@@ -1,0 +1,111 @@
+<div class="main-header">
+  <div class="appheader sticky-sm-top">
+    <div
+      class="d-flex align-items-center"
+      [ngClass]="shuoldVisible ? 'logodivShrinked' : 'logodiv'"
+    >
+      <img
+        (click)="navExpand()"
+        alt="site-icon"
+        id="siteicon"
+        src="../../assets/Images/site-icon.svg"
+        type="button"
+        [attr.data-bs-toggle]="'offcanvas'"
+        [attr.data-bs-target]="shouldVisibleCanvas ? '#navbarOffCanvas' : null"
+      />
+      <img
+        [ngClass]="{ 'd-none': shuoldVisible }"
+        alt="site-logo"
+        id="sitelogo"
+        src="../../assets/Images/logo.svg"
+      />
+    </div>
+
+     <!-- <div class="d-flex justify-content-start align-item-center ms-5">
+      <button class="btn btn-primary">
+sd
+      </button>
+      -
+      <button class="btn btn-secondary">
+as
+      </button>
+     </div> -->
+  </div>
+
+  <div
+    class=""
+    [ngClass]="shouldVisibleCanvas ? 'offcanvas offcanvas-start' : ''"
+    tabindex="-1"
+    id="navbarOffCanvas"
+    aria-labelledby="offcanvasExampleLabel"
+  >
+    <div class="navbar d-flex flex-column justify-content-start">
+      <div [ngClass]="shuoldVisible ? 'userdiv-navshrinked' : 'userdiv'">
+        <span [ngClass]="{ 'd-none': shuoldVisible }">Welcome</span>
+        <h5 class="pb-3" [ngClass]="{ 'd-none': shuoldVisible }">User</h5>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="p-0">
+            <img
+              alt="user-icon"
+              id="usericon"
+              src="../../assets/Images/icon-profile.svg"
+            />
+            <a class="userdivtext" [ngClass]="{ 'd-none': shuoldVisible }">
+              EDIT PROFILE
+            </a>
+          </span>
+          <span class="p-0">
+            <img
+              alt="logout-icon"
+              id="logouticon"
+              src="../../assets/Images/icon-logout.svg"
+            />
+            <a class="userdivtext" role="button" [ngClass]="{ 'd-none': shuoldVisible }">
+              LOGOUT
+            </a>
+          </span>
+        </div>
+      </div>
+
+      <div class="menubar ms-0">
+        <!-- <ul class="p-0 mt-5">
+              <li>
+                  <a class="text-center">
+                      <img class="menuicon" src="../../assets/icon-home.svg">
+                      <span >Home</span>
+                  </a>
+              </li>
+                <li>
+                  <a class="activelink text-center">
+                      <img class="menuicon" src="../../assets/icon-home.svg">
+                      <span >Home</span>
+                  </a>
+              </li>
+          </ul> -->
+        <ul class="p-0 mt-5">
+          <li *ngFor="let item of menuData">
+            <a class="text-center"
+            [routerLink]="item.routerPath"
+            routerLinkActive="activelink"
+            >
+              <img class="menuicon" [src]="item.imagePath" />
+              <span [ngClass]="{ 'd-none': shuoldVisible }">{{
+                item.menuItem | uppercase
+              }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <button
+        class="btn"
+        type="button"
+        [ngClass]="shuoldVisible ? 'navrightbtn' : 'navleftbtn'"
+        [attr.data-bs-toggle]="shouldVisibleCanvas ? 'offcanvas' : null"
+        [attr.data-bs-target]="'#navbarOffCanvas'"
+        (click)="navExpand()"
+      ></button>
+    </div>
+  </div>
+</div>
+

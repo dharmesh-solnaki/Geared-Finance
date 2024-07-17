@@ -1,0 +1,541 @@
+.btn {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: transparent !important;
+  padding: 4px 15px;
+  font-size: 12px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* font-weight: 600; */
+}
+.btn-primary {
+  background-color: #ffa737 !important;
+  color: black !important;
+  font-weight: 700 !important;
+}
+.btn-secondary {
+  background: #34495e !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+.form-control {
+  font-size: 0.875rem !important;
+  line-height: 18px !important;
+  height: 34px;
+  border-color: #34495e !important;
+  padding: 6px 12px !important;
+  background-color: #eef4f7 !important;
+}
+.form-control:focus {
+  border-color: #34495e !important;
+  box-shadow: 0 0 0 0.2rem #34495e20 !important;
+  background-color: #eef4f7 !important;
+}
+.form-label {
+  margin-bottom: 0px !important;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+  color: #2e2e2e;
+  padding-bottom: 5px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+}
+
+ul {
+  list-style-type: none;
+}
+.form-check {
+  width: 100%;
+}
+.form-check-inline .form-check-input {
+  position: absolute;
+  opacity: 0;
+}
+.form-check-input + .input-group-text {
+  font-size: 14px;
+  line-height: 18px;
+  height: 34px;
+  border-color: #34495e;
+  padding: 6px 12px;
+  background-color: #eef4f7;
+  text-align: center;
+  display: block;
+  cursor: pointer;
+}
+.form-check-input:checked + .input-group-text {
+  background-color: #34495e;
+  color: white;
+}
+.form-control:invalid:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+input.ng-invalid.ng-touched {
+  border-color: #dc3545 !important;
+}
+/* .requiredFormField{
+  border-color: #dc3545 !important;
+} */
+.ng-in-valid > div > button {
+  border-color: #dc3545 !important;
+}
+.nav-link {
+  color: black !important;
+}
+
+.page-link {
+  background-color: white !important;
+}
+.page-link:focus {
+  background-color: #6c7e8f !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 174, 123, 0.2) !important;
+  color: white !important;
+}
+button:disabled {
+  background-color: unset !important;
+
+  border-color: unset !important;
+}
+/* app-header starts */
+.appheader {
+  position: absolute;
+
+  /* max-width: fit-content; */
+  z-index: 2000;
+  width: auto;
+}
+.logodiv {
+  width: 13rem;
+  position: fixed;
+
+  height: 4.8rem;
+  margin-right: 3rem;
+  background-color: black;
+}
+.logodivShrinked {
+  position: fixed;
+  height: 4.8rem;
+  width: 3.75rem;
+  background-color: black;
+}
+#siteicon {
+  /* width: rem; */
+  height: 4rem;
+  padding: 1rem 0.8rem 1rem 0.8rem;
+}
+#sitelogo {
+  width: 6rem;
+}
+.navbar {
+  position: fixed;
+  top: 4.3rem;
+  z-index: 1000;
+  background-color: black;
+  height: calc(100% - 69px);
+}
+.userdiv {
+  width: 13rem;
+  height: 8.313rem;
+  background-color: #2f2f2f;
+  padding: 1.3rem;
+  color: white;
+  border-bottom: 1px solid rgb(255, 255, 255);
+  border-top: 1px solid rgb(255, 255, 255);
+}
+
+.userdiv > div > span > img {
+  width: 0.75rem;
+}
+.userdiv-navshrinked {
+  width: 3.75rem;
+  height: 8.313rem;
+  background-color: #2f2f2f;
+  color: white;
+  border-bottom: 1px solid rgb(255, 255, 255);
+  border-top: 1px solid rgb(255, 255, 255);
+}
+.userdiv-navshrinked > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding: 2rem 0rem;
+}
+.userdiv-navshrinked > div > span > img {
+  width: 1rem;
+}
+.userdivtext {
+  color: white;
+  text-decoration: none;
+  font-size: 0.7rem;
+}
+.menubar {
+  color: white;
+  width: 100%;
+}
+.menubar > ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.menubar > ul > li {
+  width: 100%;
+}
+.menubar > ul > li > a {
+  position: relative;
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  color: white;
+  height: 2.188rem;
+  align-items: center;
+  overflow: hidden;
+
+  /* background-color: red; */
+}
+.menubar > ul > li > a > span {
+  margin-left: 3.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.menuicon {
+  width: 1.4rem;
+  position: absolute;
+  left: 1rem;
+  top: 0.4rem;
+}
+.activelink {
+  position: relative;
+  background-color: #ffa737;
+  text-decoration: none;
+  color: black !important;
+}
+.activelink > img {
+  top: -1.15rem !important;
+}
+.navleftbtn {
+  background-image: url("../../assets/Images/ic-nav-left.svg");
+  background-repeat: no-repeat;
+  height: 1.4rem;
+  position: absolute;
+  bottom: 10%;
+  /* margin-top: calc(100vh - 823px + 15rem); */
+  margin-left: 9.5rem;
+}
+.navrightbtn {
+  background-image: url("../../assets/Images/ic-nav-right.svg");
+  background-repeat: no-repeat;
+  height: 1.4rem;
+  position: absolute;
+  /* margin-top: calc(100vh - 823px + 15rem); */
+  bottom: 10%;
+
+  margin-left: 1rem;
+}
+.offcanvas.offcanvas-start {
+  width: 13rem !important;
+}
+
+/* Hear style Ends */
+
+/* Settings module syles */
+.setting-wrapper {
+  max-height: 43.29rem;
+  min-height: 43.29rem;
+
+  /* position: relative; */
+}
+.setting-wrapper-row {
+  width: auto;
+  max-height: inherit;
+  min-height: inherit;
+  padding: 1rem;
+}
+
+.settingTitleText {
+  font-size: 0.877rem;
+  font-weight: 700;
+}
+.setting-left-div {
+  width: 10.938rem;
+  padding-right: 0%;
+  border-right: 1px solid black;
+}
+.setting-ul {
+  list-style-type: none;
+  padding-left: 0%;
+}
+.setting-ul > li > a {
+  text-decoration: none;
+  display: block;
+  color: #2e2e2e;
+  font-size: 0.87rem;
+  padding: 2px 10px;
+  /* position: relative; */
+}
+.settingsliactivelink {
+  background-color: #f1f6f9;
+}
+.setting-ul > li > a:hover {
+  background-color: #f1f6f9 !important;
+}
+.horizontal-line {
+  border-bottom: 1px solid #2e2e2e;
+  margin: 1rem 0px;
+  width: 100%;
+}
+.setting-right-div {
+  max-width: calc(100% - 12rem);
+}
+.inner-page-heading {
+  border-bottom: 1px solid;
+}
+
+/* user mangement */
+.inner-page-heading-title {
+  color: #fff;
+  background: #6c7e8f;
+  border-radius: 6px;
+  padding: 0.3rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  height: fit-content;
+  margin-top: 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 15px;
+}
+
+.selectionmenuholder {
+  position: relative;
+}
+.selectionmenuholder button.ng-invalid.ng-touched {
+  border-color: red !important;
+}
+.dropdownselection {
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid #34495e;
+  background-color: #eef4f7;
+  font-weight: 400;
+  height: 34px;
+  width: 100%;
+  font-size: 0.95rem;
+  text-align: left;
+  padding: 0.3rem 3rem 0.6rem 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dropdownImage {
+  position: absolute;
+  right: 5%;
+  top: 45%;
+  transform: translateY(-50%);
+}
+.dropdownImageTransform {
+  transform: rotate(180deg);
+}
+.selected-text {
+  /* max-width: calc(100% - 1px);  */
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  min-width: 10rem;
+  /* height : calc(100% + 7rem); */
+  overflow-y: scroll;
+  max-height: 14rem;
+  z-index: 100;
+  background: #fff;
+  margin-top: 3px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  /* min-width: 160px; */
+  /* height: fit-content; */
+}
+
+.dropdown-list > ul > li {
+  padding: 0.2rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-align: left;
+  color: #6c7e8f;
+}
+
+.dropdown-list > ul > li:hover {
+  background-color: #eef4f7;
+}
+
+.filter-textbox {
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  padding: 5px !important;
+}
+/* .filter-textbox input ,
+  .filter-textbox input:focus-visible
+  {
+  border: 0 !important;
+  width: 100% ;
+  padding: 0.3rem 0.6rem !important;
+  background-color: white !important;
+} */
+.search-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  color: #333;
+  background-color: transparent;
+}
+
+.page-section-title {
+  font-size: 16px;
+  line-height: 30px;
+  font-weight: 700;
+  font-family: "Source Sans Pro", sans-serif;
+  color: #34495e;
+  border-bottom: 1px solid #34495e;
+}
+
+/*----pagination----- */
+.page-link {
+  border: none !important;
+  color: #34495e !important;
+  font-weight: 500;
+}
+@media (min-width: 426px) and (max-width: 768px) {
+  .appheader {
+    width: 100%;
+    /* top: 0; */
+    background-color: rgb(211, 170, 95);
+  }
+}
+@media (min-width: 426px) {
+  .setting-left-div {
+    display: block !important;
+  }
+}
+@media (max-width: 425px) {
+  .appheader {
+    position: fixed;
+    width: 100%;
+    background-color: black;
+  }
+  .logodiv {
+    position: unset;
+    width: min-content;
+    height: 4.8rem;
+    /* margin-right: 3rem; */
+  }
+  .logodivShrinked {
+    position: unset;
+    height: 4.8rem;
+    width: min-content;
+  }
+
+  #sitelogo {
+    display: none;
+  }
+
+  /* settings- styles */
+  .setting-wrapper {
+    padding: 0%;
+    height: 100%;
+    max-height: unset;
+    min-height: unset;
+    /* position: relative; */
+  }
+
+  .setting-wrapper-row {
+    /* position: relative; */
+    /* height: 100%; */
+    max-height: unset;
+    min-height: unset;
+  }
+
+  .setting-left-div {
+    position: absolute;
+    top: 0;
+    z-index: 100;
+    height : 100%;
+    /* margin-left: 1rem; */
+    /* margin-left: 0px !important; */
+    background-color: white;
+    border-right: 1px solid black;
+    padding-top: 1rem;
+  }
+  .setting-menushow {
+    display: block !important;
+    position: absolute;
+    left: 11rem;
+    top: 4rem;
+    z-index: 150;
+    padding: 0.4rem;
+    border: 1px solid black;
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+  }
+  .setting-menuhide {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 4rem;
+    z-index: 150;
+    padding: 0.4rem;
+    border: 1px solid black;
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+  }
+  .setting-right-div {
+   padding: 1rem ;
+    max-width: 100%;
+
+    height: 100%;
+
+    border-left: none;
+  }
+}
+
+@media (max-height: 492px) {
+  .menubar {
+    height: 13rem;
+    overflow: scroll;
+    position: relative;
+  }
+  .menubar > ul {
+    margin-top: 0.5rem !important;
+  }
+}
+
+@media (max-height: 380px) {
+  .menubar {
+    height: 5rem;
+    overflow: scroll;
+    position: relative;
+  }
+  .navleftbtn {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+  .navrightbtn {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+}

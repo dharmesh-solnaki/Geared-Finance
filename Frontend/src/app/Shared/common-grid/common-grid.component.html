@@ -1,0 +1,145 @@
+<div class="grid-wrapper">
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="">
+        <tr class="grid-header">
+          <th
+            *ngFor="let key of _gridSettings.columns"
+            class="text-uppercase"
+            (click)="sort(key.name, key.sort)"
+          >
+            {{ key.title }}
+            <span *ngIf="key.sort">
+              <i
+                name="sort-up"
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="sortOrder == 'ASC' && previousSort == key.name"
+              ></i>
+              <i
+                name="sort-down"
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="sortOrder == 'DESC' && previousSort == key.name"
+              ></i>
+              <i
+                name="sort"
+                class="fa fa-sort"
+                aria-hidden="true"
+                *ngIf="previousSort != key.name"
+              ></i>
+            </span>
+          </th>
+        </tr>
+        <tr *ngIf="!displayData.isNotEmpty()">
+          <th class="text-center">
+            <span class="text-muted">No Records Found</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="grid-body" *ngIf="displayData.isNotEmpty()">
+        <ng-container *ngFor="let item of displayData">
+          <tr class="grid-row">
+            <td *ngFor="let key of _gridSettings.columns">
+              <ng-container [ngSwitch]="key.type">
+                <ng-container *ngSwitchCase="'STATUS'">
+                  <ng-container
+                    [ngTemplateOutlet]="statusTemplate"
+                    [ngTemplateOutletContext]="{ record: item, column: key }"
+                  >
+                  </ng-container>              
+                  
+                </ng-container>
+                <ng-container *ngSwitchCase="'LOGINSTATUS'">
+                  <ng-container
+                    [ngTemplateOutlet]="loginStatusTemplate"
+                    [ngTemplateOutletContext]="{ record: item, column: key }"
+                  >
+                  </ng-container>
+                </ng-container>     
+                <ng-container *ngSwitchDefault>
+                  <span>
+                    {{ item[key.name] }}
+                  </span>
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-footer" *ngIf="isShowPagination()">
+    <ul class="pagination m-0">
+      <li
+        class="page-item"
+        [ngClass]="paginationSetting.currentPage <= 1 ? 'disabled' : ''"
+      >
+        <button class="page-link" (click)="goToPreviousPage()"><</button>
+      </li>
+
+      <ng-container *ngIf="pageNumbers.length > 5 else PaginationwithLessNumber"  >
+        <li class="page-item" *ngFor="let page of pageNumbers; let i = index">
+          <button
+            class="page-link"
+            [ngClass]="paginationSetting.currentPage === page ? 'page-active' : ''"
+            (click)="goToPage(page)"
+            *ngIf="i < 5"
+          >
+            {{ page }}
+          </button>
+        </li>
+        <li>
+          <button class="page-link" disabled>...</button>
+        </li>
+         <li>
+            <button  class="page-link"
+            [ngClass]="paginationSetting.currentPage === pageNumbers[pageNumbers.length-1] ? 'page-active' : ''"
+            (click)="goToPage(pageNumbers[pageNumbers.length-1])">
+            {{ pageNumbers[pageNumbers.length-1] }}
+        </button>
+         </li>
+      </ng-container>
+      
+      <ng-template #PaginationwithLessNumber>
+        <li class="page-item" *ngFor="let page of pageNumbers">
+            <button
+              class="page-link"
+              [ngClass]="paginationSetting.currentPage === page ? 'page-active' : ''"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </li>
+
+      </ng-template>
+      
+  
+      <li class="page-item" [ngClass]="isLastPage() ? 'disabled' : ''">
+        <button class="page-link" (click)="goToNextPage()">></button>
+      </li>
+    </ul>
+
+    <app-common-selectmenu
+      #pageSizerChild
+      [optionData]="pageSizeOptions"
+      [defaultOption]="pageSizeOptions[0].option"
+      (valueChangeEmitter)="pageSizeChangeHandler($event)"
+    >
+    </app-common-selectmenu>
+  </div>
+</div>
+
+<ng-template #statusTemplate let-record="record" let-column="column">
+  <span *ngIf="record[column.name] == 1" class="status-active">Active</span>
+  <span *ngIf="record[column.name] == 0" class="status-inactive">Inactive</span>
+</ng-template>
+
+<ng-template #loginStatusTemplate let-record="record" let-column="column">
+  <span *ngIf="record[column.name] == 1" class="status-active">Active</span>
+  <span *ngIf="record[column.name] == 0" class="status-inactive">Inactive</span>
+</ng-template>
+
+
+
+

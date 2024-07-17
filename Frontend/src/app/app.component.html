@@ -1,0 +1,8 @@
+<app-header (isNavOpned)="viewHandler($event)"></app-header>
+<div [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'">
+  <div class="card">
+    <!-- <app-settings></app-settings> -->
+    <router-outlet></router-outlet>
+
+  </div>
+</div>

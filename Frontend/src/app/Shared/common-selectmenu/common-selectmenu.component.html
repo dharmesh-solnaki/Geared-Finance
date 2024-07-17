@@ -1,0 +1,28 @@
+
+<div class="selectionmenuholder">
+  <button type="button" class="dropdownselection " 
+
+  (click)="menuToggler()">
+    <span class="selected-text">{{ selectedOption }}</span>
+    <img
+      class="dropdownImage"
+      [ngClass]="isMenuOpen ? 'dropdownImageTransform' : ''"
+      width="15rem"
+      src="../../../assets/Images/icon-dropdown-arrow.svg"
+    />
+  </button>
+  
+  <div class="dropdown-list" [ngClass]="isMenuOpen ? 'd-block' : 'd-none'">
+   
+
+    <ul  class="p-0 m-0">
+      <li  *ngIf="needsSearching" class="filter-textbox">
+        <input type="text" #searchFromSelectList placeholder="search"
+        class="search-input"
+         (input)="filterHandler(searchFromSelectList.value)">
+        </li>
+      <li *ngFor="let item of workingOptionData" (click)="valueChangeHadler(item)">{{ item.option }}</li>
+    </ul>
+  </div>
+</div>
+

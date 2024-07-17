@@ -1,0 +1,464 @@
+<div class="inner-page-heading pt-1 pb-3 text-uppercase">
+  <span class="inner-page-heading-title">Add user</span>
+</div>
+
+<div class="">
+  <form [formGroup]="addUserForm" (ngSubmit)="addUserFormHandler()">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Name
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="name"
+          class="form-control"
+          maxlength="50"
+        />
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Surname
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="surname"
+          class="form-control"
+          maxlength="50"
+        />
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Role
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserRoleSelection
+          [optionData]="selectMenuRoles"
+          defaultOption="Select"
+          formControlName="role"
+          [ngClass]="{ 'ng-in-valid': hasError('role', 'required') }"
+        >
+        </app-common-selectmenu>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-3 col-md-6 mt-3" *ngIf="isFieldVisible('vendor')">
+        <label class="form-label"
+          >Vendor
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserVendorSelection
+          [optionData]="selectMenuVendors"
+          defaultOption="Select"
+          formControlName="vendor"
+          [ngClass]="{ 'ng-in-valid': hasError('vendor', 'required') }"
+        >
+        </app-common-selectmenu>
+      </div>
+      <div
+        class="col-xl-3 col-md-6 mt-3"
+        *ngIf="isFieldVisible('vendorManagerLevel')"
+      >
+        <label class="form-label"
+          >Vendor Management Level
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserVendorManagerLevelSelection
+          [optionData]="[]"
+          defaultOption="Select"
+          formControlName="vendorManagerLevel"
+          [ngClass]="{
+            'ng-in-valid': hasError('vendorManagerLevel', 'required')
+          }"
+        >
+        </app-common-selectmenu>
+      </div>
+      <div class="col-xl-3 col-md-6 mt-3" *ngIf="isFieldVisible('reportTo')">
+        <label class="form-label"
+          >Report To
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserReportToSelection
+          [optionData]="[]"
+          defaultOption="Select"
+          formControlName="reportTo"
+          [ngClass]="{ 'ng-in-valid': hasError('reportTo', 'required') }"
+        >
+        </app-common-selectmenu>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Email Address
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="email"
+          class="form-control"
+          maxlength="100"
+        />
+        <div *ngIf="hasError('email', 'pattern')" class="text-danger">
+          Please enter the valid email address
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Mobile Number
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="tel"
+          formControlName="mobileNumber"
+          appPhoneMasking
+          class="form-control"
+        />
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3">
+        <label class="form-label">Role Status</label>
+
+        <div class="form-check form-check-inline ps-0">
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="roleStatus"
+              [value]="true"
+            />
+            <span class="input-group-text">Active</span>
+          </label>
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="roleStatus"
+              [value]="false"
+              (click)="roleStatusChangeHandler()"
+            />
+            <span class="input-group-text">Inactive</span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="col-lg-3 col-md-6 col-sm-12 mt-3"
+        *ngIf="isFieldVisible('portalLogin')"
+      >
+        <label class="form-label">Portal Login</label>
+        <div class="form-check form-check-inline ps-0">
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="portalLogin"
+              [value]="true"
+            />
+            <span class="input-group-text">Active</span>
+          </label>
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="portalLogin"
+              [value]="false"
+            />
+            <span class="input-group-text">Inactive</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div
+        class="col-lg-3 col-md-6 col-sm-12 mt-3"
+        *ngIf="isFieldVisible('password')"
+      >
+        <label class="form-label"
+          >Password
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="password"
+          formControlName="password"
+          class="form-control"
+          maxlength="30"
+        />
+        <div *ngIf="hasError('password', 'pattern')" class="text-danger">
+          Invalid password format [Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character ]
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div
+        class="col-lg-3 col-md-6 col-sm-12 mt-3"
+        *ngIf="isFieldVisible('relaionshipManager')"
+      >
+        <label class="form-label"
+          >Relationship Manager
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserRelationshipManagerSelection
+          [optionData]="[]"
+          defaultOption="Select"
+          formControlName="relationshipManager"
+          [ngClass]="{
+            'ng-in-valid': hasError('relationshipManager', 'required')
+          }"
+        >
+        </app-common-selectmenu>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3">
+        <label class="form-label"
+          >Notification Preference
+          <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          #addUserNotificationPrefSelection
+          [optionData]="selectMenuNotificationPref"
+          defaultOption="None"
+          formControlName="notificationPref"
+        >
+        </app-common-selectmenu>
+      </div>
+      <div
+        class="col-lg-3 col-md-6 col-sm-12 mt-3"
+        *ngIf="isFieldVisible('birthDate')"
+      >
+        <label class="form-label">Date Of Birth</label>
+        <div class="d-flex gap-2 justify-content-between">
+          <app-common-selectmenu
+          #addUserDaySelection
+            class="w-100"
+            [optionData]="selectMenuDate"
+            defaultOption="Day"
+            [needsSearching]="true"
+            formControlName="day"
+            [ngClass]="{ 'ng-in-valid': hasError('day', 'required') }"
+          >
+          </app-common-selectmenu>
+          <app-common-selectmenu
+            #addUserMonthSelection
+            class="w-100"
+            [optionData]="selectMenuMonth"
+            defaultOption="Month"
+            [needsSearching]="true"
+            formControlName="month"
+            [ngClass]="{ 'ng-in-valid': hasError('month', 'required') }"
+          >
+          </app-common-selectmenu>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="isFieldVisible('reports')">
+      <div class="row">
+        <div class="col-12 mt-3">
+          <h3 class="pb-0 page-section-title">REPORTS</h3>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <label class="form-label">Send End of term reports</label>
+
+          <div class="form-check form-check-inline ps-0">
+            <label class="w-50">
+              <input
+                class="form-check-input"
+                type="radio"
+                formControlName="sendEOTreports"
+                [value]="true"
+              />
+              <span class="input-group-text overflow-hidden">Send</span>
+            </label>
+            <label class="w-50">
+              <input
+                class="form-check-input"
+                type="radio"
+                formControlName="sendEOTreports"
+                [value]="false"
+              />
+              <span class="input-group-text overflow-hidden">Do not send</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isFieldVisible('roleOptions')">
+      <div class="row">
+        <div class="col-12 mt-3">
+          <h3 class="pb-0 page-section-title">ROLE OPTIONS</h3>
+        </div>
+        <ng-container *ngIf="isFieldVisible('roleOptionsGearedVendorManager')">
+          <div class="col-lg-6 col-md-12 mt-2">
+            <label class="form-label">Vendor sales rep list</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="vendorSalesRepList"
+                  [value]="true"
+                />
+                <span class="input-group-text overflow-hidden"
+                  >Exclude from vendor sales rep list</span
+                >
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="vendorSalesRepList"
+                  [value]="false"
+                />
+                <span class="input-group-text overflow-hidden"
+                  >Include from vendor sales rep list</span
+                >
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 mt-2">
+            <label class="form-label">Unassigned applications</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="unassignedApplications"
+                  [value]="true"
+                />
+                <span class="input-group-text">View</span>
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="unassignedApplications"
+                  [value]="false"
+                />
+                <span class="input-group-text">Hide</span>
+              </label>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isFieldVisible('roleOptionsGearedSalesRep')">
+          <div class="col-lg-4 col-md-12 mt-2">
+            <label class="form-label">Funder profile</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  [value]="true"
+                  formControlName="funderProfile"
+                />
+                <span class="input-group-text overflow-hidden">View only</span>
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="funderProfile"
+                  [value]="false"
+                />
+                <span class="input-group-text overflow-hidden"
+                  >View & edit</span
+                >
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 mt-2">
+            <label class="form-label">Proceed button in applications</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="proceedBtnInApp"
+                  [value]="true"
+                />
+                <span class="input-group-text overflow-hidden">Show</span>
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="proceedBtnInApp"
+                  [value]="false"
+                />
+                <span class="input-group-text overflow-hidden">Hide</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 mt-3">
+            <label class="form-label">Website calculator rate editor</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="clacRateEditor"
+                  [value]="true"
+                />
+                <span class="input-group-text overflow-hidden">Show</span>
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="clacRateEditor"
+                  [value]="false"
+                />
+                <span class="input-group-text overflow-hidden">Hide</span>
+              </label>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="isFieldVisible('roleOptionsGearedSuperAdmin')">
+          <div class="col-lg-4 col-md-12 mt-2">
+            <label class="form-label">Geared sales rep list</label>
+
+            <div class="form-check form-check-inline ps-0">
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="gearedSalesRepList"
+                  [value]="true"
+                />
+                <span class="input-group-text overflow-hidden"
+                  >Include User</span
+                >
+              </label>
+              <label class="w-50">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  formControlName="gearedSalesRepList"
+                  [value]="false"
+                />
+                <span class="input-group-text overflow-hidden"
+                  >Exclude User</span
+                >
+              </label>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <div class="mt-3">
+      <button class="btn btn-primary me-2" type="submit">Save</button>
+      <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1">Cancel</a>
+    </div>
+  </form>
+</div>
