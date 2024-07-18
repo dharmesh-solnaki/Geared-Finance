@@ -1,8 +1,6 @@
-﻿using Entities.Models;
-
-namespace Entities.UtilityModels
+﻿namespace Entities.UtilityModels
 {
-    public class UserSearchEntity 
+    public class UserSearchEntity
     {
         public int? id { get; set; }
         public string? name { get; set; }

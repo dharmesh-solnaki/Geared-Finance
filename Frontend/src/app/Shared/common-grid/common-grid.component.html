@@ -7,6 +7,7 @@
             *ngFor="let key of _gridSettings.columns"
             class="text-uppercase"
             (click)="sort(key.name, key.sort)"
+            [ngClass]="{'sortPointer': key.sort}"
           >
             {{ key.title }}
             <span *ngIf="key.sort">
@@ -31,7 +32,7 @@
             </span>
           </th>
         </tr>
-        <tr *ngIf="!displayData.isNotEmpty()">
+        <tr *ngIf="!displayData.isNotEmpty()" class="w-100">
           <th class="text-center">
             <span class="text-muted">No Records Found</span>
           </th>
@@ -39,7 +40,9 @@
       </thead>
       <tbody class="grid-body" *ngIf="displayData.isNotEmpty()">
         <ng-container *ngFor="let item of displayData">
-          <tr class="grid-row">
+          <tr class="grid-row"
+          (click)="onSetEdit(item.id)"
+          >
             <td *ngFor="let key of _gridSettings.columns">
               <ng-container [ngSwitch]="key.type">
                 <ng-container *ngSwitchCase="'STATUS'">

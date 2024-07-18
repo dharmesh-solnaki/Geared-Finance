@@ -35,7 +35,7 @@
         </button>
         <a
           class="btn btn-primary ms-1"
-          [routerLink]="['/settings/user-management/add']"
+          [routerLink]="['/settings/user-management/0/add']"
           >Add User</a
         >
       </li>
@@ -59,6 +59,8 @@
   [gridSettings]="gridSetting"
   [paginationSettings]="paginationSettings"
   (onSortEvent)="sortHandler($event)"
+  [isEditable]=true
+  (onEditEvent)="onEditEventRecevier($event)"
   >
 </app-common-grid>
 

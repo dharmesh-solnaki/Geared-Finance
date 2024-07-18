@@ -11,6 +11,7 @@ import { roleSelectionMenu } from 'src/app/Models/constants.model';
 import { UserService } from '../../Service/user.service';
 import { User, UserGridSetting } from '../../Models/user.model';
 import { CommonSearch } from 'src/app/Models/common-search.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-management',
@@ -31,7 +32,7 @@ export class UserManagementComponent implements OnInit {
 
   @ViewChild('roleSelectionMenu') roleSelectionMenu!: CommonSelectmenuComponent;
 
-  constructor(private _fb: FormBuilder,private _userService:UserService) {
+  constructor(private _fb: FormBuilder,private _userService:UserService, private _router:Router,private _route: ActivatedRoute) {
     this.userHeaderSearchForm = this._fb.group({
       searchString: [''],
       selectedRole: [''],
@@ -41,18 +42,14 @@ export class UserManagementComponent implements OnInit {
   ngOnInit() {
     this.selectMenuRoles = roleSelectionMenu; 
     this.gridSetting = UserGridSetting;
-    this.dataSetter();
+    this.userDataSetter();
     this.paginationSetter();
   }
 
-  dataSetter(){
+  userDataSetter(){
    this.userData=[];
     this._userService.getUsers(this.searchingModel).subscribe(res=>{
-
-      this.userData=res
-    this.userData.map(x => {
-       x.staffcode = x.name.charAt(0).concat(x.surName.slice(0,2)).toUpperCase()
-    });
+      this.userData=res      
       })
       }
 
@@ -64,6 +61,9 @@ export class UserManagementComponent implements OnInit {
     };
   }
 
+  onEditEventRecevier(id:number){   
+    this._router.navigate([`${id}/Edit`], {relativeTo:this._route })
+  }
   
   searchHandler() {
     this.searchingModel = {
@@ -73,7 +73,7 @@ export class UserManagementComponent implements OnInit {
       roleName:  this.userHeaderSearchForm.get('selectedRole')?.value
     }
 
-    this.dataSetter();
+    this.userDataSetter();
     this.paginationSetter();
   }
 
@@ -85,7 +85,7 @@ export class UserManagementComponent implements OnInit {
       pageSize:10,
       pageNumber:1
     }
-    this.dataSetter()
+    this.userDataSetter()
   }
 
   sortHandler(ev: SortConfiguration) {
@@ -93,6 +93,6 @@ export class UserManagementComponent implements OnInit {
   
     this.searchingModel.sortBy=sort.trim();
     this.searchingModel.sortOrder=sortOrder
-    this.dataSetter();
+    this.userDataSetter();
   }
 }

@@ -25,10 +25,14 @@ namespace Service.Implementation
 
         public async Task<IEnumerable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
         {
-
-
             return await _repo.GetAllAsync(searchEntity);
         }
+
+        public async Task<IEnumerable<U>> GetOtheEntityListAsync<U>() where U : class
+        {
+            return await _repo.GetOthers<U>();
+        }
+
         public async Task SaveChangesAsync()
         {
             await _repo.SaveChangesAsync();

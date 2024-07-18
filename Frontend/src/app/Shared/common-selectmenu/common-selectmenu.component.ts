@@ -30,6 +30,7 @@ interface Array<T> {
 export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   @Input() optionData: selectMenu[] = [];
   @Input() defaultOption: string = '';
+  @Input() defaultValue:string|number='';
   @Input() needsSearching: boolean = false;
  @Output() valueChangeEmitter = new EventEmitter<number|string>()
   selectedValue: string | number = '';
@@ -71,7 +72,7 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
 this.workingOptionData = this.optionData;
   }
   ngOnInit(): void {
-    this.selectedValue = this.defaultOption;
+    this.selectedValue = this.defaultValue;
     this.selectedOption = this.defaultOption;
 
     if (!this.optionData.isNotEmpty()) {
@@ -90,7 +91,7 @@ this.workingOptionData = this.optionData;
   }
 
   resetElement() {
-    this.selectedValue = this.defaultOption;
+    this.selectedValue = this.defaultValue;
     this.selectedOption = this.defaultOption;
     this.isMenuOpen = false;
   }

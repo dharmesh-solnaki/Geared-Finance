@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Utilities;
 namespace Entities.DTOs
 {
-    public class UserDTO:BaseDTO
+    public class UserDTO : BaseDTO
 
     {
 
@@ -16,7 +15,7 @@ namespace Entities.DTOs
 
         [Required]
         [StringLength(100)]
-        [RegularExpression(Constants.EMAIL_REGEX)]
+        //[RegularExpression(Constants.EMAIL_REGEX)]
         public string Email { get; set; } = null!;
 
 
@@ -57,5 +56,8 @@ namespace Entities.DTOs
         public bool? IsProceedBtnInApp { get; set; }
 
         public bool? IsCalcRateEditor { get; set; }
+
+        public string? StaffCode { get; set; }
+        
     }
 }

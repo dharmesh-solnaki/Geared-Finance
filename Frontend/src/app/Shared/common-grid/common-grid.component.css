@@ -32,7 +32,9 @@
   line-height: 20px;
   padding: 8px 10px;
 }
-
+.sortPointer:hover{
+cursor: pointer !important;
+}
 .grid-footer {
   padding: 5px 0;
   display: flex;

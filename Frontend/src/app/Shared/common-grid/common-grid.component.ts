@@ -12,7 +12,7 @@ import {
   SortConfiguration,
   SortOrder,
 } from '../../Models/common-grid.model';
-import { selectMenu } from '../../Models/constants.model';
+import { recordsPerPage, selectMenu } from '../../Models/constants.model';
 import { CommonSelectmenuComponent } from '../common-selectmenu/common-selectmenu.component';
 
 @Component({
@@ -45,14 +45,13 @@ export class CommonGridComponent {
 
   @ViewChild('pageSizerChild') pageSizerChild!:CommonSelectmenuComponent
 
-  /**
-   *
-   */
+  
   constructor() {
     this._gridSettings = this.defaultSettings;
   }
 
   @Input() data: any[] = [];
+  @Input() isEditable:boolean=false;
   @Input() public set gridSettings(value: IGridSettings) {
     if (value) {
       this._gridSettings = value;
@@ -81,6 +80,7 @@ export class CommonGridComponent {
   }
 
   @Output() onSortEvent = new EventEmitter<SortConfiguration>();
+  @Output() onEditEvent =new EventEmitter<number>();
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.this.
@@ -94,6 +94,12 @@ export class CommonGridComponent {
     this.updateDisplayedData();
     this.pagSizeSetter();
     this.updatePageNumbers();
+  }
+
+  onSetEdit(record:number){
+    if(this.isEditable){
+      this.onEditEvent.emit(record)
+    }
   }
   pageSizeChangeHandler(ev:number|string){
    this.pageSize=+ev
@@ -137,15 +143,7 @@ export class CommonGridComponent {
   }
 
   updateDisplayedData() {
-    // const startIndex = (this.paginationSetting.currentPage - 1) * this.pageSize;
-    // const endIndex = startIndex + +this.pageSize;
-
-      //   this.displayData = this.data.slice(0)
-      // }else{
-       this.displayData = this.data
-      // }
-
-    //  console.log(this.displayData)
+  this.displayData = this.data
   }
 
   goToPreviousPage() {

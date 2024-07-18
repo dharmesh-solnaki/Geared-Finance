@@ -1,10 +1,9 @@
-﻿using System.Linq.Expressions;
-using Entities.Models;
-using Entities.UtilityModels;
+﻿using Entities.Models;
 
 namespace Repository.Interface
 {
     public interface IUserRepo : IBaseRepo<User>
     {
+        Task<IEnumerable<Vendor>> GetVendors();
     }
 }

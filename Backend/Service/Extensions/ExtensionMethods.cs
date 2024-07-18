@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Geared_Finance_API
@@ -23,18 +22,19 @@ namespace Geared_Finance_API
             return serviceProvider.GetService<IMapper>();
         }
 
-        
 
-        public static TDest MapTo<TDest>( object source)
-        { var mapper = GetMapper();
+
+        public static TDest MapTo<Tsource, TDest>(Tsource source)
+        {
+            var mapper = GetMapper();
             //var mapper = serviceProviderHelper
             return mapper.Map<TDest>(source);
 
         }
-        public static IEnumerable<TDest> MapToList<TDest>(IEnumerable<object> source)
-        {
-            var mapper = GetMapper();
-            return mapper.Map<IEnumerable<TDest>>(source);
-        }
+        //public static IEnumerable<TDest> MapToList<TDest>(IEnumerable<object> source)
+        //{
+        //    var mapper = GetMapper();
+        //    return mapper.Map<IEnumerable<TDest>>(source);
+        //}
     }
 }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
-[Index("RoleId", Name = "IX_Users_Role", IsUnique = true)]
 [Index("VendorId", Name = "IX_Users_VendorId", IsUnique = true)]
 public partial class User
 {
@@ -23,7 +20,7 @@ public partial class User
     public string Email { get; set; } = null!;
 
     [StringLength(10)]
-    public string Mobile { get; set; } =null!;
+    public string Mobile { get; set; } = null!;
 
     [StringLength(128)]
     public string? Password { get; set; }
@@ -31,7 +28,7 @@ public partial class User
     public int NotificationPreferences { get; set; }
 
     [Required]
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
 
     public bool? IsPortalLogin { get; set; }
 
@@ -62,8 +59,11 @@ public partial class User
 
     public bool? IsCalcRateEditor { get; set; }
 
+    [StringLength(3)]
+    public string StaffCode { get; set; } = null!;
+
     [ForeignKey("RoleId")]
-    [InverseProperty("User")]
+    [InverseProperty("Users")]
     public virtual Role Role { get; set; } = null!;
 
     [ForeignKey("VendorId")]

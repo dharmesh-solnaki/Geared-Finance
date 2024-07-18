@@ -19,5 +19,7 @@ namespace Service.Interface
         //public Task DeleteRange(IEnumerable<T> items);
 
         public Task SaveChangesAsync();
+
+        public Task<IEnumerable<U>> GetOtheEntityListAsync<U>() where U : class;
     }
 }

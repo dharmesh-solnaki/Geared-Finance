@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Entities.Models;
+﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -25,7 +23,7 @@ public partial class ApplicationDBContext : DbContext
     public virtual DbSet<Vendor> Vendors { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("User ID = postgres;Password=root;Server=localhost;Port=5432;Database=GearedFinance;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,10 +45,7 @@ public partial class ApplicationDBContext : DbContext
             entity.Property(e => e.Status).HasDefaultValueSql("true");
             entity.Property(e => e.UnassignedApplications).HasDefaultValueSql("true");
 
-            entity.Property(e => e.Mobile).HasColumnType("varchar").HasMaxLength(10);
-            
-
-            entity.HasOne(d => d.Role).WithOne(p => p.User)
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Roles_RolesId");
 

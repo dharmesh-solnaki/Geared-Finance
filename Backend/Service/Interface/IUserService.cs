@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Entities.DTOs;
+﻿using Entities.DTOs;
 using Entities.Models;
 using Entities.UtilityModels;
 
@@ -9,6 +8,7 @@ namespace Service.Interface
     {
         Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity);
         Task AddUserAsync(UserDTO model);
-      
+
+        Task<IEnumerable<VendorDTO>> GetAllVendors();
     }
 }

@@ -20,7 +20,8 @@ const routes: Routes = [
     component: SettingsComponent,
     children: [
       { path: 'user-management', component: UserManagementComponent },
-      { path: 'user-management/add', component: AddSiteUserComponent },
+      { path: 'user-management/0/add', component: AddSiteUserComponent  },
+      { path: 'user-management/:id/Edit', component: AddSiteUserComponent  },
     ],
   },
 ];

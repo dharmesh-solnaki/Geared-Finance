@@ -10,9 +10,6 @@ namespace Service.Implementation
 {
     public class UserService : BaseService<User>, IUserService
     {
-
-
-
         private readonly IUserRepo _userRepo;
         public UserService(IBaseRepo<User> repo, IUserRepo userRepo) : base(repo)
         {
@@ -22,10 +19,7 @@ namespace Service.Implementation
 
         public async Task AddUserAsync(UserDTO model)
         {
-            //User user = _mapper.Map<User>(model);
-
-            User user = MapperHelper.MapTo<User>(model);
-            user.Role = null;
+            User user = MapperHelper.MapTo<UserDTO, User>(model);
             await AddAsync(user);
 
         }
@@ -33,24 +27,24 @@ namespace Service.Implementation
         public async Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
         {
 
+            if (searchEntity.sortBy == "roleName")
+            {
+                searchEntity.sortBy = "Role.RoleName";
+            }
 
-            //searchEntity.predicate = _userRepo.GeneratePredicate(searchEntity);
-            //searchEntity.includes = _userRepo.GenerateInclude();
             BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
             {
                 predicate = GeneratePredicate(searchEntity),
                 includes = GenerateInclude(),
                 pageNumber = searchEntity.pageNumber,
                 pageSize = searchEntity.pageSize,
-                sortBy = searchEntity.sortBy        ,
+                sortBy = searchEntity.sortBy,
                 sortOrder = searchEntity.sortOrder,
+
             };
-
+            baseSearchEntity.SetSortingExpression();
             IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
-
-
-            IEnumerable<UserDTO> data = MapperHelper.MapToList<UserDTO>(users);
-     
+            IEnumerable<UserDTO> data = MapperHelper.MapTo<IEnumerable<User>, IEnumerable<UserDTO>>(users);
             return data;
         }
 
@@ -72,6 +66,12 @@ namespace Service.Implementation
         private Expression<Func<User, object>>[] GenerateInclude()
         {
             return new Expression<Func<User, object>>[] { x => x.Role };
+        }
+
+        public async Task<IEnumerable<VendorDTO>> GetAllVendors()
+        {
+           IEnumerable<Vendor>  vendorData = await GetOtheEntityListAsync<Vendor>();
+            return MapperHelper.MapTo<IEnumerable<Vendor> ,IEnumerable<VendorDTO>>(vendorData);
         }
     }
 }

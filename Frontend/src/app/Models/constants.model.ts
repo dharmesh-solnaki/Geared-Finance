@@ -79,11 +79,11 @@ export enum MonthEnum {
   Dec = 12,
 }
 
-export const vendorSelectionMenu = [
-  { option: 'Vendor 1', value: 'Vendo 1' },
-  { option: 'Vendor 2', value: 'Vendor 2' },
-  { option: 'Vendor 3', value: 'Vendor 3' },
-];
+// export const vendorSelectionMenu = [
+//   { option: 'Vendor 1', value: 'Vendo 1' },
+//   { option: 'Vendor 2', value: 'Vendor 2' },
+//   { option: 'Vendor 3', value: 'Vendor 3' },
+// ];
 
 export const roleSelectionMenu = [
   { option: RoleEnum.GearedAdmin, value: RoleEnum.GearedAdmin },
@@ -163,10 +163,10 @@ function isLeapYear(year: number): boolean {
 }
 
 export const notificationPreSelectionMenu = [
-  { option: 'None', value: 'None' },
-  { option: 'Email', value: 'Email' },
-  { option: 'SMS', value: 'SMS' },
-  { option: 'Email & SMS', value: 'Email & SMS  ' },
+  { option: 'None', value: 0 },
+  { option: 'Email', value: 1 },
+  { option: 'SMS', value: 2 },
+  { option: 'Email & SMS', value: 3 },
 ];
 
 export const validationRegexes = {

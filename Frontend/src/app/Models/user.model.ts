@@ -23,7 +23,7 @@ export class User {
     public isFunderProfile?: boolean,
     public isProceedBtnInApp?: boolean,
     public isCalcRateEditor?: boolean,
-    public staffcode?:string
+    public staffCode?:string
   ) //vendor
   //vendorManagerLevel
   {}
@@ -34,7 +34,7 @@ export const UserGridSetting:IGridSettings={
   columns: [
     { name: 'name', title: 'name', sort: true },
     { name: 'surName', title: 'surName', sort: true },
-    { name: 'staffcode', title: 'staff code', sort: false ,type:ColumnType.STAFFCODE},
+    { name: 'staffCode', title: 'staff code', sort: false ,type:ColumnType.STAFFCODE},
 
     { name: 'vendor', title: 'vendor', sort: false },
     { name: 'relationshipManager', title: 'relationship Manager', sort: false },

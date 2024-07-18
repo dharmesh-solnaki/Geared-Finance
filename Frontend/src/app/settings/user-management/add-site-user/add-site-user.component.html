@@ -1,9 +1,16 @@
 <div class="inner-page-heading pt-1 pb-3 text-uppercase">
+<ng-container *ngIf="!isEditable else pageTitleOnEdit">
   <span class="inner-page-heading-title">Add user</span>
+</ng-container>
+
 </div>
+<ng-template #pageTitleOnEdit>
+  <span class="inner-page-heading-title">Edit user</span>
+</ng-template>
+
 
 <div class="">
-  <form [formGroup]="addUserForm" (ngSubmit)="addUserFormHandler()">
+  <form [formGroup]="userForm" (ngSubmit)="userFormHandler()">
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
         <label class="form-label"
@@ -38,8 +45,10 @@
           #addUserRoleSelection
           [optionData]="selectMenuRoles"
           defaultOption="Select"
-          formControlName="role"
-          [ngClass]="{ 'ng-in-valid': hasError('role', 'required') }"
+          defaultValue="Select"
+          formControlName="role"    
+          
+          [ngClass]="checkValidityOfField('relationshipManager')?'ng-in-valid':''"
         >
         </app-common-selectmenu>
       </div>
@@ -54,8 +63,9 @@
           #addUserVendorSelection
           [optionData]="selectMenuVendors"
           defaultOption="Select"
+          defaultValue=0
           formControlName="vendor"
-          [ngClass]="{ 'ng-in-valid': hasError('vendor', 'required') }"
+          [ngClass]="{ 'ng-in-valid': checkValidityOfField('vendor') }"
         >
         </app-common-selectmenu>
       </div>
@@ -71,10 +81,9 @@
           #addUserVendorManagerLevelSelection
           [optionData]="[]"
           defaultOption="Select"
+          defaultValue=0
           formControlName="vendorManagerLevel"
-          [ngClass]="{
-            'ng-in-valid': hasError('vendorManagerLevel', 'required')
-          }"
+          [ngClass]="{ 'ng-in-valid': checkValidityOfField('vendorManagerLevel') }"
         >
         </app-common-selectmenu>
       </div>
@@ -87,8 +96,9 @@
           #addUserReportToSelection
           [optionData]="[]"
           defaultOption="Select"
-          formControlName="reportTo"
-          [ngClass]="{ 'ng-in-valid': hasError('reportTo', 'required') }"
+          defaultValue=0
+          formControlName="reportTo"      
+          [ngClass]="{ 'ng-in-valid': checkValidityOfField('reportTo') }"
         >
         </app-common-selectmenu>
       </div>
@@ -157,6 +167,7 @@
               class="form-check-input"
               type="radio"
               formControlName="portalLogin"
+              checked
               [value]="true"
             />
             <span class="input-group-text">Active</span>
@@ -206,10 +217,10 @@
           #addUserRelationshipManagerSelection
           [optionData]="[]"
           defaultOption="Select"
+          defaultValue=0
           formControlName="relationshipManager"
-          [ngClass]="{
-            'ng-in-valid': hasError('relationshipManager', 'required')
-          }"
+          
+          [ngClass]="checkValidityOfField('relationshipManager')?'ng-in-valid':''"
         >
         </app-common-selectmenu>
       </div>
@@ -222,6 +233,7 @@
           #addUserNotificationPrefSelection
           [optionData]="selectMenuNotificationPref"
           defaultOption="None"
+          defaultValue=0
           formControlName="notificationPref"
         >
         </app-common-selectmenu>
@@ -237,9 +249,10 @@
             class="w-100"
             [optionData]="selectMenuDate"
             defaultOption="Day"
+            defaultValue="Day"
             [needsSearching]="true"
-            formControlName="day"
-            [ngClass]="{ 'ng-in-valid': hasError('day', 'required') }"
+            formControlName="day"           
+            [ngClass]="{ 'ng-in-valid': checkValidityOfField('day') }"
           >
           </app-common-selectmenu>
           <app-common-selectmenu
@@ -247,9 +260,10 @@
             class="w-100"
             [optionData]="selectMenuMonth"
             defaultOption="Month"
+            defaultValue="Month"
             [needsSearching]="true"
             formControlName="month"
-            [ngClass]="{ 'ng-in-valid': hasError('month', 'required') }"
+            [ngClass]="{ 'ng-in-valid': checkValidityOfField('month') }"
           >
           </app-common-selectmenu>
         </div>
@@ -457,8 +471,11 @@
     </ng-container>
 
     <div class="mt-3">
-      <button class="btn btn-primary me-2" type="submit">Save</button>
-      <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1">Cancel</a>
+   <div>
+    <button class="btn btn-primary me-2" type="submit">Save</button>
+    <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1">Cancel</a>
+   </div>
+   <button class="btn btn-secondary me-2" type="submit"></button>
     </div>
   </form>
 </div>

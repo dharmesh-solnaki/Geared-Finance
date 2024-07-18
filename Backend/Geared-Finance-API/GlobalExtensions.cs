@@ -31,7 +31,7 @@ namespace Geared_Finance_API
         public static void ConfigureAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingConfig));
-           
+
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)

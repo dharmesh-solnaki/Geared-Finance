@@ -1,6 +1,5 @@
 ﻿using Entities.DTOs;
 using Entities.UtilityModels;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 
@@ -8,20 +7,21 @@ namespace Geared_Finance_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("CorsPolicy")]
+
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
+        
 
         public UserController(IUserService Service)
         {
             _service = Service;
         }
 
-       
+
         [HttpPost("GetUsers")]
         //[HttpGet]
-        public async Task<IActionResult> GetAll([FromBody]UserSearchEntity seachParams)
+        public async Task<IActionResult> GetAll([FromBody] UserSearchEntity seachParams)
         {
             IEnumerable<UserDTO> userData = await _service.GetUsersAsync(seachParams);
             if (!userData.Any())
@@ -30,8 +30,9 @@ namespace Geared_Finance_API.Controllers
             }
             return Ok(userData);
         }
+
         [HttpPost("AddUser")]
-        public async Task<IActionResult> AddUser(UserDTO model)
+        public async Task<IActionResult> AddUser([FromBody] UserDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -39,7 +40,17 @@ namespace Geared_Finance_API.Controllers
             }
             await _service.AddUserAsync(model);
             return Ok();
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> Vendors()
+        {
+            IEnumerable<VendorDTO> vendorData = await _service.GetAllVendors();
+            if (!vendorData.Any())
+            {
+                return BadRequest(); 
+            }
+            return Ok(vendorData);
         }
 
 

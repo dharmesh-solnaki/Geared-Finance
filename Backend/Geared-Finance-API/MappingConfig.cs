@@ -10,17 +10,17 @@ namespace Geared_Finance_API
     {
         public MappingConfig()
         {
-            //CreateMap<User, UserDTO>().ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName)).ReverseMap();
 
-
-            //CreateMap<UserDTO, User>().ForMember(dest => dest.RoleId,  opt => opt.MapFrom(src => Enum.Parse(typeof(RoleEnum), src.RoleName.Replace(" ", ""))));
 
             CreateMap<User, UserDTO>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
                 .ReverseMap()
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => (int)Enum.Parse(typeof(RoleEnum), src.RoleName.Replace(" ", ""))))
-                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password != null ? SecretHasher.Hash(src.Password) : null));
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password != null ? SecretHasher.Hash(src.Password) : null))
+                .ForMember(dest => dest.StaffCode, opt => opt.MapFrom(src => StringGenerator.GenerateUniqueString(3)))
+                .ForMember(dest => dest.Role, opt => opt.Ignore());
 
+            CreateMap<Vendor, VendorDTO>();
         }
     }
 
