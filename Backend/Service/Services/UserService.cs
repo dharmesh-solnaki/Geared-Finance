@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Entities.DTOs;
+using Entities.Enums;
 using Entities.Models;
 using Entities.UtilityModels;
 using Geared_Finance_API;
@@ -69,9 +70,47 @@ namespace Service.Implementation
         }
 
         public async Task<IEnumerable<VendorDTO>> GetAllVendors()
-        {
-           IEnumerable<Vendor>  vendorData = await GetOtheEntityListAsync<Vendor>();
+        {BaseSearchEntity<Vendor> searchEntity = new BaseSearchEntity<Vendor>() { pageSize=int.MaxValue};
+           IEnumerable<Vendor>  vendorData = await GetOtheEntityListAsync<Vendor>(searchEntity);
             return MapperHelper.MapTo<IEnumerable<Vendor> ,IEnumerable<VendorDTO>>(vendorData);
+        }
+
+        public async Task UpdateUserAsync(UserDTO model)
+        {
+            User user = MapperHelper.MapTo<UserDTO, User>(model);
+            if (user.Password == null)
+            {
+                User oldUser = await GetByIdAsync(user.Id);
+                if (oldUser != null) { 
+                user.Password = oldUser.Password;
+                }
+            }
+            await _userRepo.UpdateUserAsync(user);
+        }
+
+        public async Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers()
+        {
+           BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+           {
+            
+               pageSize=int.MaxValue,
+               predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || ( x.RoleId==(int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
+
+           };
+            IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
+            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
+        }
+
+        public async Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id)
+        {
+            BaseSearchEntity<ManagerLevel> baseSearchEntity = new BaseSearchEntity<ManagerLevel>()
+            {
+                pageSize=int.MaxValue,
+                predicate= x=>x.VendorId==id,
+            };
+
+            IEnumerable<ManagerLevel> managerLevels = await _userRepo.GetOthers<ManagerLevel>(baseSearchEntity);
+            return MapperHelper.MapTo<IEnumerable<ManagerLevel>, IEnumerable<ManagerLevelDTO>>(managerLevels);
         }
     }
 }

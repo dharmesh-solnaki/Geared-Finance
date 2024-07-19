@@ -184,6 +184,12 @@ export const recordsPerPage = [
   { option: '100 Per Page', value: 100 },
 ];
 
+export const alertResponses={
+  ADD_RECORD:'Record added successfully',
+  UPDATE_RECORD:'Record updated successfully',
+  DELETE_RECORD:'Record deleted successfully',
+  ERROR:'Something went wrong'
+}
 
 declare global {
   interface Array<T> {

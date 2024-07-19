@@ -1,4 +1,5 @@
-﻿using Entities.DTOs;
+﻿using System.Net;
+using Entities.DTOs;
 using Entities.UtilityModels;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
@@ -43,6 +44,7 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpGet]
+        [ProducesDefaultResponseType()]
         public async Task<IActionResult> Vendors()
         {
             IEnumerable<VendorDTO> vendorData = await _service.GetAllVendors();
@@ -52,6 +54,45 @@ namespace Geared_Finance_API.Controllers
             }
             return Ok(vendorData);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Users([FromBody] UserDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (model.id<=0)
+            {
+                return NotFound();
+            }
+            await _service.UpdateUserAsync(model);
+            return Ok();
+        }
+
+        [HttpGet("GetRelationShipManager")]
+        public async Task<IActionResult> GetRelationShipManager()
+        {
+            IEnumerable<RelationshipManagerDTO> managerData = await _service.GetAllRelationshipManagers();
+            if (!managerData.Any())
+            {
+                return NotFound();
+            }
+            return Ok(managerData);
+        }
+
+        [HttpGet("GetManagerLevels")]
+        public async Task<IActionResult> ManagerLevels([FromQuery]int id)
+        {
+            if(id<=0) return NotFound();
+            IEnumerable<ManagerLevelDTO> managerLevelData = await _service.GetManagerLevels(id);
+            if (managerLevelData == null)
+            {
+                return NotFound();
+            }
+            return Ok(managerLevelData);
+        }
+
 
 
     }

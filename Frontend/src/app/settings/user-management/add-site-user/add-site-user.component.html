@@ -52,6 +52,17 @@
         >
         </app-common-selectmenu>
       </div>
+
+     <ng-container *ngIf="isEditable">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >Staff Code
+         
+        </label>
+         <span>{{userDataOnEdit.staffCode}}</span>
+      </div>
+     </ng-container>
+     
     </div>
     <div class="row">
       <div class="col-xl-3 col-md-6 mt-3" *ngIf="isFieldVisible('vendor')">
@@ -215,7 +226,7 @@
         </label>
         <app-common-selectmenu
           #addUserRelationshipManagerSelection
-          [optionData]="[]"
+          [optionData]="selectMenuRelationshipManager"
           defaultOption="Select"
           defaultValue=0
           formControlName="relationshipManager"
@@ -470,12 +481,15 @@
       </div>
     </ng-container>
 
-    <div class="mt-3">
+    <div class="mt-3 d-flex justify-content-between align-item-center">
    <div>
     <button class="btn btn-primary me-2" type="submit">Save</button>
     <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1">Cancel</a>
    </div>
-   <button class="btn btn-secondary me-2" type="submit"></button>
+   <button class="btn btn-secondary me-2 bg-secondary"
+    type="button" 
+    [ngClass]="isEditable?'d-block':'d-none'"
+    ><img src="../../../../assets/Images/ic-delete-white.svg" width="15px"></button>
     </div>
   </form>
 </div>

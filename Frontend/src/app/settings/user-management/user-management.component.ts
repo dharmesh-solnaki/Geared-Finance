@@ -50,8 +50,10 @@ export class UserManagementComponent implements OnInit {
    this.userData=[];
     this._userService.getUsers(this.searchingModel).subscribe(res=>{
       this.userData=res      
-      })
-      }
+      },
+      err=>{
+        console.log(err)
+      })}
 
   paginationSetter() {
     this.paginationSettings = {
@@ -62,7 +64,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   onEditEventRecevier(id:number){   
-    this._router.navigate([`${id}/Edit`], {relativeTo:this._route })
+    this._router.navigate([`${id}/Edit`], {relativeTo:this._route ,state:this.userData.filter(e=>e.id==id)})
   }
   
   searchHandler() {

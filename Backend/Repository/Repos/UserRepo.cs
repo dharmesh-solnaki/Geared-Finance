@@ -1,5 +1,6 @@
 ﻿using Entities.DBContext;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 
 namespace Repository.Implementation
@@ -14,10 +15,19 @@ namespace Repository.Implementation
             _dbContext = context;
 
         }
-
-        public Task<IEnumerable<Vendor>> GetVendors()
+       
+        public async Task UpdateUserAsync(User user)
         {
-            throw new NotImplementedException();
+            var trackedEntity = _dbContext.ChangeTracker.Entries<User>().FirstOrDefault(e => e.Entity.Id == user.Id);
+
+            if (trackedEntity != null)
+            {
+                _dbContext.Entry(trackedEntity.Entity).State = EntityState.Detached;
+            }
+
+            _dbContext.Users.Attach(user);
+            _dbContext.Entry(user).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

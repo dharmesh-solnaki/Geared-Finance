@@ -30,13 +30,13 @@ interface Array<T> {
 export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   @Input() optionData: selectMenu[] = [];
   @Input() defaultOption: string = '';
-  @Input() defaultValue:string|number='';
+  @Input() defaultValue: string | number = '';
   @Input() needsSearching: boolean = false;
- @Output() valueChangeEmitter = new EventEmitter<number|string>()
+  @Output() valueChangeEmitter = new EventEmitter<number | string>();
   selectedValue: string | number = '';
   selectedOption: string | number = '';
   isMenuOpen: boolean = false;
-  workingOptionData: selectMenu[] = [];
+  @Input() workingOptionData: selectMenu[] = [];
   isFieldRequired: boolean = false;
 
   constructor(private elementRef: ElementRef) {}
@@ -62,14 +62,13 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   }
 
   updateTheOptionData(newData: selectMenu[]) {
-   
     this.optionData = newData;
- 
+    this.workingOptionData = this.optionData;
+    console.log(this.optionData);
   }
- 
-  ngOnChanges(changes: SimpleChanges): void {
 
-this.workingOptionData = this.optionData;
+  ngOnChanges(changes: SimpleChanges): void {  
+    this.workingOptionData = changes['optionData'].currentValue;
   }
   ngOnInit(): void {
     this.selectedValue = this.defaultValue;
@@ -87,7 +86,7 @@ this.workingOptionData = this.optionData;
     this.isMenuOpen = false;
     this.onChange(this.selectedValue);
     this.onTouched();
-    this.valueChangeEmitter.emit(item.value)
+    this.valueChangeEmitter.emit(item.value);
   }
 
   resetElement() {

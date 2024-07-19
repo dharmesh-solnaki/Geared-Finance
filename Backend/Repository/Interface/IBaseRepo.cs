@@ -5,7 +5,8 @@ namespace Repository.Interface
     public interface IBaseRepo<T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity);
-        Task<IEnumerable<U>> GetOthers<U>() where U : class;
+        Task<IEnumerable<U>> GetOthers<U>(BaseSearchEntity<U>? searchEntity) where U : class;
+        Task<T> GetByIdAsync(int id);
 
         Task AddAsync(T item);
 

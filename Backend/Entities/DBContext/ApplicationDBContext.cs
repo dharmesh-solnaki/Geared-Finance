@@ -1,4 +1,6 @@
-﻿using Entities.Models;
+﻿using System;
+using System.Collections.Generic;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -44,6 +46,8 @@ public partial class ApplicationDBContext : DbContext
             entity.Property(e => e.IsUserInVendorSalesRepList).HasDefaultValueSql("true");
             entity.Property(e => e.Status).HasDefaultValueSql("true");
             entity.Property(e => e.UnassignedApplications).HasDefaultValueSql("true");
+
+            entity.HasOne(d => d.Manager).WithMany(p => p.Users).HasConstraintName("FK_Users_ManagerLevels_MangerId");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)
