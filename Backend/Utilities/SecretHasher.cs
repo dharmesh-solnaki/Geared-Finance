@@ -46,5 +46,6 @@ namespace Utilities
             );
             return CryptographicOperations.FixedTimeEquals(inputHash, hash);
         }
+       
     }
 }

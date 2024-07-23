@@ -250,8 +250,9 @@ button:disabled {
 
 /* Settings module syles */
 .setting-wrapper {
-  max-height: 43.29rem;
-  min-height: 43.29rem;
+  /* max-height: 43.29rem;
+  min-height: 43.29rem; */
+height: inherit;
 
   /* position: relative; */
 }

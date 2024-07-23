@@ -67,7 +67,9 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
     console.log(this.optionData);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {  
+  ngOnChanges(changes: SimpleChanges): void { 
+    this.resetElement()
+    this.optionData =changes['optionData'].currentValue;
     this.workingOptionData = changes['optionData'].currentValue;
   }
   ngOnInit(): void {

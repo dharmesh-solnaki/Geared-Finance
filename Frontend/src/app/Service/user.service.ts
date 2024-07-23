@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 import { User } from '../Models/user.model';
 import { environment } from 'src/environments/environment.development';
 import { CommonSearch } from 'src/app/Models/common-search.model';
-import { RelationshipManager, Vendor } from '../Models/common-models';
+import {Vendor } from '../Models/common-models';
+import { RelationshipManager } from '../Models/RelationshipManager.model';
+import { ManagerLevel } from '../Models/ManagerLevel.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,16 +24,20 @@ private API_URL:string = `${environment.BASE_URL}/user`;
     
     return this._http.post<User>(`${this.API_URL}/AddUser`,user);
   }
-  getVendors():Observable<Vendor[]>{
-    return this._http.get<Vendor[]>(this.API_URL)
-  }
+ 
   updateUser(user:User):Observable<User>{
    return this._http.put<User>(this.API_URL,user)
   }
   getRelationshipManagers():Observable<RelationshipManager[]>{
  return this._http.get<RelationshipManager[]>(`${this.API_URL}/GetRelationShipManager`)
   }
-  // updateUser(id:number,user:User){
-  //  return this._http.put<User>(this.API_URL/{id})
-  // }
+ 
+  getReportingTo(vendorId:number,managerLevelId:number):Observable<RelationshipManager[]>{
+
+    return this._http.get<RelationshipManager[]>(`${this.API_URL}/GetReportingTo?vendorId=${vendorId}&managerLevelId=${managerLevelId}`)
+  }
+  deleteUser(id:number){
+   return this._http.delete( `${this.API_URL}?${id}`)
+  }
+ 
 }

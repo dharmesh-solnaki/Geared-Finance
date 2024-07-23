@@ -79,11 +79,6 @@ export enum MonthEnum {
   Dec = 12,
 }
 
-// export const vendorSelectionMenu = [
-//   { option: 'Vendor 1', value: 'Vendo 1' },
-//   { option: 'Vendor 2', value: 'Vendor 2' },
-//   { option: 'Vendor 3', value: 'Vendor 3' },
-// ];
 
 export const roleSelectionMenu = [
   { option: RoleEnum.GearedAdmin, value: RoleEnum.GearedAdmin },
@@ -185,6 +180,7 @@ export const recordsPerPage = [
 ];
 
 export const alertResponses={
+  DELETION_CONFIRMATION:'Are you sure you want to delete this record?',
   ADD_RECORD:'Record added successfully',
   UPDATE_RECORD:'Record updated successfully',
   DELETE_RECORD:'Record deleted successfully',
@@ -194,6 +190,9 @@ export const alertResponses={
 declare global {
   interface Array<T> {
     isNotEmpty(): boolean;
+  }
+  interface NumberConstructor {
+    readonly INT_MAX_VALUE: number;
   }
 }
 

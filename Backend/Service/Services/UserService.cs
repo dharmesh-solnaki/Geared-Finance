@@ -12,8 +12,10 @@ namespace Service.Implementation
     public class UserService : BaseService<User>, IUserService
     {
         private readonly IUserRepo _userRepo;
+        private readonly IVendorService _vendorService;
         public UserService(IBaseRepo<User> repo, IUserRepo userRepo) : base(repo)
         {
+           
             _userRepo = userRepo;
 
         }
@@ -52,7 +54,7 @@ namespace Service.Implementation
         private Expression<Func<User, bool>> GeneratePredicate(UserSearchEntity searchEntity)
         {
             int id = 0;
-            if (searchEntity.id != null)
+            if (searchEntity.id.HasValue)
             {
                 id = (int)searchEntity.id;
             }
@@ -61,7 +63,7 @@ namespace Service.Implementation
                   x.SurName.ToLower().Contains(searchEntity.name.Trim().ToLower()))) &&
                 (string.IsNullOrWhiteSpace(searchEntity.roleName) ||
                  x.Role.RoleName.ToLower().Contains(searchEntity.roleName.Trim().ToLower()))
-                && (id == 0 || x.Id == id);
+                && (!searchEntity.id.HasValue || (searchEntity.id.HasValue && x.Id == searchEntity.id));
         }
 
         private Expression<Func<User, object>>[] GenerateInclude()
@@ -69,11 +71,6 @@ namespace Service.Implementation
             return new Expression<Func<User, object>>[] { x => x.Role };
         }
 
-        public async Task<IEnumerable<VendorDTO>> GetAllVendors()
-        {BaseSearchEntity<Vendor> searchEntity = new BaseSearchEntity<Vendor>() { pageSize=int.MaxValue};
-           IEnumerable<Vendor>  vendorData = await GetOtheEntityListAsync<Vendor>(searchEntity);
-            return MapperHelper.MapTo<IEnumerable<Vendor> ,IEnumerable<VendorDTO>>(vendorData);
-        }
 
         public async Task UpdateUserAsync(UserDTO model)
         {
@@ -81,8 +78,9 @@ namespace Service.Implementation
             if (user.Password == null)
             {
                 User oldUser = await GetByIdAsync(user.Id);
-                if (oldUser != null) { 
-                user.Password = oldUser.Password;
+                if (oldUser != null)
+                {
+                    user.Password = oldUser.Password;
                 }
             }
             await _userRepo.UpdateUserAsync(user);
@@ -90,27 +88,49 @@ namespace Service.Implementation
 
         public async Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers()
         {
-           BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
-           {
-            
-               pageSize=int.MaxValue,
-               predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || ( x.RoleId==(int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
 
-           };
+                pageSize = int.MaxValue,
+                predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || (x.RoleId == (int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
+
+            };
             IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
             return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
         }
 
-        public async Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id)
-        {
-            BaseSearchEntity<ManagerLevel> baseSearchEntity = new BaseSearchEntity<ManagerLevel>()
-            {
-                pageSize=int.MaxValue,
-                predicate= x=>x.VendorId==id,
-            };
+     
 
-            IEnumerable<ManagerLevel> managerLevels = await _userRepo.GetOthers<ManagerLevel>(baseSearchEntity);
-            return MapperHelper.MapTo<IEnumerable<ManagerLevel>, IEnumerable<ManagerLevelDTO>>(managerLevels);
+        public async Task<bool> DeleteUser(int id)
+        {
+            User user = await GetByIdAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            await _userRepo.Delete(user);
+            return true;
+        }
+
+        public async Task<IEnumerable<RelationshipManagerDTO>> GetReportingToListAsync(int vendorId, int managerLevelId)
+        {
+            int originalLevelNo = 0;
+            if (managerLevelId!=0)
+            {
+                Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
+                ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
+                originalLevelNo = mangerLevel.LevelNo;
+            }
+
+            BaseSearchEntity<User> searchEntity = new BaseSearchEntity<User>()
+            {
+                pageSize = int.MaxValue,
+                predicate = managerLevelId != 0 ? x => x.ManagerLevel.LevelNo == originalLevelNo+1 : (x =>  x.ManagerLevel.VendorId == vendorId && x.ManagerLevel.LevelNo==1),
+                includes = new Expression<Func<User, object>>[] { x => x.ManagerLevel }
+            };
+            IEnumerable<User> users = await _userRepo.GetAllAsync(searchEntity);
+            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Utilities;
 
 namespace Geared_Finance_API
 {
@@ -22,7 +23,7 @@ namespace Geared_Finance_API
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred.");
+                _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -35,7 +36,7 @@ namespace Geared_Finance_API
             var response = new
             {
                 StatusCode = context.Response.StatusCode,
-                Message = "An unexpected error occurred. Please try again later.",
+                Message = Constants.INTERNAL_SERVER_ERR,
                 Detail = exception.Message
             };
 

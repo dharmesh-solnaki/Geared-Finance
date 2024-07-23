@@ -1,4 +1,5 @@
-﻿using Entities.UtilityModels;
+﻿using System.Linq.Expressions;
+using Entities.UtilityModels;
 
 namespace Service.Interface
 {
@@ -7,9 +8,9 @@ namespace Service.Interface
         public Task<IEnumerable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity);
         public Task<T> GetByIdAsync(int id);
         public Task AddAsync(T item);
-        public Task UpdateAsync(T item);   
-        public Task Delete(T item);  
+        public Task UpdateAsync(T item);
+        public Task Delete(T item);
         public Task SaveChangesAsync();
-        public Task<IEnumerable<U>> GetOtheEntityListAsync<U>(BaseSearchEntity<U>? searchEntity) where U : class;
+        public Task<U> GetOtherByIdAsync<U>(Expression<Func<U,bool>> predicate) where U :class;
     }
 }

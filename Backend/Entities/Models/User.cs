@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,7 +66,7 @@ public partial class User
 
     [ForeignKey("ManagerId")]
     [InverseProperty("Users")]
-    public virtual ManagerLevel? Manager { get; set; }
+    public virtual ManagerLevel? ManagerLevel { get; set; }
 
     [ForeignKey("RoleId")]
     [InverseProperty("Users")]

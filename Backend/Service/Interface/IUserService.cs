@@ -9,8 +9,10 @@ namespace Service.Interface
         Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity);
         Task AddUserAsync(UserDTO model);
         Task UpdateUserAsync(UserDTO model);
-        Task<IEnumerable<VendorDTO>> GetAllVendors();
+        //Task<IEnumerable<VendorDTO>> GetAllVendors();
         Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers();
-        Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id);
+        //Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id);
+        Task<bool> DeleteUser(int id);
+        Task<IEnumerable<RelationshipManagerDTO>> GetReportingToListAsync(int vendorId, int managerLevelId);
     }
 }

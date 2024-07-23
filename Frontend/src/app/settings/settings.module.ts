@@ -11,6 +11,7 @@ import { CommonGridComponent } from '../Shared/common-grid/common-grid.component
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../Service/user.service';
 import {  HttpClientModule } from '@angular/common/http';
+import { VendorService } from '../Service/vendor.service';
 
 
 
@@ -38,7 +39,7 @@ const routes: Routes = [
   imports: [ReactiveFormsModule, RouterModule.forChild(routes), CommonModule,
     NgbPaginationModule,HttpClientModule
   ],
-  providers:[ UserService],
+  providers:[ UserService,VendorService],
   exports: [SettingsComponent, CommonSelectmenuComponent,
     PhoneMaskingDirective,CommonGridComponent
   ]

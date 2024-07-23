@@ -90,7 +90,7 @@
         </label>
         <app-common-selectmenu
           #addUserVendorManagerLevelSelection
-          [optionData]="[]"
+          [optionData]="selectMenuManagerLevels"
           defaultOption="Select"
           defaultValue=0
           formControlName="vendorManagerLevel"
@@ -105,7 +105,7 @@
         </label>
         <app-common-selectmenu
           #addUserReportToSelection
-          [optionData]="[]"
+          [optionData]="selectMenuReportingTo"
           defaultOption="Select"
           defaultValue=0
           formControlName="reportTo"      
@@ -489,6 +489,8 @@
    <button class="btn btn-secondary me-2 bg-secondary"
     type="button" 
     [ngClass]="isEditable?'d-block':'d-none'"
+     type="button"
+     (click)="deleteUser()"
     ><img src="../../../../assets/Images/ic-delete-white.svg" width="15px"></button>
     </div>
   </form>

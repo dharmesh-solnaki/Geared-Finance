@@ -1,8 +1,7 @@
-import { formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { computeStyles } from '@popperjs/core';
+
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup,  Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 
 import {
@@ -18,8 +17,9 @@ import {
 } from 'src/app/Models/constants.model';
 import { User } from 'src/app/Models/user.model';
 import { UserService } from 'src/app/Service/user.service';
+import { VendorService } from 'src/app/Service/vendor.service';
 import { generateRandomPassword } from 'src/app/Shared/common-functions';
-import { CommonSelectmenuComponent } from 'src/app/Shared/common-selectmenu/common-selectmenu.component';
+
 
 @Component({
   selector: 'app-add-site-user',
@@ -35,6 +35,7 @@ export class AddSiteUserComponent implements OnInit {
   defaultDateSelection: selectMenu[] = [];
   defaultMonthSelection: selectMenu[] = [];
   selectMenuRelationshipManager: selectMenu[] = [];
+  selectMenuReportingTo:selectMenu[]=[]
   selectMenuManagerLevels:selectMenu[]=[]
   userForm: FormGroup = new FormGroup({});
   isEditable: boolean = false;
@@ -45,7 +46,9 @@ export class AddSiteUserComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _userService: UserService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _router:Router,
+    private _vendorService:VendorService
   ) {
     this.formInitializer();
   }
@@ -77,6 +80,8 @@ export class AddSiteUserComponent implements OnInit {
     }
 
     this.userForm.controls['role'].valueChanges.subscribe((res) => {
+      this.userForm.markAsUntouched();
+      const role=res
       if (
         res == RoleEnum.VendorGuestUser ||
         res == RoleEnum.VendorManager ||
@@ -84,10 +89,22 @@ export class AddSiteUserComponent implements OnInit {
       ) {
         this.vendorDataSetter();
         this.relationshipManagerDataSetter();
-        this.userForm.controls['vendor'].valueChanges.subscribe(res=>{
-          thi
-        })
-      }
+       
+          this.userForm.controls['vendor'].valueChanges.subscribe(res=>{ 
+            const vendorId=res; 
+            this.reportingToDataSetter(vendorId,0)  
+            
+            if(role ==  RoleEnum.VendorManager){
+            this.managerLevelsDataSetter(res) 
+            this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(res=>{
+              this.reportingToDataSetter(vendorId,res);
+            })
+            }
+          })
+        }
+      
+      
+   
     });
    
   }
@@ -285,7 +302,7 @@ export class AddSiteUserComponent implements OnInit {
       formValues.surname,
       formValues.email,
       formValues.mobileNumber.replace(' ', '').replace(' ', '').slice(0, 10),
-      formValues.password,
+    formValues.password,
       formValues.notificationPref,
       formValues.roleStatus,
       formValues.portalLogin,
@@ -319,13 +336,14 @@ export class AddSiteUserComponent implements OnInit {
     } else {
       this._userService.addUser(user).subscribe(
         (res) => {
-          alert(alertResponses.UPDATE_RECORD);
+          alert(alertResponses.ADD_RECORD);
         },
         (err) => {
           console.log(err);
         }
       );
     }
+  this._router.navigate(['settings/user-management'])
   }
 
   hasError(field: string, error: string) {
@@ -334,9 +352,9 @@ export class AddSiteUserComponent implements OnInit {
     return control?.hasError(error) && control?.touched;
   }
   checkValidityOfField(field: string) {
-    const control = this.userForm.get(field);
-    // return control?.invalid || control?.touched;
-    return control?.hasValidator(Validators.required) || control?.touched;
+    const control = this.userForm.get(field); 
+    return !control?.valid;
+
   }
 
   roleStatusChangeHandler() {
@@ -352,7 +370,7 @@ export class AddSiteUserComponent implements OnInit {
     if (role == 'Select') {
       userForm.get('role')?.setValidators(Validators.required);
     } else {
-      userForm.get('role')?.removeValidators(Validators.required);
+      userForm.get('role')?.clearValidators();
     }
 
     if (
@@ -363,7 +381,7 @@ export class AddSiteUserComponent implements OnInit {
     ) {
       userForm.get('vendor')?.setValidators(Validators.required);
     } else {
-      userForm.get('vendor')?.removeValidators(Validators.required);
+      userForm.get('vendor')?.clearValidators();
     }
 
     if (
@@ -371,6 +389,7 @@ export class AddSiteUserComponent implements OnInit {
       role == RoleEnum.VendorManager
     ) {
       userForm.get('vendorManagerLevel')?.setValidators(Validators.required);
+      // userForm.get('vendorManagerLevel')?.updateValueAndValidity(); 
     } else {
       userForm.get('vendorManagerLevel')?.clearValidators();
     }
@@ -417,8 +436,23 @@ export class AddSiteUserComponent implements OnInit {
     userForm.updateValueAndValidity();
   }
 
+  deleteUser(){
+    const id = this._route.snapshot.params['id'];  
+    const res = confirm(alertResponses.DELETION_CONFIRMATION) 
+    if(res){
+      if (id) {
+        this._userService.deleteUser(id).subscribe((res) => {   
+      },err=>console.log(err));
+    }
+    }
+  
+  }
   vendorDataSetter() {
-    this._userService.getVendors().subscribe(
+    const searchModel:CommonSearch ={
+      pageNumber: 1,
+      pageSize: Number.INT_MAX_VALUE
+    }
+    this._vendorService.getVendors(searchModel).subscribe(
       (res) => {
         this.selectMenuVendors = [];
         res.map((e) => {
@@ -440,5 +474,27 @@ export class AddSiteUserComponent implements OnInit {
         });
       });
     });
+  }
+  managerLevelsDataSetter(id:number,){ 
+      this._vendorService.getManagerLevels(id).subscribe(res=>{
+       this.selectMenuManagerLevels=[];     
+       res.map(e=>{
+       this.selectMenuManagerLevels.push({
+        option:`${e.levelName} - Level ${e.levelNo}`,
+        value:e.id,
+       })
+      })
+      },
+      err=>console.log(err))
+  }
+  reportingToDataSetter(vendorId:number,managerLevelId:number){ 
+    this.selectMenuReportingTo=[]
+    this._userService.getReportingTo(vendorId,managerLevelId).subscribe(res=>{  
+    res.map(e=>{
+      this.selectMenuReportingTo.push({option:`${e.name} ${e.surName}`,value:e.id})
+    })
+  },err=>{
+    console.log(err)
+  })
   }
 }

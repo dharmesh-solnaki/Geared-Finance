@@ -1,4 +1,5 @@
-﻿using Entities.UtilityModels;
+﻿using System.Linq.Expressions;
+using Entities.UtilityModels;
 using Repository.Interface;
 using Service.Interface;
 
@@ -30,12 +31,17 @@ namespace Service.Implementation
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return  await _repo.GetByIdAsync(id);
+            return await _repo.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<U>> GetOtheEntityListAsync<U>(BaseSearchEntity<U>? searchEntity) where U : class
+        //public async Task<IEnumerable<U>> GetOtheEntityListAsync<U>(BaseSearchEntity<U>? searchEntity) where U : class
+        //{
+        //    return await _repo.GetOthers<U>(searchEntity);
+        //}
+
+        public async Task<U> GetOtherByIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class
         {
-            return await _repo.GetOthers<U>(searchEntity);
+            return await _repo.GetByOtherIdAsync(predicate);
         }
 
         public async Task SaveChangesAsync()

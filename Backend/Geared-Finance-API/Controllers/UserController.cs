@@ -1,8 +1,8 @@
-﻿using System.Net;
-using Entities.DTOs;
+﻿using Entities.DTOs;
 using Entities.UtilityModels;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
+using Utilities;
 
 namespace Geared_Finance_API.Controllers
 {
@@ -12,7 +12,7 @@ namespace Geared_Finance_API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
-        
+
 
         public UserController(IUserService Service)
         {
@@ -20,14 +20,13 @@ namespace Geared_Finance_API.Controllers
         }
 
 
-        [HttpPost("GetUsers")]
-        //[HttpGet]
+        [HttpPost("GetUsers")] 
         public async Task<IActionResult> GetAll([FromBody] UserSearchEntity seachParams)
         {
             IEnumerable<UserDTO> userData = await _service.GetUsersAsync(seachParams);
             if (!userData.Any())
             {
-                return NotFound();
+                return NotFound(Constants.RECORD_NOT_FOUND);
             }
             return Ok(userData);
         }
@@ -37,34 +36,23 @@ namespace Geared_Finance_API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(Constants.BAD_REQUEST);
             }
             await _service.AddUserAsync(model);
             return Ok();
         }
-
-        [HttpGet]
-        [ProducesDefaultResponseType()]
-        public async Task<IActionResult> Vendors()
-        {
-            IEnumerable<VendorDTO> vendorData = await _service.GetAllVendors();
-            if (!vendorData.Any())
-            {
-                return BadRequest(); 
-            }
-            return Ok(vendorData);
-        }
+    
 
         [HttpPut]
         public async Task<IActionResult> Users([FromBody] UserDTO model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(Constants.BAD_REQUEST);
             }
-            if (model.id<=0)
+            if (model.id <= 0)
             {
-                return NotFound();
+               return NotFound(Constants.RECORD_NOT_FOUND);
             }
             await _service.UpdateUserAsync(model);
             return Ok();
@@ -76,23 +64,31 @@ namespace Geared_Finance_API.Controllers
             IEnumerable<RelationshipManagerDTO> managerData = await _service.GetAllRelationshipManagers();
             if (!managerData.Any())
             {
-                return NotFound();
+               return NotFound(Constants.RECORD_NOT_FOUND);
             }
             return Ok(managerData);
         }
 
-        [HttpGet("GetManagerLevels")]
-        public async Task<IActionResult> ManagerLevels([FromQuery]int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromQuery] int id)
         {
-            if(id<=0) return NotFound();
-            IEnumerable<ManagerLevelDTO> managerLevelData = await _service.GetManagerLevels(id);
-            if (managerLevelData == null)
-            {
-                return NotFound();
-            }
-            return Ok(managerLevelData);
+            if (id <= 0) return BadRequest();
+            bool isDeleted = await _service.DeleteUser(id);
+            if (!isDeleted) {return NotFound(Constants.RECORD_NOT_FOUND); }
+            else { return Ok(); }
         }
 
+        [HttpGet("GetReportingTo")]
+        public async Task<IActionResult> GetReportingTo([FromQuery] int vendorId, [FromQuery] int managerLevelId=0)
+        {
+          
+            IEnumerable<RelationshipManagerDTO> reportingToList = await _service.GetReportingToListAsync(vendorId, managerLevelId);
+            if (!reportingToList.Any())
+            {
+               return NotFound(Constants.RECORD_NOT_FOUND);
+            }
+            return Ok(reportingToList);
+        }
 
 
     }

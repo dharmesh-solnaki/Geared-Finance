@@ -1,7 +1,6 @@
 import { SortOrder } from "./common-grid.model";
 
 export class CommonSearch {
-
     constructor(
     public pageNumber:number,
     public pageSize:number,

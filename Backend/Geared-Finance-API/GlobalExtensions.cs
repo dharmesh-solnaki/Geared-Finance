@@ -2,8 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Repository.Implementation;
 using Repository.Interface;
+using Repository.Repos;
 using Service.Implementation;
 using Service.Interface;
+using Service.Services;
+
+
 
 namespace Geared_Finance_API
 {
@@ -38,12 +42,14 @@ namespace Geared_Finance_API
         {
             services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
             services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<IVendorRepo, VendorRepo>();
         }
 
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IVendorService,VendorService>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)

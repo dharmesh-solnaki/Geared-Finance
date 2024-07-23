@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Entities.DBContext;
 using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
@@ -44,14 +43,14 @@ namespace Repository.Implementation
             {
                 query = query.Select(searchEntity.selects);
             }
-          
+
             if (searchEntity.sortingExpression != null)
             {
                 query = searchEntity.sortOrder?.ToLower() == "desc"
                     ? query.OrderByDescending(searchEntity.sortingExpression)
                     : query.OrderBy(searchEntity.sortingExpression);
             }
-            if (searchEntity.pageSize==int.MaxValue)
+            if (searchEntity.pageSize >= int.MaxValue)
             {
                 return await query.ToListAsync();
             }
@@ -79,9 +78,9 @@ namespace Repository.Implementation
         }
 
         public async Task UpdateAsync(T item)
-        {        
-                _dbSet.Update(item);
-                await SaveChangesAsync();    
+        {
+            _dbSet.Update(item);
+            await SaveChangesAsync();
         }
 
         private static Expression<Func<T, object>> GetSortingExpression(string propertyName)
@@ -98,57 +97,18 @@ namespace Repository.Implementation
             return Expression.Lambda<Func<T, object>>(conversion, param);
         }
 
-        public  async Task<IEnumerable<U>> GetOthers<U>(BaseSearchEntity<U>? searchEntity) where U : class
-        {
-            DbSet<U> dbset = _dbContext.Set<U>();
-            IQueryable<U> query = dbset.AsNoTracking().AsQueryable();
-
-            if (searchEntity==null)
-            {               
-                return query;
-            }
-            if (searchEntity.predicate != null)
-            {
-                query = query.Where(searchEntity.predicate);
-            }
-            if (searchEntity.includes != null)
-            {
-                query = searchEntity.includes.Aggregate(query, (current, include) =>
-                {
-                    return current.Include(include);
-                });
-            }
-            {
-                if (searchEntity.thenIncludes != null)
-                    query = searchEntity.thenIncludes.Aggregate(query, (current, include) =>
-                    {
-                        return current.Include(include);
-                    });
-            }
-            if (searchEntity.selects != null)
-            {
-                query = query.Select(searchEntity.selects);
-            }
-
-            if (searchEntity.sortingExpression != null)
-            {
-                query = searchEntity.sortOrder?.ToLower() == "desc"
-                    ? query.OrderByDescending(searchEntity.sortingExpression)
-                    : query.OrderBy(searchEntity.sortingExpression);
-            }
-            if (searchEntity.pageSize == int.MaxValue)
-            {
-                return await query.ToListAsync();
-            }
-
-            return await query.Skip((searchEntity.pageNumber - 1) * searchEntity.pageSize).Take(searchEntity.pageSize).ToListAsync();
-
-        
-        }
+   
 
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<U> GetByOtherIdAsync<U>(Expression<Func<U, bool>> predicate) where U:class
+        {
+            DbSet<U> dbset = _dbContext.Set<U>();
+            
+            return await dbset.FirstOrDefaultAsync(predicate);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Utilities;
 namespace Entities.DTOs
 {
     public class UserDTO : BaseDTO
@@ -58,6 +59,6 @@ namespace Entities.DTOs
         public bool? IsCalcRateEditor { get; set; }
 
         public string? StaffCode { get; set; }
-        
+
     }
 }

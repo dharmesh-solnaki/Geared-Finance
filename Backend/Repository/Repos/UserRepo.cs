@@ -15,7 +15,7 @@ namespace Repository.Implementation
             _dbContext = context;
 
         }
-       
+
         public async Task UpdateUserAsync(User user)
         {
             var trackedEntity = _dbContext.ChangeTracker.Entries<User>().FirstOrDefault(e => e.Entity.Id == user.Id);
