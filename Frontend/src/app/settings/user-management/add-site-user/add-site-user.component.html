@@ -77,6 +77,7 @@
           defaultValue=0
           formControlName="vendor"
           [ngClass]="{ 'ng-in-valid': checkValidityOfField('vendor') }"
+          id="vendorSelectionMenu"
         >
         </app-common-selectmenu>
       </div>
@@ -139,6 +140,7 @@
           type="tel"
           formControlName="mobileNumber"
           appPhoneMasking
+          [value] ="userForm.get('mobileNumber')?.value | phoneFormatting"
           class="form-control"
         />
       </div>
@@ -229,8 +231,7 @@
           [optionData]="selectMenuRelationshipManager"
           defaultOption="Select"
           defaultValue=0
-          formControlName="relationshipManager"
-          
+          formControlName="relationshipManager"          
           [ngClass]="checkValidityOfField('relationshipManager')?'ng-in-valid':''"
         >
         </app-common-selectmenu>

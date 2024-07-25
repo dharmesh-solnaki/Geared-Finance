@@ -25,7 +25,7 @@ namespace Geared_Finance_API.Controllers
               IEnumerable<VendorDTO> vendorData = await _vendorService.GetAllVendors(searchEntity);
                 if (!vendorData.Any())
                 {
-                    return BadRequest(Constants.BAD_REQUEST);
+                    return NoContent();
                 }
                 return Ok(vendorData);
             
@@ -38,7 +38,7 @@ namespace Geared_Finance_API.Controllers
             IEnumerable<ManagerLevelDTO> managerLevelData = await _vendorService.GetManagerLevels(id);
             if (!managerLevelData.Any())
             {
-                return NotFound(Constants.RECORD_NOT_FOUND);
+                return  NoContent();
             }
             return Ok(managerLevelData);
         }

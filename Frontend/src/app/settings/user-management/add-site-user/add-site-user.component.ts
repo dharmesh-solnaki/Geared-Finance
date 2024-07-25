@@ -1,7 +1,7 @@
-
-import { Component, OnInit } from '@angular/core';
+import {   Component, OnInit, } from '@angular/core';
 import { FormBuilder, FormGroup,  Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import {  forkJoin, of, } from 'rxjs';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 
 import {
@@ -18,7 +18,7 @@ import {
 import { User } from 'src/app/Models/user.model';
 import { UserService } from 'src/app/Service/user.service';
 import { VendorService } from 'src/app/Service/vendor.service';
-import { generateRandomPassword } from 'src/app/Shared/common-functions';
+
 
 
 @Component({
@@ -31,7 +31,7 @@ export class AddSiteUserComponent implements OnInit {
   selectMenuNotificationPref: selectMenu[] = [];
   selectMenuMonth: selectMenu[] = [];
   selectMenuDate: selectMenu[] = [];
-  selectionVendors: selectMenu[] = [];
+  // selectionVendors: selectMenu[] = [];
   defaultDateSelection: selectMenu[] = [];
   defaultMonthSelection: selectMenu[] = [];
   selectMenuRelationshipManager: selectMenu[] = [];
@@ -40,8 +40,6 @@ export class AddSiteUserComponent implements OnInit {
   userForm: FormGroup = new FormGroup({});
   isEditable: boolean = false;
   userDataOnEdit: User = new User(0, '', '', '', '');
-  TempPassword: string = '';
-
 
   constructor(
     private _fb: FormBuilder,
@@ -51,6 +49,7 @@ export class AddSiteUserComponent implements OnInit {
     private _vendorService:VendorService
   ) {
     this.formInitializer();
+
   }
 
   ngOnInit(): void {
@@ -62,6 +61,7 @@ export class AddSiteUserComponent implements OnInit {
     this.selectMenuDate = this.defaultDateSelection;
     this.addFormBirthHandler();
 
+     
     this.isEditable = this._route.snapshot.params['id'] != undefined;
     if (this.isEditable) {
       const id = this._route.snapshot.params['id'];
@@ -83,19 +83,22 @@ export class AddSiteUserComponent implements OnInit {
       this.userForm.markAsUntouched();
       const role=res
       if (
-        res == RoleEnum.VendorGuestUser ||
-        res == RoleEnum.VendorManager ||
-        res == RoleEnum.VendorSalesRep
+        [ RoleEnum.VendorGuestUser,
+       RoleEnum.VendorManager,
+       RoleEnum.VendorSalesRep].includes(res)
       ) {
-        this.vendorDataSetter();
+      
+         this.vendorDataSetter()
         this.relationshipManagerDataSetter();
-       
+
+        
           this.userForm.controls['vendor'].valueChanges.subscribe(res=>{ 
             const vendorId=res; 
+          
             this.reportingToDataSetter(vendorId,0)  
-            
             if(role ==  RoleEnum.VendorManager){
-            this.managerLevelsDataSetter(res) 
+            this.managerLevelsDataSetter(res)
+           
             this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(res=>{
               this.reportingToDataSetter(vendorId,res);
             })
@@ -110,12 +113,39 @@ export class AddSiteUserComponent implements OnInit {
   }
   userFormInitializerOnEdit() {
     const formdata = this.userDataOnEdit;
-    this.TempPassword = generateRandomPassword();
-    this.userForm.patchValue({
+    const searchModel:CommonSearch ={
+      pageNumber: 1,
+      pageSize: Number.INT_MAX_VALUE
+    } 
+    formdata.vendorManagerLevelId = formdata.vendorManagerLevelId||0
+     forkJoin(
+      [         
+        this._vendorService.getVendors(searchModel),
+        this._userService.getRelationshipManagers(),
+        formdata.vendor ? this._vendorService.getManagerLevels(formdata.vendor.id):of([]),
+        formdata.vendorId ?  this._userService.getReportingTo(formdata.vendorId,formdata.vendorManagerLevelId):of([])
+  
+    ]).subscribe((res)=>{  
+      console.log(res)
+        res[0].map(e=> {
+          this.selectMenuVendors.push({ option: e.name, value: e.id })
+       });
+        res[1].map(e=> {
+          this.selectMenuRelationshipManager.push({ option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`, value: e.id });
+       });
+       res[2] && res[2].map(e=> {
+          this.selectMenuManagerLevels.push({  option:`${e.levelName} - Level ${e.levelNo}`, value: e.id });
+       });
+       res[3] && res[3].map(e=> {
+          this.selectMenuReportingTo.push({ option:`${e.name} ${e.surName}`, value: e.id });
+       });
+      
+      
+       this.userForm.patchValue({
       name: formdata.name,
       surname: formdata.surName,
       email: formdata.email,
-      password: this.TempPassword,
+      password: formdata.password,
       role: formdata.roleName,
       notificationPref: formdata.notificationPreferences,
       month: formdata.monthOfBirth,
@@ -132,8 +162,12 @@ export class AddSiteUserComponent implements OnInit {
       gearedSalesRepList: formdata.isUserInGafsalesRepList,
       reportTo: formdata.reportingTo,
       relationshipManager: formdata.relationshipManager,
+      vendor:formdata.vendor && +formdata.vendor.id,
+      vendorManagerLevel: formdata.vendorManagerLevelId
     });
+  })
   }
+  
 
   addFormBirthHandler() {
     this.userForm.get('month')?.valueChanges.subscribe((selectedMonth) => {
@@ -294,56 +328,64 @@ export class AddSiteUserComponent implements OnInit {
       this.userForm.markAllAsTouched();
       return;
     }
-
     const formValues = this.userForm.value;
-    const user = new User(
-      this.isEditable ? this.userDataOnEdit.id : 0,
-      formValues.name,
-      formValues.surname,
-      formValues.email,
-      formValues.mobileNumber.replace(' ', '').replace(' ', '').slice(0, 10),
-    formValues.password,
-      formValues.notificationPref,
-      formValues.roleStatus,
-      formValues.portalLogin,
-      formValues.gearedSalesRepList,
-      formValues.day,
-      formValues.month,
-      formValues.relationshipManager,
-      formValues.reportTo,
-      formValues.vendorSalesRepList,
-      formValues.unassignedApplications,
-      formValues.role,
-      formValues.sendEOTreports,
-      formValues.funderProfile,
-      formValues.proceedBtnInApp,
-      formValues.clacRateEditor,
-      this.isEditable ? this.userDataOnEdit.staffCode : ''
-    );
-
-    if (this.isEditable) {
-      // const pass = this.TempPassword===formValues.password?null:formValues.password
-      (user.password =
-        this.TempPassword === formValues.password ? null : formValues.password),
-        this._userService.updateUser(user).subscribe(
-          (res) => {
-            alert(alertResponses.UPDATE_RECORD);
-          },
-          (err) => {
-            console.log(err);
-          }
+    this._userService.checkValidityofEmailAndPassword(formValues.email,formValues.mobile).subscribe(res=>{
+      if(!this.isEditable && res.isEmailExist || res.isExistMobile){
+        alert( `${res.isEmailExist?'email':''} ${res.isExistMobile?'mobile':''} already exist`)
+        return;
+      }else{
+        const user = new User(
+          this.isEditable ? this.userDataOnEdit.id : 0,
+          formValues.name,
+          formValues.surname,
+          formValues.email,
+          formValues.mobileNumber.replace(' ', '').replace(' ', '').slice(0, 10),
+          formValues.password,
+          formValues.notificationPref,
+          formValues.roleStatus,
+          formValues.portalLogin,
+          formValues.gearedSalesRepList,
+          formValues.day,
+          formValues.month,
+          formValues.relationshipManager,
+          formValues.reportTo,
+          formValues.vendorSalesRepList,
+          formValues.unassignedApplications,
+          formValues.role,
+          formValues.sendEOTreports,
+          formValues.funderProfile,
+          formValues.proceedBtnInApp,
+          formValues.clacRateEditor,
+          this.isEditable ? this.userDataOnEdit.staffCode : '',
+          formValues.vendor&& formValues.vendor.toString(),
+          formValues.vendorManagerLevel.toString()
         );
-    } else {
-      this._userService.addUser(user).subscribe(
-        (res) => {
-          alert(alertResponses.ADD_RECORD);
-        },
-        (err) => {
-          console.log(err);
+    
+        if (this.isEditable) {
+          console.log(user)
+              this._userService.updateUser(user).subscribe(
+              (res) => {
+                alert(alertResponses.UPDATE_RECORD);
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+        } else {
+          this._userService.addUser(user).subscribe(
+            (res) => {
+              alert(alertResponses.ADD_RECORD);
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
         }
-      );
-    }
-  this._router.navigate(['settings/user-management'])
+      this._router.navigate(['settings/user-management'])
+      }
+     
+    })
+  
   }
 
   hasError(field: string, error: string) {
@@ -356,7 +398,6 @@ export class AddSiteUserComponent implements OnInit {
     return !control?.valid;
 
   }
-
   roleStatusChangeHandler() {
     if (this.userForm.get('roleStatus')?.value) {
       this.userForm.controls['portalLogin'].setValue(false);
@@ -447,54 +488,44 @@ export class AddSiteUserComponent implements OnInit {
     }
   
   }
-  vendorDataSetter() {
+  vendorDataSetter()  {
     const searchModel:CommonSearch ={
       pageNumber: 1,
       pageSize: Number.INT_MAX_VALUE
-    }
-    this._vendorService.getVendors(searchModel).subscribe(
-      (res) => {
-        this.selectMenuVendors = [];
-        res.map((e) => {
-          this.selectMenuVendors.push({ option: e.name, value: e.id });
-        });
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-  relationshipManagerDataSetter() {
-    this._userService.getRelationshipManagers().subscribe((res) => {
-      this.selectMenuRelationshipManager = [];
+    }   
+    this._vendorService.getVendors(searchModel).subscribe(res => {
+      this.selectMenuVendors = [];
       res.map((e) => {
-        this.selectMenuRelationshipManager.push({
-          option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`,
-          value: e.id,
-        });
+        this.selectMenuVendors.push({ option: e.name, value: e.id });
       });
     });
+
   }
-  managerLevelsDataSetter(id:number,){ 
-      this._vendorService.getManagerLevels(id).subscribe(res=>{
-       this.selectMenuManagerLevels=[];     
-       res.map(e=>{
-       this.selectMenuManagerLevels.push({
-        option:`${e.levelName} - Level ${e.levelNo}`,
-        value:e.id,
-       })
-      })
-      },
-      err=>console.log(err))
+  relationshipManagerDataSetter() {
+    this._userService.getRelationshipManagers().subscribe(res=>{
+      this.selectMenuRelationshipManager = [];
+      res.map((e) => {
+        this.selectMenuRelationshipManager.push({ option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`, value: e.id });
+      });
+    },err=>  this.selectMenuRelationshipManager = [])
+
   }
-  reportingToDataSetter(vendorId:number,managerLevelId:number){ 
-    this.selectMenuReportingTo=[]
-    this._userService.getReportingTo(vendorId,managerLevelId).subscribe(res=>{  
-    res.map(e=>{
-      this.selectMenuReportingTo.push({option:`${e.name} ${e.surName}`,value:e.id})
-    })
-  },err=>{
-    console.log(err)
-  })
+  managerLevelsDataSetter(id:number,){    
+      this._vendorService.getManagerLevels(id).subscribe((res)=>{
+        this.selectMenuManagerLevels=[];  
+       res && res.map((e) => {
+          this.selectMenuManagerLevels.push({  option:`${e.levelName} - Level ${e.levelNo}`, value: e.id });
+        });
+      },err=>  this.selectMenuManagerLevels=[])
+   
+    
   }
+  reportingToDataSetter(vendorId:number,managerLevelId:number){
+    this._userService.getReportingTo(vendorId,managerLevelId).subscribe(res=>{
+      this.selectMenuReportingTo=[];
+       res &&  res.map((e) => {
+        this.selectMenuReportingTo.push({ option:`${e.name} ${e.surName}`, value: e.id });
+      });
+    },err=>  this.selectMenuReportingTo=[])    
+   }
 }

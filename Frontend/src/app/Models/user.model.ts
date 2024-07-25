@@ -1,4 +1,6 @@
 import { ColumnType, IGridSettings } from "src/app/Models/common-grid.model";
+import { Vendor } from "./common-models";
+import { ManagerLevel } from "./ManagerLevel.model";
 
 export class User {
   constructor(
@@ -23,9 +25,14 @@ export class User {
     public isFunderProfile?: boolean,
     public isProceedBtnInApp?: boolean,
     public isCalcRateEditor?: boolean,
-    public staffCode?:string
-  ) //vendor
-  //vendorManagerLevel
+    public staffCode?:string,
+    public vendorId?:number,
+    public vendorManagerLevelId?:number,
+    public vendor?:Vendor,
+    public managerLevels?:ManagerLevel,
+    public venodrName?:string,
+    public relationshipManagerName?:string
+  )
   {}
 }
 
@@ -36,8 +43,8 @@ export const UserGridSetting:IGridSettings={
     { name: 'surName', title: 'surName', sort: true },
     { name: 'staffCode', title: 'staff code', sort: false ,type:ColumnType.STAFFCODE},
 
-    { name: 'vendor', title: 'vendor', sort: false },
-    { name: 'relationshipManager', title: 'relationship Manager', sort: false },
+    { name: 'venodrName', title: 'vendor', sort: false },
+    { name: 'relationshipManagerName', title: 'relationship Manager', sort: false },
     { name: 'roleName', title: 'role', sort: true },
 
     { name: 'email', title: 'email', sort: true },

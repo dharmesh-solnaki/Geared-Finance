@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
-[Index("VendorId", Name = "IX_Users_VendorId", IsUnique = true)]
 public partial class User
 {
     [Key]
@@ -66,13 +67,13 @@ public partial class User
 
     [ForeignKey("ManagerId")]
     [InverseProperty("Users")]
-    public virtual ManagerLevel? ManagerLevel { get; set; }
+    public virtual ManagerLevel? Manager { get; set; }
 
     [ForeignKey("RoleId")]
     [InverseProperty("Users")]
     public virtual Role Role { get; set; } = null!;
 
     [ForeignKey("VendorId")]
-    [InverseProperty("User")]
+    [InverseProperty("Users")]
     public virtual Vendor? Vendor { get; set; }
 }

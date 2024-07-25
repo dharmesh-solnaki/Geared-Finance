@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient,  } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../Models/user.model';
 import { environment } from 'src/environments/environment.development';
 import { CommonSearch } from 'src/app/Models/common-search.model';
-import {Vendor } from '../Models/common-models';
+import {IsExistData,  } from '../Models/common-models';
 import { RelationshipManager } from '../Models/RelationshipManager.model';
-import { ManagerLevel } from '../Models/ManagerLevel.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,9 @@ private API_URL:string = `${environment.BASE_URL}/user`;
   }
   deleteUser(id:number){
    return this._http.delete( `${this.API_URL}?${id}`)
+  }
+  checkValidityofEmailAndPassword(email:string,mobile:string):Observable<IsExistData>{
+    return this._http.get<IsExistData>(`${this.API_URL}/CheckValidity?email=${email}&mobile=${mobile}`);
   }
  
 }

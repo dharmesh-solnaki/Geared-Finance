@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq.Expressions;
 using Entities.DTOs;
 using Entities.Models;
@@ -26,7 +27,12 @@ namespace Service.Services
                pageSize = searchEntity.pageSize,
                sortBy= searchEntity.sortBy,
                sortOrder= searchEntity.sortOrder,
+
            };
+            if(searchEntity.id != null && searchEntity.id != 0)
+            {
+                searchEntity2.predicate =  x => x.Id == searchEntity.id;
+            }
           IEnumerable<Vendor> venodrData = await _vendorRepo.GetAllAsync(searchEntity2);
           return MapperHelper.MapTo<IEnumerable<Vendor>,IEnumerable<VendorDTO>>(venodrData);
 

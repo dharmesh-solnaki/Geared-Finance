@@ -6,6 +6,7 @@ using Entities.UtilityModels;
 using Geared_Finance_API;
 using Repository.Interface;
 using Service.Interface;
+using Utilities;
 
 namespace Service.Implementation
 {
@@ -43,6 +44,7 @@ namespace Service.Implementation
                 pageSize = searchEntity.pageSize,
                 sortBy = searchEntity.sortBy,
                 sortOrder = searchEntity.sortOrder,
+       
 
             };
             baseSearchEntity.SetSortingExpression();
@@ -68,21 +70,13 @@ namespace Service.Implementation
 
         private Expression<Func<User, object>>[] GenerateInclude()
         {
-            return new Expression<Func<User, object>>[] { x => x.Role };
+            return new Expression<Func<User, object>>[] { x => x.Role, x=>x.Manager ,x=>x.Vendor };
         }
 
 
         public async Task UpdateUserAsync(UserDTO model)
         {
             User user = MapperHelper.MapTo<UserDTO, User>(model);
-            if (user.Password == null)
-            {
-                User oldUser = await GetByIdAsync(user.Id);
-                if (oldUser != null)
-                {
-                    user.Password = oldUser.Password;
-                }
-            }
             await _userRepo.UpdateUserAsync(user);
         }
 
@@ -114,23 +108,48 @@ namespace Service.Implementation
 
         public async Task<IEnumerable<RelationshipManagerDTO>> GetReportingToListAsync(int vendorId, int managerLevelId)
         {
-            int originalLevelNo = 0;
-            if (managerLevelId!=0)
-            {
-                Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
-                ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
-                originalLevelNo = mangerLevel.LevelNo;
-            }
+            BaseSearchEntity<User> searchEntity = new BaseSearchEntity<User>();
 
-            BaseSearchEntity<User> searchEntity = new BaseSearchEntity<User>()
-            {
-                pageSize = int.MaxValue,
-                predicate = managerLevelId != 0 ? x => x.ManagerLevel.LevelNo == originalLevelNo+1 : (x =>  x.ManagerLevel.VendorId == vendorId && x.ManagerLevel.LevelNo==1),
-                includes = new Expression<Func<User, object>>[] { x => x.ManagerLevel }
-            };
+                int originalLevelNo = 0;
+                if (managerLevelId != 0)
+                {
+                    Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
+                    ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
+                    originalLevelNo = mangerLevel.LevelNo;
+                }
+                searchEntity.pageSize = int.MaxValue;
+                searchEntity.predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1)  ;
+                searchEntity.includes = new Expression<Func<User, object>>[] { x => x.Manager };
+            
             IEnumerable<User> users = await _userRepo.GetAllAsync(searchEntity);
             return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
 
+        }
+
+        public async Task<IsExistData> CheckValidityAsync(string email, string mobile)
+        {
+            IsExistData isExistData = new IsExistData();
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {            
+                predicate= x => x.Email == email,
+                pageSize=1
+            
+            };
+            IEnumerable<User> data = await GetAllAsync(baseSearchEntity);
+            if (data.Any())
+            {
+                isExistData.isEmailExist = true;
+            }          
+             
+
+            baseSearchEntity.predicate = x=> x.Mobile == mobile;
+            IEnumerable<User> userData = await GetAllAsync(baseSearchEntity);
+            if (userData.Any())
+            {
+                isExistData.isExistMobile = true;
+            }            
+
+            return isExistData;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Entities.Models;
 using Utilities;
 namespace Entities.DTOs
 {
@@ -59,6 +60,10 @@ namespace Entities.DTOs
         public bool? IsCalcRateEditor { get; set; }
 
         public string? StaffCode { get; set; }
-
+        public string? VendorId { get; set; }
+        public string? VendorManagerLevelId { get; set; }
+  
+         public VendorDTO? vendor { get; set; }
+        public ManagerLevelDTO? manager{ get; set; }
     }
 }

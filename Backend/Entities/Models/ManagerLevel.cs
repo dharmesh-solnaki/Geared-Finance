@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +19,7 @@ public partial class ManagerLevel
 
     public int LevelNo { get; set; }
 
-    [InverseProperty("ManagerLevel")]
+    [InverseProperty("Manager")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
     [ForeignKey("VendorId")]

@@ -18,7 +18,6 @@ namespace Service.Implementation
         {
             await _repo.AddAsync(item);
         }
-
         public async Task Delete(T item)
         {
             await _repo.Delete(item);
@@ -46,8 +45,8 @@ namespace Service.Implementation
 
         public async Task SaveChangesAsync()
         {
-            await _repo.SaveChangesAsync();
-        }
+                await _repo.SaveChangesAsync();
+            }
 
         public async Task UpdateAsync(T item)
         {

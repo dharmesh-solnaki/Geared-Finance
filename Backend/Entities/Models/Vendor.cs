@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -15,5 +18,5 @@ public partial class Vendor
     public virtual ICollection<ManagerLevel> ManagerLevels { get; set; } = new List<ManagerLevel>();
 
     [InverseProperty("Vendor")]
-    public virtual User? User { get; set; }
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

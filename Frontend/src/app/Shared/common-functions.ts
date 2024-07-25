@@ -32,3 +32,15 @@ export function generateRandomPassword() {
         return generateRandomPassword();
     }
 }
+
+export function decryptPassword(encryptedString:string){
+    let decrypted;
+   
+    try {
+      const b = atob(encryptedString);
+      decrypted = new TextDecoder("ascii").decode(new Uint8Array([...b].map(char => char.charCodeAt(0))));
+    } catch (error) {
+      decrypted = "";
+    }
+    return decrypted;
+}

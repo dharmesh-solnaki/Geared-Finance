@@ -72,8 +72,9 @@
       </tbody>
     </table>
   </div>
-  <div class="grid-footer" *ngIf="isShowPagination()">
-    <ul class="pagination m-0">
+  <div class="grid-footer">
+    <ul class="pagination m-0 " 
+    [ngClass]="isPaginationDisabled() ? 'disabled':''">
       <li
         class="page-item"
         [ngClass]="paginationSetting.currentPage <= 1 ? 'disabled' : ''"

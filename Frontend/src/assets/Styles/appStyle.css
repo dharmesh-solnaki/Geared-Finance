@@ -261,6 +261,7 @@ height: inherit;
   max-height: inherit;
   min-height: inherit;
   padding: 1rem;
+  margin-right: 0;
 }
 
 .settingTitleText {

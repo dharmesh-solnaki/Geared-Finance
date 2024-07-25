@@ -192,10 +192,12 @@ declare global {
     isNotEmpty(): boolean;
   }
   interface NumberConstructor {
-    readonly INT_MAX_VALUE: number;
+      INT_MAX_VALUE : number  ;
   }
+ 
 }
 
+Number.INT_MAX_VALUE=2147483647
 
 Array.prototype.isNotEmpty = function <T>(): boolean {
   return this && this.length > 0;

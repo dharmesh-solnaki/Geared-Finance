@@ -8,7 +8,7 @@
   max-height: 32rem !important;
 }
 .table {
-  overflow-y: scroll;
+  overflow: scroll;
   position: relative;
 }
 .grid-row:hover {

@@ -49,7 +49,9 @@ export class UserManagementComponent implements OnInit {
   userDataSetter(){
    this.userData=[];
     this._userService.getUsers(this.searchingModel).subscribe(res=>{
-      this.userData=res      
+   
+      this.userData=res;
+      this.userData.map(e=>{e.venodrName=e.vendor?.name})    
       },
       err=>{
         console.log(err)

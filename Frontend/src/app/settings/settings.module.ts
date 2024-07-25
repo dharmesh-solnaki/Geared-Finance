@@ -12,6 +12,8 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../Service/user.service';
 import {  HttpClientModule } from '@angular/common/http';
 import { VendorService } from '../Service/vendor.service';
+import { PhonePipe } from '../Pipes/phone.pipe';
+
 
 
 
@@ -34,7 +36,8 @@ const routes: Routes = [
     CommonSelectmenuComponent,
     AddSiteUserComponent,
     CommonGridComponent,
-    PhoneMaskingDirective
+    PhoneMaskingDirective,
+    PhonePipe
   ],
   imports: [ReactiveFormsModule, RouterModule.forChild(routes), CommonModule,
     NgbPaginationModule,HttpClientModule

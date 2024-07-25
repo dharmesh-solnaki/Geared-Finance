@@ -12,9 +12,6 @@ import {
 import { selectMenu } from '../../Models/constants.model';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-interface Array<T> {
-  isNotEmpty(): boolean;
-}
 
 @Component({
   selector: 'app-common-selectmenu',
@@ -44,13 +41,15 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   onTouched: any = () => {};
 
   writeValue(value: any): void {
+
     if (value) {
       this.selectedValue = value;
       const selectedOption = this.optionData.find(
-        (option) => option.value === value
+        (option) => option.value.toString() == value.toString()
       );
       if (selectedOption) {
         this.selectedOption = selectedOption.option;
+  
       }
     }
   }
@@ -64,13 +63,26 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   updateTheOptionData(newData: selectMenu[]) {
     this.optionData = newData;
     this.workingOptionData = this.optionData;
-    console.log(this.optionData);
+
   }
 
   ngOnChanges(changes: SimpleChanges): void { 
+    // this.resetElement()
+   const currentValue = changes['optionData']?.currentValue;
+
+  if (
+    currentValue == null ||
+    (typeof currentValue === 'string' && currentValue.trim() === '') ||
+    (Array.isArray(currentValue) && currentValue.length === 0) ||
+    Object.keys(currentValue).length===0
+  ) {
     this.resetElement()
-    this.optionData =changes['optionData'].currentValue;
-    this.workingOptionData = changes['optionData'].currentValue;
+    this.optionData = [{ option: 'No data', value: 0 }];
+  } else {    
+    this.optionData = currentValue;
+  }
+  // this.optionData = changes['optionData'].currentValue
+  this.workingOptionData = this.optionData;  
   }
   ngOnInit(): void {
     this.selectedValue = this.defaultValue;
@@ -109,6 +121,14 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
         x.option.toLowerCase().includes(searchString.toLowerCase())
       );
     }
+  }
+  setDefaults(item: selectMenu){
+    console.log(item,'fromsad')
+    this.selectedValue = item.value;
+    this.selectedOption = item.option;
+    this.isMenuOpen = false;
+    this.onChange(this.selectedValue);
+    this.onTouched();
   }
 
   @HostListener('document:click', ['$event'])

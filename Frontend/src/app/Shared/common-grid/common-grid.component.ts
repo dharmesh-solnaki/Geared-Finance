@@ -12,7 +12,7 @@ import {
   SortConfiguration,
   SortOrder,
 } from '../../Models/common-grid.model';
-import { recordsPerPage, selectMenu } from '../../Models/constants.model';
+import {  selectMenu } from '../../Models/constants.model';
 import { CommonSelectmenuComponent } from '../common-selectmenu/common-selectmenu.component';
 
 @Component({
@@ -81,6 +81,7 @@ export class CommonGridComponent {
 
   @Output() onSortEvent = new EventEmitter<SortConfiguration>();
   @Output() onEditEvent =new EventEmitter<number>();
+  @Output() onPageChange =new EventEmitter<number>()
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.this.
@@ -102,10 +103,12 @@ export class CommonGridComponent {
     }
   }
   pageSizeChangeHandler(ev:number|string){
-   this.pageSize=+ev
-   this.paginationSetting.currentPage=1
-   this.updateDisplayedData();
-    this.updatePageNumbers();
+   if(!this.isPaginationDisabled()){
+    this.pageSize=+ev
+    this.paginationSetting.currentPage=1
+    this.updateDisplayedData();
+     this.updatePageNumbers();
+   }
    
   }
   // -----------Sorting----------------
@@ -124,7 +127,7 @@ export class CommonGridComponent {
       this.onSortEvent.emit(sortDetails);
       this.updateDisplayedData();
    
-     if(  this.isShowPagination() ){
+     if(  this.isPaginationDisabled() ){
       this.paginationSettings.currentPage=1;
      }   
 
@@ -134,28 +137,35 @@ export class CommonGridComponent {
 
   ///-----------------pagination
 
-  isShowPagination() {
-    return (
-      this._gridSettings.showPagination &&
-      this.displayData.length > 0 &&
-      this.paginationSetting.totalRecords > this.pageSize
-    );
+  // isPaginationDisabled() {
+  //   return (
+  //     this._gridSettings.showPagination &&
+  //     this.displayData.length > 0 &&
+  //     this.paginationSetting.totalRecords > this.pageSize
+  //   );
+  // }
+  isPaginationDisabled(){
+   return !this._gridSettings.showPagination || this.displayData.length <= 0 ||
+        this.paginationSetting.totalRecords < this.pageSize
   }
-
   updateDisplayedData() {
   this.displayData = this.data
   }
 
   goToPreviousPage() {
     if (this.paginationSetting.currentPage > 1) {
-      this.paginationSetting.currentPage--;
+      this.paginationSetting.currentPage--
+     const page =  this.paginationSetting.currentPage - 1;
+    this.onPageChange.emit(page);
       this.updateDisplayedData();
     }
   }
 
   goToNextPage() {
     if (!this.isLastPage()) {
-      this.paginationSetting.currentPage++;
+      this.paginationSetting.currentPage++
+      const page =  this.paginationSetting.currentPage + 1;
+      this.onPageChange.emit(page);
       this.updateDisplayedData();
     }
   }
@@ -168,7 +178,8 @@ export class CommonGridComponent {
   }
 
   goToPage(page: number) {
-    this.paginationSetting.currentPage = page;
+    this.paginationSetting.currentPage = page;    
+    this.onPageChange.emit(page);
     this.updateDisplayedData();
   }
 
@@ -176,7 +187,7 @@ export class CommonGridComponent {
     const totalPages = Math.ceil(
       this.paginationSetting.totalRecords / +this.pageSize
     );
-    this.pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    this.pageNumbers = this.isPaginationDisabled() ? [1]:Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
   pagSizeSetter() {

@@ -12,5 +12,6 @@ namespace Service.Interface
         public Task Delete(T item);
         public Task SaveChangesAsync();
         public Task<U> GetOtherByIdAsync<U>(Expression<Func<U,bool>> predicate) where U :class;
+  
     }
 }

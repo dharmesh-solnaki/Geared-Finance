@@ -4,3 +4,11 @@ export class Vendor{
         public name:string,
     ){}
 }
+
+export class IsExistData{   
+    constructor(
+       public isEmailExist:boolean,
+       public isExistMobile:boolean
+
+    ) {}
+}

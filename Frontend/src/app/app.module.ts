@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppHeaderModule } from './app-header/app-header.module';
 import { RouterModule, Routes } from '@angular/router';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { PhonePipe } from './Pipes/phone.pipe';
 
 
 
@@ -20,6 +21,7 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+
 
     ],
   providers: [],
