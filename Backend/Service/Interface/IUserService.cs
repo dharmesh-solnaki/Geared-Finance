@@ -7,7 +7,7 @@ namespace Service.Interface
     public interface IUserService : IBaseService<User>
     {
         Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity);
-        Task AddUserAsync(UserDTO model);
+        Task<IsExistData> AddUserAsync(UserDTO model);
         Task UpdateUserAsync(UserDTO model);
         //Task<IEnumerable<VendorDTO>> GetAllVendors();
         Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers();

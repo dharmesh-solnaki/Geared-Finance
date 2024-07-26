@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using Entities.DTOs;
 using Entities.Enums;
 using Entities.Models;
@@ -21,11 +22,38 @@ namespace Service.Implementation
 
         }
 
-        public async Task AddUserAsync(UserDTO model)
+        public async Task<IsExistData> AddUserAsync(UserDTO model)
         {
             User user = MapperHelper.MapTo<UserDTO, User>(model);
-            await AddAsync(user);
+            IsExistData response =new IsExistData();
 
+            if (model.id == 0)
+            {
+                response = await CheckValidityAsync(model.Email, model.Mobile);
+                if (!response.isEmailExist && !response.isExistMobile)
+                {
+                    await AddAsync(user);
+                }
+            }
+            else
+            {
+                User oldUser = await GetByIdAsync((int)model.id);
+                if (oldUser != null)
+                {
+                    bool isEmailChanged = !oldUser.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase);
+                    bool isMobileChanged = !oldUser.Mobile.Equals(model.Mobile);
+
+                    if (isEmailChanged || isMobileChanged)
+                    {
+                        response = await CheckValidityAsync(model.Email, model.Mobile);
+                        if (!response.isEmailExist && !response.isExistMobile)
+                        {
+                            await _userRepo.UpdateUserAsync(user);
+                        }
+                    }
+                }
+            }
+            return response;
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
@@ -35,10 +63,27 @@ namespace Service.Implementation
             {
                 searchEntity.sortBy = "Role.RoleName";
             }
+            if (!string.IsNullOrWhiteSpace(searchEntity.name))
+            {
+                searchEntity.name = searchEntity.name.Trim();
+            }
+            PredicateModel model = new PredicateModel()
+            {
+                Id = searchEntity.id,
+                Keyword = searchEntity.name,
+                Criteria = new Dictionary<string, object>
+                {
+                    { "surName",searchEntity.name},
+                    {"Role.RoleName",searchEntity.roleName }
+                }
+            };
+
+            var predicate = PredicateBuilder.BuildPredicate<User>(model);
 
             BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
             {
-                predicate = GeneratePredicate(searchEntity),
+                //predicate = GeneratePredicate(searchEntity),
+                predicate = predicate,
                 includes = GenerateInclude(),
                 pageNumber = searchEntity.pageNumber,
                 pageSize = searchEntity.pageSize,
@@ -51,21 +96,6 @@ namespace Service.Implementation
             IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
             IEnumerable<UserDTO> data = MapperHelper.MapTo<IEnumerable<User>, IEnumerable<UserDTO>>(users);
             return data;
-        }
-
-        private Expression<Func<User, bool>> GeneratePredicate(UserSearchEntity searchEntity)
-        {
-            int id = 0;
-            if (searchEntity.id.HasValue)
-            {
-                id = (int)searchEntity.id;
-            }
-            return x => (string.IsNullOrWhiteSpace(searchEntity.name) ||
-                 (x.Name.ToLower().Contains(searchEntity.name.Trim().ToLower()) ||
-                  x.SurName.ToLower().Contains(searchEntity.name.Trim().ToLower()))) &&
-                (string.IsNullOrWhiteSpace(searchEntity.roleName) ||
-                 x.Role.RoleName.ToLower().Contains(searchEntity.roleName.Trim().ToLower()))
-                && (!searchEntity.id.HasValue || (searchEntity.id.HasValue && x.Id == searchEntity.id));
         }
 
         private Expression<Func<User, object>>[] GenerateInclude()

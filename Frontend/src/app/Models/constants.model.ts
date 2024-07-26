@@ -187,6 +187,19 @@ export const alertResponses={
   ERROR:'Something went wrong'
 }
 
+export const errorResponses={
+  CLIEENTSIDE_ERROR:'Client-side error',
+  BAD_REQUEST:'Bad Request',
+  FORBIDDEN:'Forbidden',
+  UNAUTHORIZED:'Forbidden',
+  NOT_FOUND:'Not Found',
+  INTERNAL_SERVER_ERROR:'Internal Server Error',
+  UNKNOWN_ERROR:'Unknown Error'
+}
+
+
+// extensions methods..
+
 declare global {
   interface Array<T> {
     isNotEmpty(): boolean;
@@ -197,7 +210,7 @@ declare global {
  
 }
 
-Number.INT_MAX_VALUE=2147483647
+Number.INT_MAX_VALUE=2147483647;
 
 Array.prototype.isNotEmpty = function <T>(): boolean {
   return this && this.length > 0;

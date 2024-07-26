@@ -20,9 +20,9 @@ private API_URL:string = `${environment.BASE_URL}/user`;
    
     return this._http.post<User[]>(`${this.API_URL}/GetUsers`,searchingModel);
   }
-  addUser(user:User): Observable<User>{    
+  addUser(user:User): Observable<IsExistData>{    
     
-    return this._http.post<User>(`${this.API_URL}/AddUser`,user);
+    return this._http.post<IsExistData>(`${this.API_URL}/UpsertUser`,user);
   }
  
   updateUser(user:User):Observable<User>{

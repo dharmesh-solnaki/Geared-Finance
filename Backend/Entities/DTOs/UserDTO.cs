@@ -60,8 +60,8 @@ namespace Entities.DTOs
         public bool? IsCalcRateEditor { get; set; }
 
         public string? StaffCode { get; set; }
-        public string? VendorId { get; set; }
-        public string? VendorManagerLevelId { get; set; }
+        public int? VendorId { get; set; }
+        public int? VendorManagerLevelId { get; set; }
   
          public VendorDTO? vendor { get; set; }
         public ManagerLevelDTO? manager{ get; set; }

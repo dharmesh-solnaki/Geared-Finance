@@ -145,8 +145,8 @@ export class CommonGridComponent {
   //   );
   // }
   isPaginationDisabled(){
-   return !this._gridSettings.showPagination || this.displayData.length <= 0 ||
-        this.paginationSetting.totalRecords < this.pageSize
+   return !this._gridSettings.showPagination && this.displayData.length <= 0 &&
+        this.paginationSetting.totalRecords <this.pageSize
   }
   updateDisplayedData() {
   this.displayData = this.data

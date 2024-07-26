@@ -5,7 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppHeaderModule } from './app-header/app-header.module';
 import { RouterModule, Routes } from '@angular/router';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { PhonePipe } from './Pipes/phone.pipe';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { GeneralInterceptorInterceptor } from './general-interceptor.interceptor';
 
 
 
@@ -24,14 +25,14 @@ const appRoutes: Routes = [
 
 
     ],
-  providers: [],
+  providers: [ {provide:HTTP_INTERCEPTORS,useClass:GeneralInterceptorInterceptor,multi:true}],
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppHeaderModule,
     RouterModule.forRoot(appRoutes),  
-    NgbPaginationModule
+    NgbPaginationModule,
     
   ],
   // exports:[

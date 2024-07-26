@@ -27,7 +27,7 @@ namespace Repository.Implementation
 
             _dbContext.Users.Attach(user);
             _dbContext.Entry(user).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); 
         }
     }
 }

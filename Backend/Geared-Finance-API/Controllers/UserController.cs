@@ -1,4 +1,5 @@
-﻿using Entities.DTOs;
+﻿using System.Reflection;
+using Entities.DTOs;
 using Entities.Enums;
 using Entities.UtilityModels;
 using Microsoft.AspNetCore.Mvc;
@@ -34,15 +35,15 @@ namespace Geared_Finance_API.Controllers
             return Ok(userData);
         }
 
-        [HttpPost("AddUser")]
+        [HttpPost("UpsertUser")]
         public async Task<IActionResult> AddUser(UserDTO model)
-        {
+        {          
             if (!ModelState.IsValid)
             {
                 return BadRequest(Constants.BAD_REQUEST);
             }
-            await _service.AddUserAsync(model);
-            return Ok();
+           IsExistData isExistData = await _service.AddUserAsync(model);
+            return Ok(isExistData);
         }
     
 
