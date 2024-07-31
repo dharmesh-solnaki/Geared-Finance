@@ -318,7 +318,6 @@ height: inherit;
   text-overflow: ellipsis;
   margin-right: 15px;
 }
-
 .selectionmenuholder {
   position: relative;
 }
@@ -389,14 +388,7 @@ height: inherit;
   position: relative;
   padding: 5px !important;
 }
-/* .filter-textbox input ,
-  .filter-textbox input:focus-visible
-  {
-  border: 0 !important;
-  width: 100% ;
-  padding: 0.3rem 0.6rem !important;
-  background-color: white !important;
-} */
+
 .search-input {
   border: none;
   outline: none;
@@ -422,11 +414,58 @@ height: inherit;
   color: #34495e !important;
   font-weight: 500;
 }
+
+.download-icon-btn{
+  /* width: 24px;  */
+  /* height: 34px; */
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+
+}
+.download-icon-btn >img{
+  width: 24px; 
+  position: absolute;
+ left:23%;
+ top: 23%;
+}
+
+.setting-title-btn {
+  padding: 0.3rem 1.5rem;
+  font-size: 1.2rem;
+  height: fit-content;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+   padding: 0 ;
+}
+/* ------------------common-dialog------ */
+.modal-header{
+  background-color: #6c7e8f;
+  color: white;
+}
+.btn-close{
+  background-image: none !important;
+  color: white !important;
+  padding: auto;
+  height: inherit !important;
+}
+.btn-close:focus{
+  box-shadow: none !important;
+}
+.btn-close::after{
+  content: "X" !important;
+  font-size: 1.5rem !important;
+}
+
 @media (min-width: 426px) and (max-width: 768px) {
   .appheader {
     width: 100%;
     /* top: 0; */
     background-color: rgb(211, 170, 95);
+  }
+  .setting-title-items{
+    padding-left:  0px;
   }
 }
 @media (min-width: 426px) {

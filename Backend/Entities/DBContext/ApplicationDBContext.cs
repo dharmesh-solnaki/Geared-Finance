@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Entities.Models;
+﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -16,6 +14,10 @@ public partial class ApplicationDBContext : DbContext
     {
     }
 
+    public virtual DbSet<FundingCategory> FundingCategories { get; set; }
+
+    public virtual DbSet<FundingEquipmentType> FundingEquipmentTypes { get; set; }
+
     public virtual DbSet<ManagerLevel> ManagerLevels { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -30,6 +32,24 @@ public partial class ApplicationDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<FundingCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("FundingCategory_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<FundingEquipmentType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("FundingEquipmentType_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Category).WithMany(p => p.FundingEquipmentTypes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FundingEquipmentType_FundingCategory");
+        });
+
         modelBuilder.Entity<ManagerLevel>(entity =>
         {
             entity.HasOne(d => d.Vendor).WithMany(p => p.ManagerLevels).HasConstraintName("FK_ManagerLevels_Vendors_ManagerId");

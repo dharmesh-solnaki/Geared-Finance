@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  SettingMenuType,
   settingSystemProperties,
   settingsSalesAndMarketing,
-} from '../Models/constants.model';
+} from '../Shared/constants';
 
 @Component({
   selector: 'app-settings',
@@ -10,7 +11,7 @@ import {
   styleUrls: ['../../assets/Styles/appStyle.css'],
 })
 export class SettingsComponent implements OnInit {
-  systemPropertiesData: string[] = [];
+  systemPropertiesData: SettingMenuType[] = [];
   salesAndMarketingData: string[] = [];
   isSdiebarVisible: boolean = false;
   ngOnInit(): void {

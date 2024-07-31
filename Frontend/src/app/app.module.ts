@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GeneralInterceptorInterceptor } from './general-interceptor.interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -22,10 +23,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-
-
     ],
-  providers: [ {provide:HTTP_INTERCEPTORS,useClass:GeneralInterceptorInterceptor,multi:true}],
+  providers: [ {provide:HTTP_INTERCEPTORS,useClass:GeneralInterceptorInterceptor,multi:true},],
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
@@ -33,7 +32,7 @@ const appRoutes: Routes = [
     AppHeaderModule,
     RouterModule.forRoot(appRoutes),  
     NgbPaginationModule,
-    
+    ToastrModule.forRoot(),
   ],
   // exports:[
   //   PhoneMaskingDirective

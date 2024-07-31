@@ -6,9 +6,17 @@
       <p class="settingTitleText mb-1">SYSTEM PROPERITES</p>
       <ul class="setting-ul">
         <li *ngFor="let item of systemPropertiesData">
-          <a>
-            {{ item }}
-          </a>
+          <ng-container  *ngIf="item.routerPath; else noLink">
+            <a
+            [routerLink]="['/settings', item.routerPath]" 
+            routerLinkActive="settingsliactivelink">
+              {{ item.menuItem }}
+            </a>
+          </ng-container>
+
+          <ng-template #noLink>
+            <a>{{ item.menuItem }} </a>
+          </ng-template>
         </li>
       </ul>
       <hr class="horizontal-line" />
@@ -42,3 +50,5 @@
     <img src="../../assets/Images/icon-sidebar.svg" width="25rem" />
   </button>
 </div>
+
+

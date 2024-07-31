@@ -9,7 +9,7 @@
 </ng-template>
 
 
-<div class="">
+<div >
   <form [formGroup]="userForm" (ngSubmit)="userFormHandler()">
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
@@ -46,9 +46,8 @@
           [optionData]="selectMenuRoles"
           defaultOption="Select"
           defaultValue="Select"
-          formControlName="role"    
-          
-          [ngClass]="checkValidityOfField('relationshipManager')?'ng-in-valid':''"
+          formControlName="role" 
+          [ngClass]="checkValidityOfField('role')?'ng-in-valid':''"
         >
         </app-common-selectmenu>
       </div>

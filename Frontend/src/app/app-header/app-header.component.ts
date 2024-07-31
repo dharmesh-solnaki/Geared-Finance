@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { menuBarItems } from '../Models/constants.model';
+import { menuBarItems } from '../Shared/constants';
 
 @Component({
   selector: 'app-header',

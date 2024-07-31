@@ -7,7 +7,7 @@ import {
   
 } from 'src/app/Models/common-grid.model';
 import { CommonSelectmenuComponent } from 'src/app/Shared/common-selectmenu/common-selectmenu.component';
-import { roleSelectionMenu } from 'src/app/Models/constants.model';
+import { roleSelectionMenu } from 'src/app/Shared/constants';
 import { UserService } from '../../Service/user.service';
 import { User, UserGridSetting } from '../../Models/user.model';
 import { CommonSearch } from 'src/app/Models/common-search.model';
@@ -21,6 +21,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class UserManagementComponent implements OnInit {
   selectMenuRoles: { option: string; value: string }[] = [];
   userData: User[] = [];
+  totalRecords:number=0
   gridSetting!: IGridSettings;
   paginationSettings!: PaginationSetting;
   userHeaderSearchForm: FormGroup;
@@ -43,27 +44,43 @@ export class UserManagementComponent implements OnInit {
     this.selectMenuRoles = roleSelectionMenu; 
     this.gridSetting = UserGridSetting;
     this.userDataSetter();
-    this.paginationSetter();
   }
+  
 
   userDataSetter(){
    this.userData=[];
     this._userService.getUsers(this.searchingModel).subscribe(res=>{
-     if(res!=null) {
-      this.userData=res;
+   
+     if(  res && res.responseData) {
+      this.totalRecords = res.totalRecords
+      this.userData= res.responseData
       this.userData.map(e=>{e.venodrName=e.vendor?.name})
      }  
+     this.paginationSetter();
       },
       err=>{
         console.log(err)
-      })}
+      })
+   
+    }
 
   paginationSetter() {
     this.paginationSettings = {
-      totalRecords: this.userData.length,
-      currentPage: 1,
-      selectedPageSize: ['25 pre page', '50 per page', '100 per page'],
+      totalRecords: this.totalRecords,
+      currentPage: this.searchingModel.pageNumber,
+      // selectedPageSize: ['25 per page', '50 per page', '100 per page'],
+      selectedPageSize: [`${this.searchingModel.pageSize} per page`],
     };
+  }
+
+  pageChangeEventHandler(page:number){
+      this.searchingModel.pageNumber=page;
+      this.userDataSetter()
+  }
+  pageSizeChangeHandler(pageSize:number){
+  this.searchingModel.pageNumber=1;
+  this.searchingModel.pageSize=pageSize
+  this.userDataSetter()
   }
 
   onEditEventRecevier(id:number){   
@@ -77,12 +94,13 @@ export class UserManagementComponent implements OnInit {
       pageSize:10, 
       roleName:  this.userHeaderSearchForm.get('selectedRole')?.value
     }
-
     this.userDataSetter();
-    this.paginationSetter();
   }
 
   resetForm() {
+    const keyword = this.userHeaderSearchForm.get('searchString')?.value
+    const role = this.userHeaderSearchForm.get('selectedRole')?.value
+   if(keyword ||role){
     this.userHeaderSearchForm.reset();
     this.roleSelectionMenu.resetElement();
     this.paginationSetter();
@@ -91,11 +109,12 @@ export class UserManagementComponent implements OnInit {
       pageNumber:1
     }
     this.userDataSetter()
+   }
+
   }
 
   sortHandler(ev: SortConfiguration) {
     const { sort , sortOrder } = ev;
-  
     this.searchingModel.sortBy=sort.trim();
     this.searchingModel.sortOrder=sortOrder
     this.userDataSetter();

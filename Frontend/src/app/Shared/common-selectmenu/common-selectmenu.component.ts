@@ -8,8 +8,9 @@ import {
   SimpleChanges,
   EventEmitter,
   Output,
+  ViewChild,
 } from '@angular/core';
-import { selectMenu } from '../../Models/constants.model';
+import { selectMenu } from '../constants';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 
@@ -30,6 +31,7 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   @Input() defaultValue: string | number = '';
   @Input() needsSearching: boolean = false;
   @Output() valueChangeEmitter = new EventEmitter<number | string>();
+  @ViewChild('searchFromSelectList') searchFromSelectList!:ElementRef
   selectedValue: string | number = '';
   selectedOption: string | number = '';
   isMenuOpen: boolean = false;
@@ -107,6 +109,11 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
     this.selectedValue = this.defaultValue;
     this.selectedOption = this.defaultOption;
     this.isMenuOpen = false;
+    if(this.needsSearching){
+     if( this.searchFromSelectList && this.searchFromSelectList.nativeElement){
+      this.searchFromSelectList.nativeElement.value=''
+    } 
+   }
   }
 
   menuToggler() {

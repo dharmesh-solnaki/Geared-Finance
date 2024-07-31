@@ -36,17 +36,22 @@ export const menuBarItems = [
   },
 ];
 
-export const settingSystemProperties = [
-  'Role Permission',
-  'Funding categories',
-  'Vendor industries',
-  'Geared doc fee ',
-  'Vendor rate charts',
-  'Clients in arrears',
-  'Delete a deal',
-  'Configuration',
-  'Privacy funder list',
-  'Website Calculator',
+export interface SettingMenuType{
+ menuItem:string,
+ routerPath?:string
+}
+
+export const settingSystemProperties:SettingMenuType[] = [
+  { menuItem: 'Role Permission', },
+  { menuItem: 'Funding categories', routerPath: 'equipmentType' },
+  { menuItem: 'Vendor industries',},
+  { menuItem: 'Geared doc fee ',  },
+  { menuItem: 'Vendor rate charts',  },
+  { menuItem: 'Clients in arrears',  },
+  { menuItem: 'Delete a deal', },
+  { menuItem: 'Configuration', },
+  { menuItem: 'Privacy funder list', },
+  { menuItem: 'Website Calculator', },
 ];
 
 export const settingsSalesAndMarketing = [
@@ -194,9 +199,13 @@ export const errorResponses={
   UNAUTHORIZED:'Forbidden',
   NOT_FOUND:'Not Found',
   INTERNAL_SERVER_ERROR:'Internal Server Error',
+  CONFLICT_ERROR:'Request can\'t be fulfilled ',
   UNKNOWN_ERROR:'Unknown Error'
 }
 
+export const modalTitles={
+ ADDEQUIPMENTTYPE:'ADD FUNDING/EQUIPMENT'
+}
 
 // extensions methods..
 
@@ -207,11 +216,8 @@ declare global {
   interface NumberConstructor {
       INT_MAX_VALUE : number  ;
   }
- 
 }
-
 Number.INT_MAX_VALUE=2147483647;
-
 Array.prototype.isNotEmpty = function <T>(): boolean {
   return this && this.length > 0;
 };

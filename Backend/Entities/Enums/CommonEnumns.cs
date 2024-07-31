@@ -1,10 +1,5 @@
 ﻿namespace Entities.Enums
 {
-    //public class CommonEnumns
-    //{
-
-    //}
-
     public enum RoleEnum
     {
         GearedAdmin = 1,
@@ -14,5 +9,6 @@
         VendorManager = 5,
         VendorSalesRep = 6,
     }
+
 
 }

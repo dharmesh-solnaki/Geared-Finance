@@ -43,13 +43,16 @@ namespace Geared_Finance_API
             services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IVendorRepo, VendorRepo>();
+            services.AddScoped<IEquipmentRepo, EquipmentRepo>();
+
         }
 
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IVendorService,VendorService>();
+            services.AddTransient<IVendorService, VendorService>();
+            services.AddTransient<IEquipmentService, EquipmentService>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)

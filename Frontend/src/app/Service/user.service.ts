@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { User } from '../Models/user.model';
 import { environment } from 'src/environments/environment.development';
 import { CommonSearch } from 'src/app/Models/common-search.model';
-import {IsExistData,  } from '../Models/common-models';
+import {BaseRespons, IsExistData,   } from '../Models/common-models';
 import { RelationshipManager } from '../Models/RelationshipManager.model';
 
 
@@ -16,9 +16,9 @@ private API_URL:string = `${environment.BASE_URL}/user`;
 
   constructor(private _http:HttpClient ) {}
 
-  getUsers(searchingModel:CommonSearch):Observable<User[]>{
+  getUsers(searchingModel:CommonSearch):Observable<BaseRespons<User>>{
    
-    return this._http.post<User[]>(`${this.API_URL}/GetUsers`,searchingModel);
+    return this._http.post<BaseRespons<User>>(`${this.API_URL}/GetUsers`,searchingModel);
   }
   addUser(user:User): Observable<IsExistData>{    
     

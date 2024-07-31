@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Entities.DTOs;
-using Entities.Enums;
+﻿using Entities.DTOs;
 using Entities.UtilityModels;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
@@ -22,13 +20,11 @@ namespace Geared_Finance_API.Controllers
         }
 
 
-        [HttpPost("GetUsers")] 
+        [HttpPost("GetUsers")]
         public async Task<IActionResult> GetAll(UserSearchEntity seachParams)
         {
-            
-
-            IEnumerable<UserDTO> userData = await _service.GetUsersAsync(seachParams);
-            if (!userData.Any())
+            BaseRepsonseDTO<UserDTO> userData = await _service.GetUsersAsync(seachParams);
+            if (!userData.responseData.Any())
             {
                 return NoContent();
             }
@@ -37,15 +33,15 @@ namespace Geared_Finance_API.Controllers
 
         [HttpPost("UpsertUser")]
         public async Task<IActionResult> AddUser(UserDTO model)
-        {          
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(Constants.BAD_REQUEST);
             }
-           IsExistData isExistData = await _service.AddUserAsync(model);
+            IsExistData isExistData = await _service.AddUserAsync(model);
             return Ok(isExistData);
         }
-    
+
 
         [HttpPut]
         public async Task<IActionResult> EditUser(UserDTO model)
@@ -56,7 +52,7 @@ namespace Geared_Finance_API.Controllers
             }
             if (model.id <= 0)
             {
-               return NotFound(Constants.RECORD_NOT_FOUND);
+                return NotFound(Constants.RECORD_NOT_FOUND);
             }
             await _service.UpdateUserAsync(model);
             return Ok();
@@ -64,9 +60,9 @@ namespace Geared_Finance_API.Controllers
 
 
         [HttpGet("CheckValidity")]
-        public async Task<IActionResult> CheckEmailAndPass(string email,string mobile)
+        public async Task<IActionResult> CheckEmailAndPass(string email, string mobile)
         {
-           IsExistData response = await _service.CheckValidityAsync(email,mobile);
+            IsExistData response = await _service.CheckValidityAsync(email, mobile);
             return Ok(response);
 
         }
@@ -76,7 +72,7 @@ namespace Geared_Finance_API.Controllers
             IEnumerable<RelationshipManagerDTO> managerData = await _service.GetAllRelationshipManagers();
             if (!managerData.Any())
             {
-               return NoContent();
+                return NoContent();
             }
             return Ok(managerData);
         }
@@ -86,18 +82,18 @@ namespace Geared_Finance_API.Controllers
         {
             if (id <= 0) return BadRequest();
             bool isDeleted = await _service.DeleteUser(id);
-            if (!isDeleted) {return NotFound(Constants.RECORD_NOT_FOUND); }
+            if (!isDeleted) { return NotFound(Constants.RECORD_NOT_FOUND); }
             else { return Ok(); }
         }
 
         [HttpGet("GetReportingTo")]
         public async Task<IActionResult> GetReportingTo([FromQuery] int vendorId, [FromQuery] int managerLevelId = 0)
         {
-          
+
             IEnumerable<RelationshipManagerDTO> reportingToList = await _service.GetReportingToListAsync(vendorId, managerLevelId);
             if (!reportingToList.Any())
             {
-               return NoContent();
+                return NoContent();
             }
             return Ok(reportingToList);
         }

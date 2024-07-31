@@ -1,7 +1,8 @@
-﻿using System.Linq.Expressions;
-using Entities.UtilityModels;
+﻿using Entities.UtilityModels;
+using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 using Service.Interface;
+using System.Linq.Expressions;
 
 namespace Service.Implementation
 {
@@ -23,7 +24,7 @@ namespace Service.Implementation
             await _repo.Delete(item);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
+        public async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
         {
             return await _repo.GetAllAsync(searchEntity);
         }
@@ -43,10 +44,16 @@ namespace Service.Implementation
             return await _repo.GetByOtherIdAsync(predicate);
         }
 
+        public  IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData)
+        {
+            return  searchData.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsQueryable();
+         
+        }
+
         public async Task SaveChangesAsync()
         {
-                await _repo.SaveChangesAsync();
-            }
+            await _repo.SaveChangesAsync();
+        }
 
         public async Task UpdateAsync(T item)
         {

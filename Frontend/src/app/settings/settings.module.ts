@@ -13,6 +13,9 @@ import { UserService } from '../Service/user.service';
 import {  HttpClientModule } from '@angular/common/http';
 import { VendorService } from '../Service/vendor.service';
 import { PhonePipe } from '../Pipes/phone.pipe';
+import { FundingCategoriesComponent } from './funding-categories/funding-categories.component';
+import { CommonDialogComponent } from '../Shared/common-dialog/common-dialog.component';
+import { EquipmentService } from '../Service/equipment.service';
 
 
 
@@ -25,6 +28,7 @@ const routes: Routes = [
       { path: 'user-management', component: UserManagementComponent },
       { path: 'user-management/0/add', component: AddSiteUserComponent  },
       { path: 'user-management/:id/Edit', component: AddSiteUserComponent  },
+      {path:'equipmentType',component:FundingCategoriesComponent}
     ],
   },
 ];
@@ -37,14 +41,16 @@ const routes: Routes = [
     AddSiteUserComponent,
     CommonGridComponent,
     PhoneMaskingDirective,
-    PhonePipe
+    PhonePipe,
+    FundingCategoriesComponent,
+    CommonDialogComponent
   ],
   imports: [ReactiveFormsModule, RouterModule.forChild(routes), CommonModule,
     NgbPaginationModule,HttpClientModule
   ],
-  providers:[ UserService,VendorService],
+  providers:[ UserService,VendorService,EquipmentService],
   exports: [SettingsComponent, CommonSelectmenuComponent,
-    PhoneMaskingDirective,CommonGridComponent
+    PhoneMaskingDirective,CommonGridComponent,CommonDialogComponent
   ]
 })
 export class SettingsModule {}

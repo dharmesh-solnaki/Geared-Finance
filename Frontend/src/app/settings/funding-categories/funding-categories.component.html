@@ -1,0 +1,116 @@
+<div class="">
+  <div
+    class="inner-page-heading d-lg-flex justify-content-between align-item-center"
+  >
+    <span class="inner-page-heading-title">Funding Categories </span>
+    <ul
+      class="d-lg-flex justify-content-end align-items-center setting-title-items"
+    >
+      <li class="m-2">
+        <div class="from-control">
+          <input
+            #fundingSearchInput
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            (input)="onEmptyInputField(fundingSearchInput.value)"
+          />
+        </div>
+      </li>
+      <li class="my-2">
+        <button class="btn btn-secondary my-auto" (click)="searchHandler()">
+          Search
+        </button>
+      </li>
+
+      <li class="d-flex align-item-center setting-title-btn">
+        <button class="btn btn-secondary download-icon-btn mx-1 px-4">
+          <img src="../../../assets/Images/icon-download.svg" />
+        </button>
+        <button
+          class="btn btn-primary ms-1 my-auto overflow-hidden"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+        >
+          Add funding/equipment
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <ng-template #addEquipmentTypeForm>
+      <form
+        class="row"
+        [formGroup]="equipmentTypeForm"
+        (ngSubmit)="formSubmitHandler()"
+      >
+        <div class="col-12 my-2">
+          <label class="form-label">
+            Funding category
+            <span class="text-danger">*</span>
+          </label>
+          <app-common-selectmenu
+          #selectMenuFundingCategories
+            [optionData]="fundingCategoties"
+            defaultOption="Select"
+            defaultValue="0"
+            formControlName="category"
+            [needsSearching]="true"
+            [ngClass]="
+              equipmentTypeForm.get('name')?.touched &&
+              equipmentTypeForm.get('category')?.invalid
+                ? 'ng-in-valid': ''">
+          </app-common-selectmenu>
+        </div>
+        <div class="col-12 my-2">
+          <label class="form-label">
+            Funding/equipment type
+            <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            maxlength="100"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              equipmentTypeForm.get('name')?.touched &&
+              equipmentTypeForm.get('name')?.invalid
+            "
+          >
+            Please enter a valid value*.
+          </div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary m-1">Save</button>
+          <button
+          id="closeBtnModal"
+            type="button"
+            class="btn btn-secondary m-1"
+            data-bs-dismiss="modal"
+            (click)="formCancelingHandler()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </ng-template>
+
+    <app-common-dialog
+      [modalTitle]="modalTitle"
+      [bodyData]="addEquipmentTypeForm"
+      modalClass="modal-dialog-centered"
+      (onModalCloseEventEmitter)="formCancelingHandler()"
+    ></app-common-dialog>
+
+   <app-common-grid
+   [data]="equipmentData"
+   [gridSettings]="gridSetting"
+   [paginationSettings]="paginationSetting"
+
+   >
+   </app-common-grid>
+  </div>
+</div>

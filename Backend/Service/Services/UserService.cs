@@ -1,12 +1,12 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using Entities.DTOs;
+﻿using Entities.DTOs;
 using Entities.Enums;
 using Entities.Models;
 using Entities.UtilityModels;
 using Geared_Finance_API;
+using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 using Service.Interface;
+using System.Linq.Expressions;
 using Utilities;
 
 namespace Service.Implementation
@@ -14,18 +14,53 @@ namespace Service.Implementation
     public class UserService : BaseService<User>, IUserService
     {
         private readonly IUserRepo _userRepo;
-        private readonly IVendorService _vendorService;
         public UserService(IBaseRepo<User> repo, IUserRepo userRepo) : base(repo)
         {
-           
             _userRepo = userRepo;
+        }
+        public async Task<BaseRepsonseDTO<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
+        {
 
+            if (searchEntity.sortBy == "roleName")
+            {
+                searchEntity.sortBy = "Role.RoleName";
+            }
+            PredicateModel model = new PredicateModel()
+            {
+                Id = searchEntity.id,
+                Criteria = new Dictionary<string, object>
+                {
+                    {"Role.RoleName",searchEntity.roleName }
+                },
+                Property1="name",
+                Property2="surName",
+                NeedsCombine = true,
+                Keyword=searchEntity.name,
+            };
+
+            Expression<Func<User,bool>> predicate = PredicateBuilder.BuildPredicate<User>(model);
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
+                predicate = predicate,
+                includes = GenerateInclude(),
+                pageNumber = searchEntity.pageNumber,
+                pageSize = searchEntity.pageSize,
+                sortBy = searchEntity.sortBy,
+                sortOrder = searchEntity.sortOrder,
+            };
+            baseSearchEntity.SetSortingExpression();
+            IQueryable<User> users = await GetAllAsync(baseSearchEntity);
+            BaseRepsonseDTO<UserDTO> userDataResponse = new BaseRepsonseDTO<UserDTO>() { TotalRecords = users.Count() };
+            List<User> userPageList =await GetPaginatedList(searchEntity.pageNumber,searchEntity.pageSize,users).ToListAsync();
+            userDataResponse.responseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
+
+            return userDataResponse;
         }
 
         public async Task<IsExistData> AddUserAsync(UserDTO model)
         {
             User user = MapperHelper.MapTo<UserDTO, User>(model);
-            IsExistData response =new IsExistData();
+            IsExistData response = new IsExistData();
 
             if (model.id == 0)
             {
@@ -46,61 +81,33 @@ namespace Service.Implementation
                     if (isEmailChanged || isMobileChanged)
                     {
                         response = await CheckValidityAsync(model.Email, model.Mobile);
-                        if (!response.isEmailExist && !response.isExistMobile)
+
+                        if (isEmailChanged && response.isEmailExist)
                         {
-                            await _userRepo.UpdateUserAsync(user);
+                            response.isExistMobile = false;
+                            return response;
+                        }
+
+                        if (isMobileChanged && response.isExistMobile)
+                        {
+                            response.isEmailExist = false;
+                            return response;
                         }
                     }
+
+                    await _userRepo.UpdateUserAsync(user);
+                    response.isEmailExist = false;
+                    response.isExistMobile = false;
                 }
             }
             return response;
         }
 
-        public async Task<IEnumerable<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
-        {
 
-            if (searchEntity.sortBy == "roleName")
-            {
-                searchEntity.sortBy = "Role.RoleName";
-            }
-            if (!string.IsNullOrWhiteSpace(searchEntity.name))
-            {
-                searchEntity.name = searchEntity.name.Trim();
-            }
-            PredicateModel model = new PredicateModel()
-            {
-                Id = searchEntity.id,
-                Keyword = searchEntity.name,
-                Criteria = new Dictionary<string, object>
-                {
-                    { "surName",searchEntity.name},
-                    {"Role.RoleName",searchEntity.roleName }
-                }
-            };
-
-            var predicate = PredicateBuilder.BuildPredicate<User>(model);
-
-            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
-            {
-                //predicate = GeneratePredicate(searchEntity),
-                predicate = predicate,
-                includes = GenerateInclude(),
-                pageNumber = searchEntity.pageNumber,
-                pageSize = searchEntity.pageSize,
-                sortBy = searchEntity.sortBy,
-                sortOrder = searchEntity.sortOrder,
-       
-
-            };
-            baseSearchEntity.SetSortingExpression();
-            IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
-            IEnumerable<UserDTO> data = MapperHelper.MapTo<IEnumerable<User>, IEnumerable<UserDTO>>(users);
-            return data;
-        }
 
         private Expression<Func<User, object>>[] GenerateInclude()
         {
-            return new Expression<Func<User, object>>[] { x => x.Role, x=>x.Manager ,x=>x.Vendor };
+            return new Expression<Func<User, object>>[] { x => x.Role, x => x.Manager, x => x.Vendor };
         }
 
 
@@ -123,7 +130,7 @@ namespace Service.Implementation
             return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
         }
 
-     
+
 
         public async Task<bool> DeleteUser(int id)
         {
@@ -140,17 +147,17 @@ namespace Service.Implementation
         {
             BaseSearchEntity<User> searchEntity = new BaseSearchEntity<User>();
 
-                int originalLevelNo = 0;
-                if (managerLevelId != 0)
-                {
-                    Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
-                    ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
-                    originalLevelNo = mangerLevel.LevelNo;
-                }
-                searchEntity.pageSize = int.MaxValue;
-                searchEntity.predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1)  ;
-                searchEntity.includes = new Expression<Func<User, object>>[] { x => x.Manager };
-            
+            int originalLevelNo = 0;
+            if (managerLevelId != 0)
+            {
+                Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
+                ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
+                originalLevelNo = mangerLevel.LevelNo;
+            }
+            searchEntity.pageSize = int.MaxValue;
+            searchEntity.predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1);
+            searchEntity.includes = new Expression<Func<User, object>>[] { x => x.Manager };
+
             IEnumerable<User> users = await _userRepo.GetAllAsync(searchEntity);
             return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
 
@@ -160,24 +167,24 @@ namespace Service.Implementation
         {
             IsExistData isExistData = new IsExistData();
             BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
-            {            
-                predicate= x => x.Email == email,
-                pageSize=1
-            
+            {
+                predicate = x => x.Email == email,
+                pageSize = 1
+
             };
             IEnumerable<User> data = await GetAllAsync(baseSearchEntity);
             if (data.Any())
             {
                 isExistData.isEmailExist = true;
-            }          
-             
+            }
 
-            baseSearchEntity.predicate = x=> x.Mobile == mobile;
+
+            baseSearchEntity.predicate = x => x.Mobile == mobile;
             IEnumerable<User> userData = await GetAllAsync(baseSearchEntity);
             if (userData.Any())
             {
                 isExistData.isExistMobile = true;
-            }            
+            }
 
             return isExistData;
         }

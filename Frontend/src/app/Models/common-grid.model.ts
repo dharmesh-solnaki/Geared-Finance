@@ -1,4 +1,4 @@
-import { RoleEnum } from './constants.model';
+import { RoleEnum } from '../Shared/constants';
 
 export interface IGridSettings {
   columns: GridColumn[];

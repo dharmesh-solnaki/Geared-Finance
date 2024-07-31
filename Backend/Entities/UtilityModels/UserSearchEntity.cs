@@ -1,8 +1,7 @@
 ﻿namespace Entities.UtilityModels
 {
-    public class UserSearchEntity :BaseModelSearchEntity
-    { 
-        public string? name { get; set; }
+    public class UserSearchEntity : BaseModelSearchEntity
+    {
         public string? roleName { get; set; }
     }
 }

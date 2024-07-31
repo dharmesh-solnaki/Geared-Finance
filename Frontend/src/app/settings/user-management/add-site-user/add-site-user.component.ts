@@ -14,10 +14,11 @@ import {
   validationRegexes,
   MonthEnum,
   alertResponses,
-} from 'src/app/Models/constants.model';
+} from 'src/app/Shared/constants';
 import { User } from 'src/app/Models/user.model';
 import { UserService } from 'src/app/Service/user.service';
 import { VendorService } from 'src/app/Service/vendor.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -47,7 +48,8 @@ export class AddSiteUserComponent implements OnInit {
     private _userService: UserService,
     private _route: ActivatedRoute,
     private _router:Router,
-    private _vendorService:VendorService
+    private _vendorService:VendorService,
+    private _toaster:ToastrService
   ) {
     this.formInitializer();
 
@@ -74,7 +76,7 @@ export class AddSiteUserComponent implements OnInit {
         };
 
         this._userService.getUsers(userSearch).subscribe((res) => {
-          this.userDataOnEdit = res[0];
+          this.userDataOnEdit = res.responseData[0];
           this.userFormInitializerOnEdit();
         });
       }
@@ -83,12 +85,13 @@ export class AddSiteUserComponent implements OnInit {
     this.userForm.controls['role'].valueChanges.subscribe((res) => {
       this.userForm.markAsUntouched();
       const role=res
+      this.isFormSubmitted=false;
       if (
         [ RoleEnum.VendorGuestUser,
        RoleEnum.VendorManager,
        RoleEnum.VendorSalesRep].includes(res)
       ) {
-      
+       
          this.vendorDataSetter()
         this.relationshipManagerDataSetter();
 
@@ -98,7 +101,7 @@ export class AddSiteUserComponent implements OnInit {
           
             this.reportingToDataSetter(vendorId,0)  
             if(role ==  RoleEnum.VendorManager){
-            this.managerLevelsDataSetter(res)
+            this.managerLevelsDataSetter(vendorId)
            
             this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(res=>{
               const managerLevelId = res||0
@@ -340,8 +343,6 @@ export class AddSiteUserComponent implements OnInit {
   userFormHandler() {
     this.isFieldRequired();
     this.isFormSubmitted = true
-    console.log(this.userForm.invalid)
-    console.log(this.userForm)
     if (this.userForm.invalid) {    
       this.userForm.markAllAsTouched();
       return;
@@ -390,9 +391,9 @@ export class AddSiteUserComponent implements OnInit {
           this._userService.addUser(user).subscribe(
             (res) => {
               if(res.isEmailExist || res.isExistMobile){
-                alert( `${res.isEmailExist?'email':''} ${res.isExistMobile?'mobile':''} already exist`)
+                this._toaster.error( `${res.isEmailExist?'email':''} ${res.isExistMobile?'mobile':''} already exist`)
               }else {
-                alert(this.isEditable?alertResponses.UPDATE_RECORD:alertResponses.ADD_RECORD);
+                this._toaster.success(this.isEditable?alertResponses.UPDATE_RECORD:alertResponses.ADD_RECORD);
                 this._router.navigate(['settings/user-management'])
               }
             },
@@ -411,8 +412,8 @@ export class AddSiteUserComponent implements OnInit {
   checkValidityOfField(field: string) {
     const control = this.userForm.get(field); 
 
-    return  !control?.valid || control?.touched ;
-    // return this.isFormSubmitted && !control?.valid ;
+    // return  !control?.valid || control?.touched ;
+    return this.isFormSubmitted && !control?.valid ;
 
   }
   roleStatusChangeHandler() {
@@ -454,18 +455,7 @@ export class AddSiteUserComponent implements OnInit {
       userForm.get('vendorManagerLevel')?.clearValidators();
     }
     userForm.get('vendorManagerLevel')?.updateValueAndValidity();
-
-    // if (
-    //   userForm.get('reportTo')?.value == 0 &&
-    //   (role == RoleEnum.VendorSalesRep ||
-    //     role == RoleEnum.VendorManager ||
-    //     role == RoleEnum.VendorGuestUser)
-    // ) {
-    //   userForm.get('reportTo')?.setValidators(Validators.required);
-    // } else {
-    //   userForm.get('reportTo')?.clearValidators();
-    // }
-    if (
+   if (
       // userForm.get('relationshipManager')?.value == 0 &&
       (role == RoleEnum.VendorSalesRep ||
         role == RoleEnum.VendorManager ||
@@ -551,19 +541,4 @@ export class AddSiteUserComponent implements OnInit {
       });
     },err=>  this.selectMenuReportingTo=[])    
    }
-  //  ngDoCheck(): void {
-  //   //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
-  //   //Add 'implements DoCheck' to the class.
-    
- 
-  //   //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-  //   //Add 'implements AfterViewInit' to the class.
-  //   const role = this.userForm.get('role')?.value;
-  //   if([RoleEnum.VendorGuestUser ,RoleEnum.VendorManager,RoleEnum.VendorSalesRep].includes(role)){
-  //     console.log("hi from sucbeiber")
-  //         this.userForm.get('role')?.valueChanges.subscribe(()=>{
-  //           this.isFieldRequired();
-  //         })
-  //   }
-  //  }
 }

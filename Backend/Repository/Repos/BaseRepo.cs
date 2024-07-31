@@ -1,8 +1,8 @@
-﻿using System.Linq.Expressions;
-using Entities.DBContext;
+﻿using Entities.DBContext;
 using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
+using System.Linq.Expressions;
 
 namespace Repository.Implementation
 {
@@ -17,9 +17,9 @@ namespace Repository.Implementation
             _dbSet = _dbContext.Set<T>();
         }
 
-        public async virtual Task<IEnumerable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
+        public async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
         {
-            IQueryable<T> query = _dbSet.AsNoTracking();
+            IQueryable<T> query = _dbSet.AsNoTracking().AsQueryable();
 
             if (searchEntity.predicate != null)
             {
@@ -50,13 +50,8 @@ namespace Repository.Implementation
                     ? query.OrderByDescending(searchEntity.sortingExpression)
                     : query.OrderBy(searchEntity.sortingExpression);
             }
-            if (searchEntity.pageSize >= int.MaxValue)
-            {
-                return await query.ToListAsync();
-            }
 
-            return await query.Skip((searchEntity.pageNumber - 1) * searchEntity.pageSize).Take(searchEntity.pageSize).ToListAsync();
-
+            return query;
         }
 
         public async Task AddAsync(T item)
@@ -97,17 +92,17 @@ namespace Repository.Implementation
             return Expression.Lambda<Func<T, object>>(conversion, param);
         }
 
-   
+
 
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<U> GetByOtherIdAsync<U>(Expression<Func<U, bool>> predicate) where U:class
+        public async Task<U> GetByOtherIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class
         {
             DbSet<U> dbset = _dbContext.Set<U>();
-            
+
             return await dbset.FirstOrDefaultAsync(predicate);
         }
     }

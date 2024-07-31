@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Linq.Expressions;
-using Entities.DTOs;
+﻿using Entities.DTOs;
 using Entities.Models;
 using Entities.UtilityModels;
 using Geared_Finance_API;
@@ -21,26 +18,26 @@ namespace Service.Services
 
         public async Task<IEnumerable<VendorDTO>> GetAllVendors(BaseModelSearchEntity searchEntity)
         {
-           BaseSearchEntity<Vendor> searchEntity2 = new BaseSearchEntity<Vendor>
-           {
-               pageNumber = searchEntity.pageNumber,
-               pageSize = searchEntity.pageSize,
-               sortBy= searchEntity.sortBy,
-               sortOrder= searchEntity.sortOrder,
-
-           };
-            if(searchEntity.id != null && searchEntity.id != 0)
+            BaseSearchEntity<Vendor> searchEntity2 = new BaseSearchEntity<Vendor>
             {
-                searchEntity2.predicate =  x => x.Id == searchEntity.id;
+                pageNumber = searchEntity.pageNumber,
+                pageSize = searchEntity.pageSize,
+                sortBy = searchEntity.sortBy,
+                sortOrder = searchEntity.sortOrder,
+
+            };
+            if (searchEntity.id != null && searchEntity.id != 0)
+            {
+                searchEntity2.predicate = x => x.Id == searchEntity.id;
             }
-          IEnumerable<Vendor> venodrData = await _vendorRepo.GetAllAsync(searchEntity2);
-          return MapperHelper.MapTo<IEnumerable<Vendor>,IEnumerable<VendorDTO>>(venodrData);
+            IEnumerable<Vendor> venodrData = await _vendorRepo.GetAllAsync(searchEntity2);
+            return MapperHelper.MapTo<IEnumerable<Vendor>, IEnumerable<VendorDTO>>(venodrData);
 
         }
 
 
         public async Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id)
-        {           
+        {
             IEnumerable<ManagerLevel> managerLevels = await _vendorRepo.GetManagerLevelsById(id);
             return MapperHelper.MapTo<IEnumerable<ManagerLevel>, IEnumerable<ManagerLevelDTO>>(managerLevels);
         }

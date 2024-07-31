@@ -3,7 +3,7 @@
     <span class="inner-page-heading-title"> USER MANAGEMENT </span>
 
 
-    <ul class="d-lg-flex justify-content-end align-items-center">
+    <ul class="d-lg-flex justify-content-end align-items-center setting-title-items">
       <form class="form d-flex " [formGroup]="userHeaderSearchForm">
       <li class="m-2">
           <div class="from-control">
@@ -27,14 +27,14 @@
       </form>
      
       <li class="d-lg-flex flex-row align-item-center">
-        <button class="btn btn-secondary mx-1" (click)="searchHandler()">
+        <button class="btn btn-secondary mx-1 my-auto" (click)="searchHandler()">
           Search
         </button>
-        <button class="btn btn-secondary mx-1" (click)="resetForm()">
+        <button class="btn btn-secondary mx-1 my-auto " (click)="resetForm()">
           Clear
         </button>
         <a
-          class="btn btn-primary ms-1"
+          class="btn btn-primary ms-1 my-auto overflow-hidden setting-title-btn"
           [routerLink]="['/settings/user-management/0/add']"
           >Add User</a
         >
@@ -61,6 +61,8 @@
   (onSortEvent)="sortHandler($event)"
   [isEditable]=true
   (onEditEvent)="onEditEventRecevier($event)"
+  (onPageChange)="pageChangeEventHandler($event)"
+  (onpageSizeChange)="pageSizeChangeHandler($event)"
   >
 </app-common-grid>
 

@@ -6,8 +6,8 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
-import { errorResponses } from './Models/constants.model';
+import { Observable, catchError, of, throwError } from 'rxjs';
+import { errorResponses } from './Shared/constants';
 
 @Injectable()
 export class GeneralInterceptorInterceptor implements HttpInterceptor {
@@ -19,7 +19,6 @@ export class GeneralInterceptorInterceptor implements HttpInterceptor {
 
       catchError((error: HttpErrorResponse) => {
         let errorMessage = '';
-     console.log("hi from itercepto")
         if (error.error instanceof ErrorEvent) {
           // Client-side errors
           errorMessage = `${errorResponses.CLIEENTSIDE_ERROR}: ${error.error.message}`;
@@ -38,6 +37,9 @@ export class GeneralInterceptorInterceptor implements HttpInterceptor {
             case 404:
               errorMessage = `${errorResponses.NOT_FOUND}: ${error.message}`;
               break;
+              case 409:
+                errorMessage = `${errorResponses.CONFLICT_ERROR}: ${error.message}`;
+                break;
             case 500:
               errorMessage = `${errorResponses.INTERNAL_SERVER_ERROR}: ${error.message}`;
               break;
@@ -47,7 +49,7 @@ export class GeneralInterceptorInterceptor implements HttpInterceptor {
           }
         }
         alert(errorMessage)
-        return of()
+          return throwError(()=> new Error(errorMessage))
       })
 
     );

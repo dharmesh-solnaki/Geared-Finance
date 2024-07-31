@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Utilities;
+﻿using Utilities;
 
 namespace Geared_Finance_API
 {
@@ -30,8 +29,6 @@ namespace Geared_Finance_API
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             var response = new
             {

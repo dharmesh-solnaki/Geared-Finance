@@ -1,10 +1,8 @@
-﻿using System.Security.Cryptography;
-
-namespace Utilities
+﻿namespace Utilities
 {
     public static class SecretHasher
     {
-  
+
         public static string EnryptString(string strEncrypted)
         {
             byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);

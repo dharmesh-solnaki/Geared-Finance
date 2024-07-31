@@ -36,6 +36,7 @@
 cursor: pointer !important;
 }
 .grid-footer {
+
   padding: 5px 0;
   display: flex;
   justify-content: center;
@@ -44,7 +45,6 @@ cursor: pointer !important;
   color: #34495e;
   white-space: nowrap;
   flex-wrap: wrap;
-
   max-height: fit-content;
 }
 
@@ -98,10 +98,13 @@ tbody > tr > td {
   padding-left: 12px;
   color: #df3535;
 }
-.page-active {
+
+.page-active{
   background-color: #6c7e8f !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 174, 123, 0.2) !important;
   color: white !important;
+  border-radius: 10%;
+
 }
 
 @media (max-width: 768px) {

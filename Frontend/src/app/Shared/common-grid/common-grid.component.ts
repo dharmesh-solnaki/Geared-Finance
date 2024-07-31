@@ -12,7 +12,7 @@ import {
   SortConfiguration,
   SortOrder,
 } from '../../Models/common-grid.model';
-import {  selectMenu } from '../../Models/constants.model';
+import {  selectMenu } from '../constants';
 import { CommonSelectmenuComponent } from '../common-selectmenu/common-selectmenu.component';
 
 @Component({
@@ -53,64 +53,48 @@ export class CommonGridComponent {
   @Input() data: any[] = [];
   @Input() isEditable:boolean=false;
   @Input() public set gridSettings(value: IGridSettings) {
-    if (value) {
-      this._gridSettings = value;
-
-    } else {
-      this._gridSettings = Object.assign(this.defaultSettings);
-    }
-
-    if (value && value.showPagination && !value.showPagination) {
-      this.showPagination = value.showPagination;
-    }
+    this._gridSettings = value || this.defaultSettings;
+    this.showPagination = this._gridSettings.showPagination || false;
+    this.initializePageSize();
   }
 
   @Input() public set paginationSettings(value: PaginationSetting) {
-    if (value) {
-      this.paginationSetting = {
-        currentPage: value.currentPage,
-        totalRecords: value.totalRecords,
-        selectedPageSize: [value.selectedPageSize![0] + ' per page'],
-      };
-    } else {
-      this.paginationSetting = this.defaultPaginationSetting;
-    }
+    this.paginationSetting = value || this.defaultPaginationSetting;
     this.pageSize = +this.paginationSetting.selectedPageSize![0].split(' ')[0];
     this.updateDisplayedData();
   }
 
   @Output() onSortEvent = new EventEmitter<SortConfiguration>();
   @Output() onEditEvent =new EventEmitter<number>();
-  @Output() onPageChange =new EventEmitter<number>()
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.this.
-
-    this.updateDisplayedData();
-    // this.pagSizeSetter();
+  @Output() onPageChange =new EventEmitter<number>();
+  @Output() onpageSizeChange = new EventEmitter<number>();
   
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
-    this.updatePageNumbers();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+      if (changes['data'] || changes['paginationSettings']) {
+      this.updateDisplayedData();// this.updatePageNumbers();
+    }
   }
 
+  updateDisplayedData() {
+    this.displayData = this.data
+    this.updatePageNumbers()
+    }
+  
   onSetEdit(record:number){
     if(this.isEditable){
       this.onEditEvent.emit(record)
     }
   }
   pageSizeChangeHandler(ev:number|string){
-   if(!this.isPaginationDisabled()){
-    this.pageSize=+ev
-    this.paginationSetting.currentPage=1
-    this.updateDisplayedData();
-     this.updatePageNumbers();
-   }
-   
-  }
+
+      this.pageSize=+ev
+      this.onpageSizeChange.emit(this.pageSize);
+     
+    }
   // -----------Sorting----------------
   public sortOrder: SortOrder = SortOrder.ASC;
   public previousSort: string = '';
@@ -125,38 +109,18 @@ export class CommonGridComponent {
 
       const sortDetails: SortConfiguration = { sort: col, sortOrder: this.sortOrder };
       this.onSortEvent.emit(sortDetails);
-      this.updateDisplayedData();
-   
-     if(  this.isPaginationDisabled() ){
-      this.paginationSettings.currentPage=1;
-     }   
-
+      this.updateDisplayedData();  
     }
   }
  
 
   ///-----------------pagination
 
-  // isPaginationDisabled() {
-  //   return (
-  //     this._gridSettings.showPagination &&
-  //     this.displayData.length > 0 &&
-  //     this.paginationSetting.totalRecords > this.pageSize
-  //   );
-  // }
-  isPaginationDisabled(){
-   return !this._gridSettings.showPagination && this.displayData.length <= 0 &&
-        this.paginationSetting.totalRecords <this.pageSize
-  }
-  updateDisplayedData() {
-  this.displayData = this.data
-  }
-
+ 
   goToPreviousPage() {
     if (this.paginationSetting.currentPage > 1) {
       this.paginationSetting.currentPage--
-     const page =  this.paginationSetting.currentPage - 1;
-    this.onPageChange.emit(page);
+    this.onPageChange.emit(this.paginationSetting.currentPage);
       this.updateDisplayedData();
     }
   }
@@ -164,17 +128,17 @@ export class CommonGridComponent {
   goToNextPage() {
     if (!this.isLastPage()) {
       this.paginationSetting.currentPage++
-      const page =  this.paginationSetting.currentPage + 1;
-      this.onPageChange.emit(page);
+      this.onPageChange.emit(this.paginationSetting.currentPage);
       this.updateDisplayedData();
     }
   }
 
   isLastPage(): boolean {
     const lastPage = Math.ceil(
-      this.paginationSetting.totalRecords / +this.pageSize
+      this.paginationSetting.totalRecords / this.pageSize
     );
     return this.paginationSetting.currentPage >= lastPage;
+   
   }
 
   goToPage(page: number) {
@@ -187,18 +151,21 @@ export class CommonGridComponent {
     const totalPages = Math.ceil(
       this.paginationSetting.totalRecords / +this.pageSize
     );
-    this.pageNumbers = this.isPaginationDisabled() ? [1]:Array.from({ length: totalPages }, (_, i) => i + 1);
+    this.pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
   pagSizeSetter() {
-    if (this._gridSettings && this._gridSettings.pageSizeValues) {
-      this.pageSizeOptions.splice(0)
-      this._gridSettings.pageSizeValues.forEach((item) => {
-   
-        this.pageSizeOptions.push({ option: item.text, value: item.pageNo });
-      });
+    if (this._gridSettings && this._gridSettings.pageSizeValues) {      
+      this.pageSizeOptions = this._gridSettings.pageSizeValues.map(item => ({
+        option: item.text,
+        value: item.pageNo
+      }));
     }
-    this.pageSize = +this.pageSizeOptions[0].value
-
+    }
+    
+    private initializePageSize() {
+    if (this._gridSettings.pageSizeValues && this._gridSettings.pageSizeValues.length > 0) {
+      this.pageSize = this._gridSettings.pageSizeValues[0].pageNo;
+    }
   }
 }

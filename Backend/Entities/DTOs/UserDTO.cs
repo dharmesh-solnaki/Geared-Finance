@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Entities.Models;
-using Utilities;
 namespace Entities.DTOs
 {
     public class UserDTO : BaseDTO
@@ -62,8 +60,8 @@ namespace Entities.DTOs
         public string? StaffCode { get; set; }
         public int? VendorId { get; set; }
         public int? VendorManagerLevelId { get; set; }
-  
-         public VendorDTO? vendor { get; set; }
-        public ManagerLevelDTO? manager{ get; set; }
+
+        public VendorDTO? vendor { get; set; }
+        public ManagerLevelDTO? manager { get; set; }
     }
 }
