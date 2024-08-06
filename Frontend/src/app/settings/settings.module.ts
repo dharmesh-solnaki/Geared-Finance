@@ -4,7 +4,7 @@ import { SettingsComponent } from './settings.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { CommonSelectmenuComponent } from '../Shared/common-selectmenu/common-selectmenu.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddSiteUserComponent } from './user-management/add-site-user/add-site-user.component';
 import { PhoneMaskingDirective } from '../Directives/phone-masking.directive';
 import { CommonGridComponent } from '../Shared/common-grid/common-grid.component';
@@ -45,7 +45,7 @@ const routes: Routes = [
     FundingCategoriesComponent,
     CommonDialogComponent
   ],
-  imports: [ReactiveFormsModule, RouterModule.forChild(routes), CommonModule,
+  imports: [ReactiveFormsModule,FormsModule, RouterModule.forChild(routes), CommonModule,
     NgbPaginationModule,HttpClientModule
   ],
   providers:[ UserService,VendorService,EquipmentService],

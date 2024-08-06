@@ -24,13 +24,13 @@
       </li>
 
       <li class="d-flex align-item-center setting-title-btn">
-        <button class="btn btn-secondary download-icon-btn mx-1 px-4">
+        <button class="btn btn-secondary download-icon-btn mx-1 px-4" type="button"  (click)="downloadClickHandler()">
           <img src="../../../assets/Images/icon-download.svg" />
         </button>
         <button
           class="btn btn-primary ms-1 my-auto overflow-hidden"
           data-bs-toggle="modal"
-          data-bs-target="#staticBackdrop"
+          data-bs-target="#addFundingEquipment"
         >
           Add funding/equipment
         </button>
@@ -81,7 +81,7 @@
               equipmentTypeForm.get('name')?.invalid
             "
           >
-            Please enter a valid value*.
+            Please enter a valid Equipment Type*.
           </div>
         </div>
         <div class="col-12">
@@ -99,6 +99,7 @@
     </ng-template>
 
     <app-common-dialog
+    modalId="addFundingEquipment"
       [modalTitle]="modalTitle"
       [bodyData]="addEquipmentTypeForm"
       modalClass="modal-dialog-centered"
@@ -109,8 +110,43 @@
    [data]="equipmentData"
    [gridSettings]="gridSetting"
    [paginationSettings]="paginationSetting"
-
+   [isEquipmentTypeEditable]="isEquipmentTypeEditable"
+   [selectedId]="equipmentId"
+   [equipmentType]="equipmentType"
+   (onSortEvent)="sortHandler($event)"
+   (onPageChange)="pageChangeEventHandler($event)"
+   (onpageSizeChange)="pageSizeChangeHandler($event)"
+   (onEquipmentEdit)="onEditEquipment($event)"
+   (onEquipmentSave)="onSaveEquipment($event)"
+   (onEquipmentDelete)="onDeleteEquipment($event)"
    >
    </app-common-grid>
+
+   <div>
+    <button
+    class="d-none"
+    data-bs-toggle="modal"
+    data-bs-target="#deleteConfirmationModal"
+    id="deleteConfirmationBtn"
+  >
+  </button>
+
+
+  <ng-template #deleteConfirmation>
+    <p class="text-muted">Are you sure you want to delete?</p>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary mx-1" type="button" (click)="deleteOkHandler()">Ok</button>
+        <button class="btn btn-secondary mx-1" id="deleteModalCancelBtn" type="button" data-bs-dismiss="modal">Cancel</button>
+    </div>
+  </ng-template>
+  
+  <app-common-dialog
+  [modalTitle]="deleteModalTitle"
+  [bodyData]="deleteConfirmation"
+  modalClass="modal-dialog-centered"
+  modalId="deleteConfirmationModal"
+></app-common-dialog>
+
+   </div>
   </div>
 </div>

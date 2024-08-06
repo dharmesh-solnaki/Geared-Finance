@@ -1,0 +1,112 @@
+<div class="login-wrapper">
+  <div class="container-lg">
+    <div class="row">
+      <div class="col-lg-6 login-greeting">
+        <div class="greeting-content">
+          <img
+            id="greeting-vdot-img"
+            src="../../assets/Images/dots.png"
+            alt=""
+          />
+          <img src="../../assets/Images/geared-logo-v2.png" class="mb-5" />
+
+          <h3 class="display-6 fw-bold mt-5 mb-3">Welcome Back!</h3>
+          <h4 class="mb-2 mt-3">Geared Portal</h4>
+          <p class="w-50">
+            You can sign in to access with your existing account
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-6 login-content">
+        <img src="../../assets/Images/h-dots.png" />
+        <h1 class="my-5">Sign In</h1>
+
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="onLoginFomSubmit()"
+          class="form row"
+        >
+          <div class="form-group my-2 p-0">
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Username"
+              maxlength="100"
+              formControlName="email"
+              [ngClass]="{
+                'form-control-invalid':
+                  loginForm.get('email')?.invalid &&
+                  (loginForm.get('email')?.dirty ||
+                    loginForm.get('email')?.touched)
+              }"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                loginForm.get('email')?.invalid &&
+                (loginForm.get('email')?.dirty ||
+                  loginForm.get('email')?.touched)
+              "
+            >
+              <p *ngIf="loginForm.get('email')?.errors?.['required']">
+                Username is required
+              </p>
+              <p *ngIf="loginForm.get('email')?.errors?.['pattern']">
+                Username must be a valid Email-Id.
+              </p>
+            </div>
+          </div>
+
+          <div class="form-group my-2 p-0">
+            <input
+              class="form-control"
+              type="password"
+              placeholder="Password"
+              maxlength="150"
+              formControlName="password"
+              [ngClass]="{
+                'form-control-invalid':
+                  loginForm.get('password')?.invalid &&
+                  (loginForm.get('password')?.dirty ||
+                    loginForm.get('password')?.touched)
+              }"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                loginForm.get('password')?.invalid &&
+                (loginForm.get('password')?.dirty ||
+                  loginForm.get('password')?.touched)
+              "
+            >
+              <p *ngIf="loginForm.get('password')?.errors?.['required']">
+                Password is required
+              </p>
+              <p *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                Password must be a minimum of 8 characters
+              </p>
+              <p *ngIf="loginForm.get('password')?.errors?.['pattern']">
+                Password must be a valid format [Uppercase, Lowercase, Special
+                characters, numbers]
+              </p>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between my-2 p-0">
+            <label>
+              <input
+                type="checkbox"
+                formControlName="isRemember"
+                name="checkbox"
+                class="custom-checkbox"
+              />
+              Remeber Me
+            </label>
+            <a [routerLink]="[ '/forgot-password']" class="text-decoration-none text-light">Forgot Password?</a>
+          </div>
+          <button class="btn btn-primary mt-2 fs-6" type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

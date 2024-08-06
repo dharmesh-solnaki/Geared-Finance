@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models;
 
-public partial class User 
+public partial class User
 {
     [Key]
     public int Id { get; set; }
@@ -61,6 +61,9 @@ public partial class User
     public string StaffCode { get; set; } = null!;
 
     public int? ManagerId { get; set; }
+
+    [StringLength(6)]
+    public string? Otp {  get; set; }
 
     [ForeignKey("ManagerId")]
     [InverseProperty("Users")]

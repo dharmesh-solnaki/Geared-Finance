@@ -5,14 +5,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppHeaderModule } from './app-header/app-header.module';
 import { RouterModule, Routes } from '@angular/router';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { GeneralInterceptorInterceptor } from './general-interceptor.interceptor';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { GeneralInterceptor } from './general-interceptor.interceptor';
 import { ToastrModule } from 'ngx-toastr';
-
-
+import { AppLoginComponent } from './app-login/app-login.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from './Service/auth.service';
+import { TokenService } from './Service/token.service';
+import { AppForgotPasswwordComponent } from './app-forgot-passwword/app-forgot-passwword.component';
 
 const appRoutes: Routes = [
   { path: '', component: AppComponent },
+  { path: 'login', component: AppLoginComponent },
+  { path: 'forgot-password', component: AppForgotPasswwordComponent },
   {
     path: 'settings',
     loadChildren: () =>
@@ -21,18 +26,27 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ],
-  providers: [ {provide:HTTP_INTERCEPTORS,useClass:GeneralInterceptorInterceptor,multi:true},],
+  declarations: [AppComponent, AppLoginComponent, AppForgotPasswwordComponent],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: GeneralInterceptor, multi: true },
+    AuthService,
+    TokenService,
+  ],
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppHeaderModule,
-    RouterModule.forRoot(appRoutes),  
+    ReactiveFormsModule,
+    RouterModule.forRoot(appRoutes),
     NgbPaginationModule,
-    ToastrModule.forRoot(),
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-center',
+      progressBar: true,
+      preventDuplicates: true,
+    }),
   ],
   // exports:[
   //   PhoneMaskingDirective

@@ -25,6 +25,10 @@ namespace Service.Implementation
             {
                 searchEntity.sortBy = "Role.RoleName";
             }
+            if (string.IsNullOrEmpty(searchEntity.sortBy))
+            {
+                searchEntity.sortBy = "name";
+            }
             PredicateModel model = new PredicateModel()
             {
                 Id = searchEntity.id,
@@ -32,13 +36,12 @@ namespace Service.Implementation
                 {
                     {"Role.RoleName",searchEntity.roleName }
                 },
-                Property1="name",
-                Property2="surName",
-                NeedsCombine = true,
-                Keyword=searchEntity.name,
+                Property1 = "name",
+                Property2 = "surName",
+                Keyword = searchEntity.name,
             };
 
-            Expression<Func<User,bool>> predicate = PredicateBuilder.BuildPredicate<User>(model);
+            Expression<Func<User, bool>> predicate = PredicateBuilder.BuildPredicate<User>(model);
             BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
             {
                 predicate = predicate,
@@ -51,7 +54,7 @@ namespace Service.Implementation
             baseSearchEntity.SetSortingExpression();
             IQueryable<User> users = await GetAllAsync(baseSearchEntity);
             BaseRepsonseDTO<UserDTO> userDataResponse = new BaseRepsonseDTO<UserDTO>() { TotalRecords = users.Count() };
-            List<User> userPageList =await GetPaginatedList(searchEntity.pageNumber,searchEntity.pageSize,users).ToListAsync();
+            List<User> userPageList = await GetPaginatedList(searchEntity.pageNumber, searchEntity.pageSize, users).ToListAsync();
             userDataResponse.responseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
 
             return userDataResponse;
@@ -151,7 +154,7 @@ namespace Service.Implementation
             if (managerLevelId != 0)
             {
                 Expression<Func<ManagerLevel, bool>> predicate = x => x.Id == managerLevelId;
-                ManagerLevel mangerLevel = await GetOtherByIdAsync(predicate);
+                ManagerLevel mangerLevel = await GetOtherAsync(predicate, null);
                 originalLevelNo = mangerLevel.LevelNo;
             }
             searchEntity.pageSize = int.MaxValue;

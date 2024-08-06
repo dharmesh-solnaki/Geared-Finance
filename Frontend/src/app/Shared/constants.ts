@@ -189,7 +189,13 @@ export const alertResponses={
   ADD_RECORD:'Record added successfully',
   UPDATE_RECORD:'Record updated successfully',
   DELETE_RECORD:'Record deleted successfully',
-  ERROR:'Something went wrong'
+  ERROR:'Something went wrong',
+  ON_LOGIN_SUCCESS:"Logged in successfully",
+  ON_LOGIN_ERROR:"Please provide valid credentials",
+  ON_OTP_SUCCESS:"Otp sent successfully",
+  ON_OTP_INVALID:"Invalid Otp!",
+  ON_EMAIL_NOT_EXIST:"Given username not exists",
+  ON_PASSWORD_CHANGE_SUCCESS:"Password updated successfully",
 }
 
 export const errorResponses={
@@ -204,7 +210,8 @@ export const errorResponses={
 }
 
 export const modalTitles={
- ADDEQUIPMENTTYPE:'ADD FUNDING/EQUIPMENT'
+ ADDEQUIPMENTTYPE:'ADD FUNDING/EQUIPMENT',
+ DELETEEQUIPMENTTYPE:'DELETE EQUIPMENT TYPE'
 }
 
 // extensions methods..

@@ -1,4 +1,4 @@
-import { IGridSettings } from "./common-grid.model";
+import { ColumnType, IGridSettings } from "./common-grid.model";
 
 export class FundingCategory{
     constructor(
@@ -13,30 +13,25 @@ export class FundingEquipmentType{
         public id?:number,
     ){}
 }
-// export class FundingEquipmentResponse{
-//     constructor(
-//         public id:number,
-//         public name:string,
-//         public catogory:FundingCategory
-//     ){}
-// }
+export class FundingEquipmentResponse{
+    constructor(
+        public id:number,
+        public name:string,
+        public isBeingUsed:boolean,
+        public category:FundingCategory,
+        public categoryName?:string
+    ){}
+}
 
-
-// category
-// : 
-// {id: 1, name: 'Hospitality equipment'}
-// id
-// : 
-// 2
-// name
-// : 
-// "Pizza Oven"
 export const FundingEquipmentTypeGridSetting:IGridSettings={
     columns: [
-        {name:"name",title:"Funding/Equipment type",sort:true},
+        {name:"name",title:"Funding/Equipment type",type:ColumnType.EQUIPMENTTYPE,sort:true},
         {name:"categoryName", title:"Funding Category",sort:true}
     ],
     showPagination:true,
+    showEquipmentTypeDelete:true,
+    showEquipmentTypeSave:true,
+    showEquipmentTypeEdit:true,
     pageSizeValues:[
       { pageNo: 10, text: '10 per pager' },
       { pageNo: 25, text: '25 per pager' },

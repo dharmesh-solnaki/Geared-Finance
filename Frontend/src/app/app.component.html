@@ -1,8 +1,8 @@
-<app-header (isNavOpned)="viewHandler($event)"></app-header>
-<div [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'">
+<app-header *ngIf="!isForgotPassStatus && getLoginStatus" (isNavOpned)="viewHandler($event)"></app-header>
+<app-login *ngIf="!getLoginStatus && !isForgotPassStatus"></app-login>
+<app-forgot-passwword *ngIf="isForgotPassStatus && !getLoginStatus"></app-forgot-passwword>
+<div *ngIf="!isForgotPassStatus && getLoginStatus " [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'">
   <div class="card">
-    <!-- <app-settings></app-settings> -->
     <router-outlet></router-outlet>
-
   </div>
 </div>

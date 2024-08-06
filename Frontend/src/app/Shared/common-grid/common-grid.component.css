@@ -107,6 +107,7 @@ tbody > tr > td {
 
 }
 
+
 @media (max-width: 768px) {
   .table-responsive {   
     max-height: 28rem !important;

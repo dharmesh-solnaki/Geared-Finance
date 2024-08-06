@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   height="16"
+   width="14"
+   sodipodi:docname="ic-delete.svg"
+   id="svg4"
+   version="1.1"
+   viewBox="0 0 14 16">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg4"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="8.3901986"
+     inkscape:cx="6.2245471"
+     inkscape:zoom="45.9375"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     showgrid="false"
+     id="namedview6"
+     inkscape:window-height="1369"
+     inkscape:window-width="2560"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <!--! Font Awesome Pro 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+  <path
+     style="stroke-width:0.03125"
+     id="path2"
+     d="M 4.5,12.5 C 4.5,12.775 4.275,13 4,13 3.725,13 3.5,12.775 3.5,12.5 v -7 C 3.5,5.225 3.725,5 4,5 4.275,5 4.5,5.225 4.5,5.5 Z m 3,0 C 7.5,12.775 7.275,13 7,13 6.725,13 6.5,12.775 6.5,12.5 v -7 C 6.5,5.225 6.725,5 7,5 7.275,5 7.5,5.225 7.5,5.5 Z m 3,0 C 10.5,12.775 10.275,13 10,13 9.725,13 9.5,12.775 9.5,12.5 v -7 C 9.5,5.225 9.725,5 10,5 c 0.275,0 0.5,0.225 0.5,0.5 z M 9.690625,0.705 10.528125,2 H 13.5 C 13.775,2 14,2.22375 14,2.5 14,2.77625 13.775,3 13.5,3 H 13 v 10.5 c 0,1.38125 -1.11875,2.5 -2.5,2.5 h -7 C 2.119375,16 1,14.88125 1,13.5 V 3 H 0.5 C 0.223875,3 0,2.77625 0,2.5 0,2.22375 0.223875,2 0.5,2 H 3.471875 L 4.28125,0.705 C 4.55625,0.2664375 5.0375,0 5.553125,0 h 2.89375 C 8.9625,0 9.44375,0.2664375 9.690625,0.705 Z M 4.653125,2 h 4.69375 L 8.86875,1.235 C 8.778125,1.08875 8.61875,1 8.446875,1 H 5.553125 C 5.38125,1 5.221875,1.08875 5.13125,1.235 Z M 2,13.5 C 2,14.328125 2.6715625,15 3.5,15 h 7 C 11.328125,15 12,14.328125 12,13.5 V 3 H 2 Z" />
+</svg>

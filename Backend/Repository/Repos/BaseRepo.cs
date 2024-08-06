@@ -99,11 +99,19 @@ namespace Repository.Implementation
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<U> GetByOtherIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class
+        public async Task<U> GetByOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class
         {
             DbSet<U> dbset = _dbContext.Set<U>();
 
-            return await dbset.FirstOrDefaultAsync(predicate);
+            IQueryable<U> query = dbset;
+
+            if (includes != null && includes.Any())
+            {
+                query = includes.Aggregate(query, (current, include) => current.Include(include));
+            }
+
+            return await query.FirstOrDefaultAsync(predicate);
         }
+
     }
 }

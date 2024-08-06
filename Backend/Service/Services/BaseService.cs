@@ -1,5 +1,4 @@
 ﻿using Entities.UtilityModels;
-using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 using Service.Interface;
 using System.Linq.Expressions;
@@ -39,15 +38,15 @@ namespace Service.Implementation
         //    return await _repo.GetOthers<U>(searchEntity);
         //}
 
-        public async Task<U> GetOtherByIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class
+        public async Task<U> GetOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class
         {
-            return await _repo.GetByOtherIdAsync(predicate);
+            return await _repo.GetByOtherAsync(predicate, includes);
         }
 
-        public  IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData)
+        public IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData)
         {
-            return  searchData.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsQueryable();
-         
+            return searchData.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsQueryable();
+
         }
 
         public async Task SaveChangesAsync()

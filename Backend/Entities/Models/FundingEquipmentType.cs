@@ -16,6 +16,8 @@ public partial class FundingEquipmentType
 
     public int CategoryId { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     [ForeignKey("CategoryId")]
     [InverseProperty("FundingEquipmentTypes")]
     public virtual FundingCategory Category { get; set; } = null!;

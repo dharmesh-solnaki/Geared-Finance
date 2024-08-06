@@ -28,7 +28,7 @@ namespace Geared_Finance_API
             CreateMap<ManagerLevel, ManagerLevelDTO>().ReverseMap();
             CreateMap<FundingCategory, FundingCategoryDTO>().ReverseMap();
             CreateMap<FundingEquipmentType, EquipmentTypeDTO>().ReverseMap();
-            CreateMap<FundingEquipmentType,EquipmentRepsonseDTO>().ReverseMap();
+            CreateMap<FundingEquipmentType, EquipmentRepsonseDTO>().ReverseMap();
         }
     }
 

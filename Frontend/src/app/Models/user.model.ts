@@ -41,7 +41,7 @@ export const UserGridSetting:IGridSettings={
   columns: [
     { name: 'name', title: 'name', sort: true },
     { name: 'surName', title: 'surName', sort: true },
-    { name: 'staffCode', title: 'staff code', sort: false ,type:ColumnType.STAFFCODE},
+    { name: 'staffCode', title: 'staff code', sort: false },
 
     { name: 'venodrName', title: 'vendor', sort: false },
     { name: 'relationshipManagerName', title: 'relationship Manager', sort: false },

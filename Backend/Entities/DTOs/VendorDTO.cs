@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Entities.DTOs
+﻿namespace Entities.DTOs
 {
     public class VendorDTO : BaseDTO
     {

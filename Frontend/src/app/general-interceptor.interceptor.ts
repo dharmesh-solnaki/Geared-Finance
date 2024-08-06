@@ -6,31 +6,40 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, catchError, of, throwError } from 'rxjs';
+import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
 import { errorResponses } from './Shared/constants';
+import { AuthService } from './Service/auth.service';
+import { TokenService } from './Service/token.service';
 
 @Injectable()
-export class GeneralInterceptorInterceptor implements HttpInterceptor {
+export class GeneralInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(
+    private _authService:AuthService,
+    private _tokenService:TokenService
+  ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const accessToken = this._tokenService.getAccessToken();
+    if(accessToken){
+      request  = request.clone({
+        setHeaders:{
+          Authorization:`Bearer ${accessToken}`
+        }
+      })
+    }
     return next.handle(request).pipe(
-
       catchError((error: HttpErrorResponse) => {
         let errorMessage = '';
         if (error.error instanceof ErrorEvent) {
-          // Client-side errors
           errorMessage = `${errorResponses.CLIEENTSIDE_ERROR}: ${error.error.message}`;
         } else {
-          // Server-side errors
           switch (error.status) {
             case 400:
               errorMessage = `${errorResponses.BAD_REQUEST}: ${error.message}`;
               break;
             case 401:
-              errorMessage = `${errorResponses.UNAUTHORIZED}: ${error.message}`;
-              break;
+               return this.handle401Error(request,next)
             case 403:
               errorMessage = `${errorResponses.FORBIDDEN}: ${error.message}`;
               break;
@@ -54,4 +63,25 @@ export class GeneralInterceptorInterceptor implements HttpInterceptor {
 
     );
   }
+  private  handle401Error(request: HttpRequest<any> , next:HttpHandler){
+     const isTokenExpired = this._tokenService.isAccessTokenExpired()
+    if(!isTokenExpired){
+      return this._authService.validateToken().pipe(
+       switchMap((res:{accessToken:string})=>{
+      this._tokenService.setToken(res.accessToken)
+      request = request.clone({
+       setHeaders:{ Authorization: `Bearer ${res.accessToken}`}
+      })
+      return next.handle(request);
+       }),
+       catchError(err=>{
+         this._tokenService.clearToken();
+         return throwError(()=> new Error(err));
+       })
+      )
+    }else{
+     this._tokenService.clearToken();
+     return throwError(errorResponses.UNAUTHORIZED);
+    }
+   }
 }

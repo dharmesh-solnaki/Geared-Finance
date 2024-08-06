@@ -42,7 +42,7 @@ as
     <div class="navbar d-flex flex-column justify-content-start">
       <div [ngClass]="shuoldVisible ? 'userdiv-navshrinked' : 'userdiv'">
         <span [ngClass]="{ 'd-none': shuoldVisible }">Welcome</span>
-        <h5 class="pb-3" [ngClass]="{ 'd-none': shuoldVisible }">User</h5>
+        <h5 class="pb-3" [ngClass]="{ 'd-none': shuoldVisible }" >{{getUsername}}</h5>
         <div class="d-flex justify-content-between align-items-center">
           <span class="p-0">
             <img
@@ -60,7 +60,7 @@ as
               id="logouticon"
               src="../../assets/Images/icon-logout.svg"
             />
-            <a class="userdivtext" role="button" [ngClass]="{ 'd-none': shuoldVisible }">
+            <a class="userdivtext" (click)="onLogout()" role="button" [ngClass]="{ 'd-none': shuoldVisible }">
               LOGOUT
             </a>
           </span>

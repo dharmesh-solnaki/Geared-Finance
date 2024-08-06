@@ -8,8 +8,6 @@ namespace Utilities
         public string? Keyword { get; set; }
         public string? Property1 { get; set; }
         public string? Property2 { get; set; }
-
-        public Boolean NeedsCombine { get; set; } = false;
         public Dictionary<string, object>? Criteria { get; set; }
     }
 
@@ -63,25 +61,25 @@ namespace Utilities
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(searchModel.Property1)  && !string.IsNullOrWhiteSpace(searchModel.Keyword))
+            if (!string.IsNullOrWhiteSpace(searchModel.Property1) && !string.IsNullOrWhiteSpace(searchModel.Keyword))
             {
                 var propertyValue1 = Expression.Property(parameter, searchModel.Property1);
-                var toLowerMethod = typeof(string).GetMethod("ToLower",Type.EmptyTypes);
+                var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
                 var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                 var propertyValue1Lower = Expression.Call(propertyValue1, toLowerMethod);
-                var keywordConstant = Expression.Constant(searchModel.Keyword.Trim().Replace(" ",string.Empty).ToLower());
-                if (searchModel.NeedsCombine &&  !string.IsNullOrWhiteSpace(searchModel.Property2))
+                var keywordConstant = Expression.Constant(searchModel.Keyword.Trim().Replace(" ", string.Empty).ToLower());
+                if (!string.IsNullOrWhiteSpace(searchModel.Property2))
                 {
                     var propertyValue2 = Expression.Property(parameter, searchModel.Property2);
                     var propertyValue2Lower = Expression.Call(propertyValue2, toLowerMethod);
                     var combineValue = Expression.Call(null, typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }), propertyValue1Lower, propertyValue2Lower);
                     var combineCondition = Expression.Call(combineValue, containsMethod, keywordConstant);
-                      predicate = Expression.AndAlso(predicate, combineCondition);
+                    predicate = Expression.AndAlso(predicate, combineCondition);
                 }
                 else
                 {
-                    var containsConstant = Expression.Call( propertyValue1Lower,containsMethod,keywordConstant);
-                    predicate = Expression.AndAlso(predicate,containsConstant);
+                    var containsConstant = Expression.Call(propertyValue1Lower, containsMethod, keywordConstant);
+                    predicate = Expression.OrElse(predicate, containsConstant);
                 }
             }
 

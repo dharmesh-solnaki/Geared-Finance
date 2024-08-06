@@ -1,0 +1,154 @@
+<div class="login-wrapper">
+  <div class="container-lg" style="background-color: #35495f">
+    <div class="login-content forgot-password-content col-lg-6 m-auto">
+      <img src="../../assets/Images/h-dots.png" />
+      <h1 class="my-5">Forgot Password</h1>
+
+      <form
+        [formGroup]="forgotPassForm"
+        (ngSubmit)="onFormSubmit()"
+        class="form row"
+      >
+        <div class="form-group my-2 p-0" *ngIf="forgotPassForm.get('email')">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Username"
+            maxlength="100"
+            formControlName="email"
+            [ngClass]="{
+              'form-control-invalid':
+                forgotPassForm.get('email')?.invalid &&
+                (forgotPassForm.get('email')?.dirty ||
+                  forgotPassForm.get('email')?.touched)
+            }"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              forgotPassForm.get('email')?.invalid &&
+              (forgotPassForm.get('email')?.dirty ||
+                forgotPassForm.get('email')?.touched)
+            "
+          >
+            <p *ngIf="forgotPassForm.get('email')?.errors?.['required']">
+              Username is required
+            </p>
+            <p *ngIf="forgotPassForm.get('email')?.errors?.['pattern']">
+              Username must be a valid Email-Id.
+            </p>
+          </div>
+        </div>
+        <div class="form-group my-2 p-0" *ngIf="forgotPassForm.get('otp')">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="OTP"
+            maxlength="6"
+            formControlName="otp"
+            [ngClass]="{
+              'form-control-invalid':
+                forgotPassForm.get('otp')?.invalid &&
+                (forgotPassForm.get('otp')?.dirty ||
+                  forgotPassForm.get('otp')?.touched)
+            }"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              forgotPassForm.get('otp')?.invalid &&
+              (forgotPassForm.get('otp')?.dirty ||
+                forgotPassForm.get('otp')?.touched)
+            "
+          >
+            <p *ngIf="forgotPassForm.get('otp')?.errors?.['required']">
+              OTP is required
+            </p>
+          </div>
+        </div>
+        <div class="form-group my-2 p-0" *ngIf="forgotPassForm.get('newPass')">
+          <input
+            class="form-control"
+            type="password"
+            placeholder="New Password"
+            maxlength="50"
+            formControlName="newPass"
+            [ngClass]="{
+              'form-control-invalid':
+                forgotPassForm.get('newPass')?.invalid &&
+                (forgotPassForm.get('newPass')?.dirty ||
+                  forgotPassForm.get('newPass')?.touched)
+            }"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              forgotPassForm.get('newPass')?.invalid &&
+              (forgotPassForm.get('newPass')?.dirty ||
+                forgotPassForm.get('newPass')?.touched)
+            "
+          >
+            <p *ngIf="forgotPassForm.get('newPass')?.errors?.['required']">
+              Password is required
+            </p>
+            <p *ngIf="forgotPassForm.get('newPass')?.errors?.['pattern']">
+              Password must be a valid fromat.
+            </p>
+          </div>
+        </div>
+        <div
+          class="form-group my-2 p-0"
+          *ngIf="forgotPassForm.get('confirmPass')"
+        >
+          <input
+            class="form-control"
+            type="password"
+            placeholder="Confirm Password"
+            maxlength="50"
+            formControlName="confirmPass"
+            [ngClass]="{
+              'form-control-invalid':
+                forgotPassForm.get('confirmPass')?.invalid &&
+                (forgotPassForm.get('confirmPass')?.dirty ||
+                  forgotPassForm.get('confirmPass')?.touched)
+            }"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              forgotPassForm.get('confirmPass')?.invalid &&
+              (forgotPassForm.get('confirmPass')?.dirty ||
+                forgotPassForm.get('confirmPass')?.touched)
+            "
+          >
+            <p *ngIf="forgotPassForm.get('confirmPass')?.errors?.['required']">
+              Confirm Password is required
+            </p>
+            <p
+              *ngIf="!forgotPassForm.get('confirmPass')?.errors?.['isMatching']"
+            >
+              Password and Confirm password must be same.
+            </p>
+          </div>
+        </div>
+
+        <button class="btn btn-primary my-2 fs-6" type="submit">Submit</button>
+      </form>
+      <div class="position-relative mt-3">
+        <a
+          *ngIf="forgotPassForm.get('otp')"
+          class="text-decoration-none text-light position-absolute top-50 start-0 translate-middle-y"
+          role="button"
+          (click)="OtpBackBtnClick()"
+          >Back</a
+        >
+
+        <a
+          [routerLink]="['/login']"
+          class="text-decoration-none text-light position-absolute top-50 end-0 translate-middle-y"
+          >Back To Login</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

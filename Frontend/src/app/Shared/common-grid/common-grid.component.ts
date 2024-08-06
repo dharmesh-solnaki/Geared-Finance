@@ -12,8 +12,9 @@ import {
   SortConfiguration,
   SortOrder,
 } from '../../Models/common-grid.model';
-import {  selectMenu } from '../constants';
+import { selectMenu } from '../constants';
 import { CommonSelectmenuComponent } from '../common-selectmenu/common-selectmenu.component';
+import { outputAst } from '@angular/compiler';
 
 @Component({
   selector: 'app-common-grid',
@@ -43,15 +44,17 @@ export class CommonGridComponent {
     selectedPageSize: ['25 per page'],
   };
 
-  @ViewChild('pageSizerChild') pageSizerChild!:CommonSelectmenuComponent
+  @ViewChild('pageSizerChild') pageSizerChild!: CommonSelectmenuComponent;
 
-  
   constructor() {
     this._gridSettings = this.defaultSettings;
   }
 
   @Input() data: any[] = [];
-  @Input() isEditable:boolean=false;
+  @Input() isEditable: boolean = false;
+  @Input() isEquipmentTypeEditable:boolean=false
+  @Input() selectedId:number=0
+  @Input() equipmentType:string=''
   @Input() public set gridSettings(value: IGridSettings) {
     this._gridSettings = value || this.defaultSettings;
     this.showPagination = this._gridSettings.showPagination || false;
@@ -65,69 +68,71 @@ export class CommonGridComponent {
   }
 
   @Output() onSortEvent = new EventEmitter<SortConfiguration>();
-  @Output() onEditEvent =new EventEmitter<number>();
-  @Output() onPageChange =new EventEmitter<number>();
+  @Output() onEditEvent = new EventEmitter<number>();
+  @Output() onPageChange = new EventEmitter<number>();
   @Output() onpageSizeChange = new EventEmitter<number>();
-  
+  @Output() onEquipmentEdit = new EventEmitter();
+  @Output() onEquipmentSave =new EventEmitter<string>();
+  @Output() onEquipmentDelete=new EventEmitter<number>()
   ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
   }
   ngOnChanges(changes: SimpleChanges): void {
-      if (changes['data'] || changes['paginationSettings']) {
-      this.updateDisplayedData();// this.updatePageNumbers();
+    if (changes['data'] || changes['paginationSettings']) {
+      this.updateDisplayedData(); // this.updatePageNumbers();
     }
   }
 
   updateDisplayedData() {
-    this.displayData = this.data
-    this.updatePageNumbers()
-    }
-  
-  onSetEdit(record:number){
-    if(this.isEditable){
-      this.onEditEvent.emit(record)
+    this.displayData = this.data;
+    this.updatePageNumbers();
+  }
+
+  onSetEdit(record: number) {
+    if (this.isEditable) {
+      this.onEditEvent.emit(record);
     }
   }
-  pageSizeChangeHandler(ev:number|string){
-
-      this.pageSize=+ev
-      this.onpageSizeChange.emit(this.pageSize);
-     
-    }
+  pageSizeChangeHandler(ev: number | string) {
+    this.pageSize = +ev;
+    this.onpageSizeChange.emit(this.pageSize);
+  }
   // -----------Sorting----------------
   public sortOrder: SortOrder = SortOrder.ASC;
   public previousSort: string = '';
 
   sort(col: string, sort: boolean) {
     if (sort) {
-      this.sortOrder = (col === this.previousSort && this.sortOrder === SortOrder.ASC)
-        ? SortOrder.DESC
-        : SortOrder.ASC;
+      this.sortOrder =
+        col === this.previousSort && this.sortOrder === SortOrder.ASC
+          ? SortOrder.DESC
+          : SortOrder.ASC;
 
       this.previousSort = col;
 
-      const sortDetails: SortConfiguration = { sort: col, sortOrder: this.sortOrder };
+      const sortDetails: SortConfiguration = {
+        sort: col,
+        sortOrder: this.sortOrder,
+      };
       this.onSortEvent.emit(sortDetails);
-      this.updateDisplayedData();  
+      this.updateDisplayedData();
     }
   }
- 
 
   ///-----------------pagination
 
- 
   goToPreviousPage() {
     if (this.paginationSetting.currentPage > 1) {
-      this.paginationSetting.currentPage--
-    this.onPageChange.emit(this.paginationSetting.currentPage);
+      this.paginationSetting.currentPage--;
+      this.onPageChange.emit(this.paginationSetting.currentPage);
       this.updateDisplayedData();
     }
   }
 
   goToNextPage() {
     if (!this.isLastPage()) {
-      this.paginationSetting.currentPage++
+      this.paginationSetting.currentPage++;
       this.onPageChange.emit(this.paginationSetting.currentPage);
       this.updateDisplayedData();
     }
@@ -138,11 +143,10 @@ export class CommonGridComponent {
       this.paginationSetting.totalRecords / this.pageSize
     );
     return this.paginationSetting.currentPage >= lastPage;
-   
   }
 
   goToPage(page: number) {
-    this.paginationSetting.currentPage = page;    
+    this.paginationSetting.currentPage = page;
     this.onPageChange.emit(page);
     this.updateDisplayedData();
   }
@@ -155,17 +159,28 @@ export class CommonGridComponent {
   }
 
   pagSizeSetter() {
-    if (this._gridSettings && this._gridSettings.pageSizeValues) {      
-      this.pageSizeOptions = this._gridSettings.pageSizeValues.map(item => ({
+    if (this._gridSettings && this._gridSettings.pageSizeValues) {
+      this.pageSizeOptions = this._gridSettings.pageSizeValues.map((item) => ({
         option: item.text,
-        value: item.pageNo
+        value: item.pageNo,
       }));
     }
-    }
-    
-    private initializePageSize() {
-    if (this._gridSettings.pageSizeValues && this._gridSettings.pageSizeValues.length > 0) {
+  }
+
+  private initializePageSize() {
+    if (
+      this._gridSettings.pageSizeValues &&
+      this._gridSettings.pageSizeValues.length > 0
+    ) {
       this.pageSize = this._gridSettings.pageSizeValues[0].pageNo;
     }
+  }
+
+  isShowAction() {
+    return (
+      this._gridSettings.showEquipmentTypeDelete ||
+      this._gridSettings.showEquipmentTypeEdit ||
+      this._gridSettings.showEquipmentTypeSave
+    );
   }
 }

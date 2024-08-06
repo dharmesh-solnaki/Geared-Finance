@@ -8,6 +8,7 @@ export class CommonDialogComponent {
   @Input() modalTitle:string=''
   @Input() bodyData:any
   @Input() modalClass:string=''
+ @Input() modalId:string=''
   @Output() onModalCloseEventEmitter = new EventEmitter();
 
  get isTemplate():boolean{

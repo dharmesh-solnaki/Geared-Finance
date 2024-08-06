@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
-import { BaseRespons, FundingCategory, FundingEquipmentResponse, FundingEquipmentType,   } from '../Models/common-models';
+import { BaseRespons  } from '../Models/common-models';
 import { CommonSearch } from '../Models/common-search.model';
+import { FundingCategory, FundingEquipmentResponse, FundingEquipmentType } from '../Models/equipmentTypes.model';
 
 
 @Injectable({
@@ -23,5 +24,8 @@ export class EquipmentService {
   getEquipmentTypes(searchModel:CommonSearch):Observable<BaseRespons<FundingEquipmentResponse>>{
   return this._http.post<BaseRespons<FundingEquipmentResponse>>(`${this.API_URL}/GetEquipments`,searchModel);
   }
+  deleteEquipmentType(id:number):Observable<void>{
+    return this._http.delete<void>(`${this.API_URL}?id=${id}`);
+  };
 
 }

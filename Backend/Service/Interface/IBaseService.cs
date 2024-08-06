@@ -13,7 +13,7 @@ namespace Service.Interface
         public Task UpdateAsync(T item);
         public Task Delete(T item);
         public Task SaveChangesAsync();
-        public Task<U> GetOtherByIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class;
+        public Task<U> GetOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class;
 
     }
 }

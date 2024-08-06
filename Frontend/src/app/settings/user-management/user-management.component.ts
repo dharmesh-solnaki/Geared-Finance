@@ -112,11 +112,11 @@ export class UserManagementComponent implements OnInit {
    }
 
   }
-
   sortHandler(ev: SortConfiguration) {
     const { sort , sortOrder } = ev;
     this.searchingModel.sortBy=sort.trim();
     this.searchingModel.sortOrder=sortOrder
+    this.searchingModel.pageNumber=1
     this.userDataSetter();
   }
 }

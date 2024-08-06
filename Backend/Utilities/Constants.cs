@@ -6,12 +6,5 @@
         public const string RECORD_NOT_FOUND = "Record(s) Not Found";
         public const string BAD_REQUEST = "Bad Request";
         public const string INTERNAL_SERVER_ERR = "An unexpected error occurred. Please try again later.";
-
-
-
     }
-
-
-
-
 }

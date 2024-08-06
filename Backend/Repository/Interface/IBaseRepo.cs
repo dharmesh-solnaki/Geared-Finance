@@ -6,7 +6,7 @@ namespace Repository.Interface
     public interface IBaseRepo<T> where T : class
     {
         Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity);
-        Task<U> GetByOtherIdAsync<U>(Expression<Func<U, bool>> predicate) where U : class;
+        Task<U> GetByOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class;
         Task<T> GetByIdAsync(int id);
 
         Task AddAsync(T item);

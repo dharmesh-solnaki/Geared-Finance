@@ -31,10 +31,13 @@
               ></i>
             </span>
           </th>
+          <th class="text-uppercase" *ngIf="isShowAction()">
+            Actions
+          </th>
         </tr>
-        <tr *ngIf="!displayData.isNotEmpty()" class="w-100">
-          <th class="text-center">
-            <span class="text-muted">No Records Found</span>
+        <tr *ngIf="!displayData.isNotEmpty()">
+          <th class="text-center ">
+            <span class="text-muted ">No Records Found</span>
           </th>
         </tr>
       </thead>
@@ -59,13 +62,38 @@
                     [ngTemplateOutletContext]="{ record: item, column: key }"
                   >
                   </ng-container>
-                </ng-container>     
+                </ng-container>  
+                <ng-container *ngSwitchCase="'EQUIPMENTTYPE'">
+                  <span *ngIf="isEquipmentTypeEditable && item.id==selectedId">
+                     <input  type="text" class="form-control" [(ngModel)]="equipmentType" />
+                  </span>
+                  <span *ngIf="!isEquipmentTypeEditable || item.id != selectedId">
+                    {{ item[key.name] }}
+                  </span>
+                </ng-container>
                 <ng-container *ngSwitchDefault>
                   <span>
                     {{ item[key.name] }}
                   </span>
                 </ng-container>
               </ng-container>
+            </td>
+            <td *ngIf="isShowAction() ">
+                <a *ngIf="_gridSettings.showEquipmentTypeEdit  && item.id != selectedId "
+                class="action-icon action-edit-icon"
+                (click)="onEquipmentEdit.emit(item)"
+                > 
+                </a>
+                
+                <a *ngIf="_gridSettings.showEquipmentTypeSave  && item.id==selectedId "
+                class="action-icon action-save-icon"
+                (click)="onEquipmentSave.emit(equipmentType)">
+                </a>
+                <a *ngIf="_gridSettings.showEquipmentTypeDelete && !item['isBeingUsed']"
+                class="action-icon action-delete-icon"
+                (click)="onEquipmentDelete.emit(item.id)"
+                ></a>
+              
             </td>
           </tr>
         </ng-container>

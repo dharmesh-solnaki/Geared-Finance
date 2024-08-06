@@ -1,5 +1,6 @@
 ﻿using Entities.DTOs;
 using Entities.UtilityModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Service.Interface;
@@ -8,6 +9,7 @@ namespace Geared_Finance_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VendorController : ControllerBase
     {
         private readonly IVendorService _vendorService;

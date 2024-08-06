@@ -15,6 +15,9 @@
   color: black !important;
   font-weight: 700 !important;
 }
+.btn-primary:hover{
+  background-color: #ec9527 !important;
+}
 .btn-secondary {
   background: #34495e !important;
   color: #fff !important;
@@ -457,6 +460,72 @@ height: inherit;
   content: "X" !important;
   font-size: 1.5rem !important;
 }
+/* -------------common grid icons--------- */
+.action-icon{
+  background-color: transparent !important;
+  background-position: center !important;
+  display: inline-block;
+  padding:10px 20px;
+  background-repeat: no-repeat;
+}
+.action-edit-icon{
+background-image: url('../Images/ic-edit.svg') !important;
+}
+.action-edit-icon:hover{
+  background-image: url('../Images/ic-edit-orange.svg') !important;
+}
+.action-delete-icon{
+background-image: url('../Images/ic-delete.svg') !important;
+}
+.action-delete-icon:hover{
+background-image: url('../Images/ic-delete-orange.svg') !important;
+}
+.action-save-icon{
+background-image: url('../Images/ic-save.svg') !important;
+}
+.action-save-icon:hover{
+background-image: url('../Images/ic-save-orange.svg') !important;
+}
+
+/* ----------App-Login---------- */
+.login-wrapper{
+  background-image: url('../Images/bg-dots.svg');
+  width: 100%;
+  height:100%;
+  display: grid;
+  place-items: center;
+}
+.login-wrapper> .container-lg{
+  box-shadow: 0px 0px 20px 8px rgba(53, 73, 95, 0.5);
+}
+.login-greeting{
+  color: white;
+  padding: 4.5rem 3.125rem 2.875rem 3.125rem;
+  background-image: url('../Images/wood-bg.png'),url('../Images/wood-layer.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode:overlay;
+}
+.greeting-content{
+  position: relative;
+}
+#greeting-vdot-img{
+  position: absolute;
+  right: 1rem;
+}
+.login-content{
+  background-color: #35495f;
+  padding: 4.5rem 8rem 2.875rem 8rem;
+ color: white;
+}
+.form-control-invalid{
+  background-image: url('../Images/ic-invalid.svg');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 1%);
+  background-size:1.2rem ;
+}
+
+
 
 @media (min-width: 426px) and (max-width: 768px) {
   .appheader {
@@ -466,6 +535,12 @@ height: inherit;
   }
   .setting-title-items{
     padding-left:  0px;
+  }
+  .login-content{
+    padding: 4.5rem 3.125rem 2.875rem 3.125rem;
+  }
+  .forgot-password-content{
+    min-height: 100vh !important;
   }
 }
 @media (min-width: 426px) {
@@ -547,10 +622,14 @@ height: inherit;
   .setting-right-div {
    padding: 1rem ;
     max-width: 100%;
-
     height: 100%;
-
     border-left: none;
+  }
+  .login-content{
+    padding: 4.5rem 3.125rem 2.875rem 3.125rem;
+  }
+  .forgot-password-content{
+    min-height: 100vh !important;
   }
 }
 

@@ -29,18 +29,13 @@ namespace Geared_Finance_API
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-
             var response = new
             {
                 StatusCode = context.Response.StatusCode,
                 Message = Constants.INTERNAL_SERVER_ERR,
                 Detail = exception.Message
             };
-
             return context.Response.WriteAsJsonAsync(response);
         }
-
-
-
     }
 }
