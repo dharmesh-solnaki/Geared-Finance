@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Utilities;
 
 namespace Entities.DTOs
 {
@@ -10,9 +9,9 @@ namespace Entities.DTOs
         [EmailAddress]
         public string Email { get; set; } = null!;
     }
-    public class LoginDTO:BaseMail
+    public class LoginDTO : BaseMail
     {
-        
+
         [Required]
         [MinLength(8)]
         public string Password { get; set; } = null!;
@@ -20,14 +19,14 @@ namespace Entities.DTOs
         public bool IsRemember { get; set; } = false;
     }
 
-    public class OtpRequest:BaseMail
+    public class OtpRequest : BaseMail
     {
         [Required]
         [StringLength(6)]
         public string Otp { get; set; } = null!;
     }
 
-    public class PasswordUpdateReq :BaseMail
+    public class PasswordUpdateReq : BaseMail
     {
         [Required]
         [MinLength(8)]

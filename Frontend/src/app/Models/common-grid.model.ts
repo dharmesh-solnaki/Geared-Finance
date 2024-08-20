@@ -1,11 +1,11 @@
-import { RoleEnum } from '../Shared/constants';
-
 export interface IGridSettings {
   columns: GridColumn[];
   showPagination?: boolean;
-  showEquipmentTypeDelete?:boolean,
-  showEquipmentTypeSave?:boolean,
-  showEquipmentTypeEdit?:boolean
+  showEquipmentTypeDelete?: boolean;
+  showEquipmentTypeSave?: boolean;
+  showEquipmentTypeEdit?: boolean;
+  showRolePermissionEdit?: boolean;
+  isShowIndex?: boolean;
   pageSizeValues?: { pageNo: number; text: string }[];
 }
 
@@ -36,7 +36,7 @@ export class GridColumn {
 export enum ColumnType {
   STATUS = 'STATUS',
   LOGINSTATUS = 'LOGINSTATUS',
-  EQUIPMENTTYPE='EQUIPMENTTYPE'
+  EQUIPMENTTYPE = 'EQUIPMENTTYPE',
 }
 
 export enum SortOrder {

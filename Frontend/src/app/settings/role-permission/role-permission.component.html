@@ -1,0 +1,18 @@
+<div class="">
+  <div
+    class="inner-page-heading d-lg-flex justify-content-between mb-2 align-item-center"
+  >
+    <span class="inner-page-heading-title mb-2 text-uppercase"
+      >Role Management
+    </span>
+  </div>
+  <div class="mt-2">
+    <app-common-grid
+      [data]="roleList"
+      [gridSettings]="gridSetting"
+      (onSortEvent)="sortHandler($event)"
+      (onEditEvent)="onEditEventRecevier($event)"
+    >
+    </app-common-grid>
+  </div>
+</div>

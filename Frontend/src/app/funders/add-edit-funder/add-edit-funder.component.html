@@ -1,0 +1,459 @@
+<ng-template #funderHeaderTabs>
+  <div class="d-lg-flex justify-content-between">
+    <div class="d-flex justify-content-between">
+      <a
+        class="header-tab text-center"
+        [ngClass]="{ 'header-active-tab': activeTab === 'overview' }"
+        (click)="setActiveTab('overview', overViewTemplate)"
+      >
+        Overview
+      </a>
+      <a
+        class="header-tab text-center"
+        [ngClass]="{ 'header-active-tab': activeTab === 'funderProductGuide' }"
+        (click)="setActiveTab('funderProductGuide', funderProductTypeGuide)"
+      >
+        Funder Product Guide
+      </a>
+    </div>
+    <div class="d-flex gap-1 m-1">
+      <button class="btn btn-primary">
+        <img width="15px" src="../../../assets/Images/ic-trash-dark.svg" />
+      </button>
+      <button class="btn btn-primary">Set entity name</button>
+
+      <button class="btn btn-primary position-relative">
+        <img
+          src="../../../assets/Images/ic-diarynote.svg"
+          class="position-absolute d-none"
+          style="top: -21px; left: 10%"
+          width="25px"
+          alt=""
+        />
+
+        <img src="../../../assets/Images/ic-white-diarynote.svg" width="19px" />
+      </button>
+      <button
+        class="btn btn-primary position-relative"
+        style="width: 35px; overflow: hidden"
+      >
+        <img
+          src="../../../assets/Images/icon-save.svg"
+          class="position-absolute"
+          style="top: -22px; left: 10%"
+          width="27px"
+          alt=""
+        />
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<div *ngIf="activeTemplate" class="px-4 py-3">
+  <ng-container *ngTemplateOutlet="activeTemplate"></ng-container>
+</div>
+
+<ng-template #overViewTemplate>
+  <form [formGroup]="funderForm">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">
+          Name <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          maxlength="50"
+        />
+        <div
+          *ngIf="
+            funderForm.get('name')?.invalid && funderForm.get('name')?.touched
+          "
+          class="text-danger"
+        >
+          Name is required.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">
+          ABN <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="abn"
+          minlength="11"
+          maxlength="11"
+          appRemoveNondigits
+        />
+        <div
+          *ngIf="
+            funderForm.get('abn')?.hasError('required') &&
+            funderForm.get('abn')?.touched
+          "
+          class="text-danger"
+        >
+          ABN is required.
+        </div>
+        <div
+          *ngIf="
+            funderForm.get('abn')?.hasError('minlength') ||
+            funderForm.get('abn')?.hasError('maxlength')
+          "
+          class="text-danger"
+        >
+          ABN must be exactly 11 digits long.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">
+          Status <span class="text-danger">*</span>
+        </label>
+        <app-common-selectmenu
+          formControlName="status"
+          [optionData]="selectMenuStatus"
+          defaultOption="Active"
+          defaultValue="true"
+        ></app-common-selectmenu>
+        <div
+          *ngIf="
+            funderForm.get('status')?.invalid &&
+            funderForm.get('status')?.touched
+          "
+          class="text-danger"
+        >
+          Status is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Bank </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="bank"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">BSB </label>
+        <input
+          type="tel"
+          class="form-control"
+          formControlName="bsb"
+          minlength="6"
+          maxlength="6"
+          appRemoveNondigits
+        />
+        <div
+          *ngIf="
+            funderForm.get('bsb')?.hasError('minlength') ||
+            funderForm.get('bsb')?.hasError('maxlength')
+          "
+          class="text-danger"
+        >
+          BSB must be exactly 6 digits long.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Account </label>
+        <input
+          type="tel"
+          class="form-control"
+          formControlName="account"
+          maxlength="10"
+          appRemoveNondigits
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 mt-3">
+        <h3 class="pb-0 page-section-title text-uppercase">Address Details</h3>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Street address </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="streetAddress"
+          maxlength="150"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Suburb </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="suburb"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">State </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="state"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Postcode </label>
+        <input
+          type="tel"
+          class="form-control"
+          formControlName="postcode"
+          minlength="4"
+          maxlength="6"
+          appRemoveNondigits
+        />
+        <div
+          *ngIf="funderForm.get('postcode')?.hasError('minlength')"
+          class="text-danger"
+        >
+          Postcode must be at least 4 digits long.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Postal address </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="postalAddress"
+          maxlength="150"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Suburb </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="postalSuburb"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">State </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="postalState"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Postcode </label>
+        <input
+          type="tel"
+          class="form-control"
+          formControlName="postalPostcode"
+          minlength="4"
+          maxlength="6"
+          appRemoveNondigits
+        />
+        <div
+          *ngIf="funderForm.get('postalPostcode')?.hasError('minlength')"
+          class="text-danger"
+        >
+          Postal Postcode must be at least 4 digits long.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mt-3">
+      <h3 class="pb-0 page-section-title text-uppercase">Email Details</h3>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Credit/Application email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="creditAppEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('creditAppEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Settlements email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="settlementsEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('settlementsEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Admin email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="adminEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('adminEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Payouts email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="payoutsEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('payoutsEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Collection email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="collectionEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('collectionEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"> EOT email </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="eotEmail"
+          maxlength="100"
+        />
+        <div
+          *ngIf="funderForm.get('eotEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+    </div>
+    <div class="col-12 mt-3">
+      <h3 class="pb-0 page-section-title text-uppercase">Contact Details</h3>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >BDM name
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="bdmName"
+          maxlength="50"
+        />
+        <div
+          *ngIf="
+            funderForm.get('bdmName')?.invalid &&
+            funderForm.get('bdmName')?.touched
+          "
+          class="text-danger"
+        >
+          BDM Name is required.
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >BDM surname
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="bdmSurname"
+          maxlength="50"
+        />
+        <div
+          *ngIf="
+            funderForm.get('bdmSurname')?.invalid &&
+            funderForm.get('bdmSurname')?.touched
+          "
+          class="text-danger"
+        >
+          BDM Surname is required.
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"
+          >BDM email
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="bdmEmail"
+          maxlength="50"
+        />
+        <div
+          *ngIf="
+            funderForm.get('bdmEmail')?.invalid &&
+            funderForm.get('bdmEmail')?.touched
+          "
+          class="text-danger"
+        >
+          BDM email is required.
+        </div>
+        <div
+          *ngIf="funderForm.get('bdmEmail')?.hasError('pattern')"
+          class="text-danger"
+        >
+          Invalid email format.
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">BDM phone </label>
+        <input type="tel" appPhoneMasking class="form-control" maxlength="12" />
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #funderProductTypeGuide> sdf </ng-template>

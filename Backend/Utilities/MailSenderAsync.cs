@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Utilities
 {
-    public class MailSenderAsync
+    public static class MailSenderAsync
     {
-        public Task SendMailAsync(string mailTo, string subject,string body)
+        public static Task SendMailAsync(string mailTo, string subject, string body)
         {
-            var mailMessage = new MailMessage();    
-            mailMessage.From = new MailAddress("gearedfinance@util.com");
+            var mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress("gearedfinance@service.com");
             mailMessage.To.Add(new MailAddress(mailTo));
             mailMessage.Subject = subject;
             mailMessage.Body = body;
@@ -23,14 +17,14 @@ namespace Utilities
             using (var smtpClient = new SmtpClient())
             {
                 smtpClient.Host = "mail.etatvasoft.com";
-                smtpClient.Port =587;
+                smtpClient.Port = 587;
                 smtpClient.UseDefaultCredentials = true;
                 smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new NetworkCredential("aksh.patel@etatvasoft.com", "s4l5eejl}j@V");
+                smtpClient.Credentials = new NetworkCredential("dharmesh.solanki@tatvasoft.com", "github@025");
                 smtpClient.Send(mailMessage);
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             }
-                return Task.CompletedTask; 
+            return Task.CompletedTask;
         }
     }
 }

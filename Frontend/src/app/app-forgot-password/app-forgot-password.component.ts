@@ -1,24 +1,21 @@
 import { Component } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { alertResponses, validationRegexes } from '../Shared/constants';
 import { AuthService } from '../Service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { matchPasswords } from '../Shared/validators/password-match.validator';
 
 @Component({
-  selector: 'app-forgot-passwword',
-  templateUrl: './app-forgot-passwword.component.html',
+  selector: 'app-forgot-password',
+  templateUrl: './app-forgot-password.component.html',
 })
 export class AppForgotPasswwordComponent {
   isShowOtp: boolean = false;
   isShowPass: boolean = false;
   userMail: string = '';
   forgotPassForm: FormGroup;
+  isFormSubmitted: boolean = false;
   constructor(
     private fb: FormBuilder,
     private _authService: AuthService,
@@ -56,8 +53,9 @@ export class AppForgotPasswwordComponent {
     );
     this.forgotPassForm.addControl(
       'confirmPass',
-      this.fb.control('', [Validators.required, this.matchValues('newPass')])
+      this.fb.control('', [Validators.required])
     );
+    this.forgotPassForm.setValidators(matchPasswords('newPass', 'confirmPass'));
   }
 
   removeControls(controls: string[]) {
@@ -65,8 +63,8 @@ export class AppForgotPasswwordComponent {
   }
 
   onFormSubmit() {
+    this.isFormSubmitted = true;
     if (this.forgotPassForm.invalid) {
-      this.forgotPassForm.markAllAsTouched();
       return;
     }
     if (this.isShowOtp) {
@@ -129,15 +127,6 @@ export class AppForgotPasswwordComponent {
     this.forgotPassForm.reset();
   }
 
-  matchValues(
-    matchTo: string
-  ): (AbstractControl: any) => { [key: string]: boolean } | null {
-    return (control: AbstractControl) => {
-      return control?.value === this.forgotPassForm.controls[matchTo].value
-        ? null
-        : { isMatching: false };
-    };
-  }
   OtpBackBtnClick() {
     this.userMail = '';
     this.isShowOtp = false;

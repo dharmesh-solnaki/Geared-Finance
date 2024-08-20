@@ -18,6 +18,12 @@ namespace Service.Implementation
         {
             await _repo.AddAsync(item);
         }
+
+        public async Task AddRangeAsync(IEnumerable<T> items)
+        {
+            await _repo.AddRangeAsync(items);
+        }
+
         public async Task Delete(T item)
         {
             await _repo.Delete(item);
@@ -32,11 +38,6 @@ namespace Service.Implementation
         {
             return await _repo.GetByIdAsync(id);
         }
-
-        //public async Task<IEnumerable<U>> GetOtheEntityListAsync<U>(BaseSearchEntity<U>? searchEntity) where U : class
-        //{
-        //    return await _repo.GetOthers<U>(searchEntity);
-        //}
 
         public async Task<U> GetOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class
         {
@@ -57,6 +58,11 @@ namespace Service.Implementation
         public async Task UpdateAsync(T item)
         {
             await _repo.UpdateAsync(item);
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> items)
+        {
+            await _repo.UpdateRangeAsync(items);
         }
     }
 }

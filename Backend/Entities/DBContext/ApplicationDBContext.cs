@@ -20,6 +20,10 @@ public partial class ApplicationDBContext : DbContext
 
     public virtual DbSet<ManagerLevel> ManagerLevels { get; set; }
 
+    public virtual DbSet<Module> Modules { get; set; }
+
+    public virtual DbSet<Right> Rights { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -55,6 +59,28 @@ public partial class ApplicationDBContext : DbContext
             entity.HasOne(d => d.Vendor).WithMany(p => p.ManagerLevels).HasConstraintName("FK_ManagerLevels_Vendors_ManagerId");
         });
 
+        modelBuilder.Entity<Module>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Module_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<Right>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Rights_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Module).WithMany(p => p.Rights)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Module_Rights");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Rights)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Role_Rights");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.IsCalcRateEditor).HasDefaultValueSql("true");
@@ -68,6 +94,8 @@ public partial class ApplicationDBContext : DbContext
             entity.Property(e => e.UnassignedApplications).HasDefaultValueSql("true");
 
             entity.HasOne(d => d.Manager).WithMany(p => p.Users).HasConstraintName("FK_Users_ManagerLevels_MangerId");
+
+            entity.HasOne(d => d.RelationshipManagerNavigation).WithMany(p => p.InverseRelationshipManagerNavigation).HasConstraintName("FK_User_UserId");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)

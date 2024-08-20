@@ -1,7 +1,15 @@
-<app-header *ngIf="!isForgotPassStatus && getLoginStatus" (isNavOpned)="viewHandler($event)"></app-header>
+<app-header
+  *ngIf="!isForgotPassStatus && getLoginStatus"
+  (isNavOpned)="viewHandler($event)"
+></app-header>
 <app-login *ngIf="!getLoginStatus && !isForgotPassStatus"></app-login>
-<app-forgot-passwword *ngIf="isForgotPassStatus && !getLoginStatus"></app-forgot-passwword>
-<div *ngIf="!isForgotPassStatus && getLoginStatus " [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'">
+<app-forgot-password
+  *ngIf="isForgotPassStatus && !getLoginStatus"
+></app-forgot-password>
+<div
+  *ngIf="!isForgotPassStatus && getLoginStatus"
+  [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'"
+>
   <div class="card">
     <router-outlet></router-outlet>
   </div>

@@ -14,7 +14,6 @@ import {
 } from '../../Models/common-grid.model';
 import { selectMenu } from '../constants';
 import { CommonSelectmenuComponent } from '../common-selectmenu/common-selectmenu.component';
-import { outputAst } from '@angular/compiler';
 
 @Component({
   selector: 'app-common-grid',
@@ -27,7 +26,7 @@ export class CommonGridComponent {
   public showPagination: boolean = true;
   public pageSize!: number;
   public displayData: any = [];
-  public pageSizeOptions: selectMenu[] = [];
+  public pageSizeOptions: selectMenu[] = [{ option: '10 per page', value: 10 }];
   pageNumbers: number[] = [];
   defaultSettings: IGridSettings = {
     columns: [],
@@ -48,13 +47,14 @@ export class CommonGridComponent {
 
   constructor() {
     this._gridSettings = this.defaultSettings;
+    this.paginationSetting = this.defaultPaginationSetting;
   }
 
   @Input() data: any[] = [];
   @Input() isEditable: boolean = false;
-  @Input() isEquipmentTypeEditable:boolean=false
-  @Input() selectedId:number=0
-  @Input() equipmentType:string=''
+  @Input() isEquipmentTypeEditable: boolean = false;
+  @Input() selectedId: number = 0;
+  @Input() equipmentType: string = '';
   @Input() public set gridSettings(value: IGridSettings) {
     this._gridSettings = value || this.defaultSettings;
     this.showPagination = this._gridSettings.showPagination || false;
@@ -72,15 +72,15 @@ export class CommonGridComponent {
   @Output() onPageChange = new EventEmitter<number>();
   @Output() onpageSizeChange = new EventEmitter<number>();
   @Output() onEquipmentEdit = new EventEmitter();
-  @Output() onEquipmentSave =new EventEmitter<string>();
-  @Output() onEquipmentDelete=new EventEmitter<number>()
+  @Output() onEquipmentSave = new EventEmitter<string>();
+  @Output() onEquipmentDelete = new EventEmitter<number>();
   ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] || changes['paginationSettings']) {
-      this.updateDisplayedData(); // this.updatePageNumbers();
+      this.updateDisplayedData();
     }
   }
 
@@ -180,7 +180,8 @@ export class CommonGridComponent {
     return (
       this._gridSettings.showEquipmentTypeDelete ||
       this._gridSettings.showEquipmentTypeEdit ||
-      this._gridSettings.showEquipmentTypeSave
+      this._gridSettings.showEquipmentTypeSave ||
+      this._gridSettings.showRolePermissionEdit
     );
   }
 }

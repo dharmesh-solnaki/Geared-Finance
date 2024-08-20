@@ -63,11 +63,18 @@ public partial class User
     public int? ManagerId { get; set; }
 
     [StringLength(6)]
-    public string? Otp {  get; set; }
+    public string? Otp { get; set; }
+
+    [InverseProperty("RelationshipManagerNavigation")]
+    public virtual ICollection<User> InverseRelationshipManagerNavigation { get; set; } = new List<User>();
 
     [ForeignKey("ManagerId")]
     [InverseProperty("Users")]
     public virtual ManagerLevel? Manager { get; set; }
+
+    [ForeignKey("RelationshipManager")]
+    [InverseProperty("InverseRelationshipManagerNavigation")]
+    public virtual User? RelationshipManagerNavigation { get; set; }
 
     [ForeignKey("RoleId")]
     [InverseProperty("Users")]

@@ -1,5 +1,6 @@
 ﻿using Entities.DBContext;
 using Entities.Models;
+using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 
@@ -15,6 +16,7 @@ namespace Repository.Implementation
             _dbContext = context;
 
         }
+
 
         public async Task UpdateUserAsync(User user)
         {

@@ -3,49 +3,49 @@
     <table class="table">
       <thead class="">
         <tr class="grid-header">
-          <th
-            *ngFor="let key of _gridSettings.columns"
-            class="text-uppercase"
-            (click)="sort(key.name, key.sort)"
-            [ngClass]="{'sortPointer': key.sort}"
-          >
-            {{ key.title }}
-            <span *ngIf="key.sort">
-              <i
-                name="sort-up"
-                class="fa fa-sort-asc"
-                aria-hidden="true"
-                *ngIf="sortOrder == 'ASC' && previousSort == key.name"
-              ></i>
-              <i
-                name="sort-down"
-                class="fa fa-sort-desc"
-                aria-hidden="true"
-                *ngIf="sortOrder == 'DESC' && previousSort == key.name"
-              ></i>
-              <i
-                name="sort"
-                class="fa fa-sort"
-                aria-hidden="true"
-                *ngIf="previousSort != key.name"
-              ></i>
-            </span>
-          </th>
-          <th class="text-uppercase" *ngIf="isShowAction()">
-            Actions
-          </th>
+          <th *ngIf="_gridSettings.isShowIndex">#</th>
+          <ng-container *ngFor="let key of _gridSettings.columns">
+            <th
+              class="text-uppercase"
+              (click)="sort(key.name, key.sort)"
+              [ngClass]="{ sortPointer: key.sort }"
+            >
+              {{ key.title }}
+              <span *ngIf="key.sort">
+                <i
+                  name="sort-up"
+                  class="fa fa-sort-asc"
+                  aria-hidden="true"
+                  *ngIf="sortOrder == 'ASC' && previousSort == key.name"
+                ></i>
+                <i
+                  name="sort-down"
+                  class="fa fa-sort-desc"
+                  aria-hidden="true"
+                  *ngIf="sortOrder == 'DESC' && previousSort == key.name"
+                ></i>
+                <i
+                  name="sort"
+                  class="fa fa-sort"
+                  aria-hidden="true"
+                  *ngIf="previousSort != key.name"
+                ></i>
+              </span>
+            </th>
+          </ng-container>
+
+          <th class="text-uppercase" *ngIf="isShowAction()">Actions</th>
         </tr>
         <tr *ngIf="!displayData.isNotEmpty()">
-          <th class="text-center ">
-            <span class="text-muted ">No Records Found</span>
+          <th class="text-center">
+            <span class="text-muted">No Records Found</span>
           </th>
         </tr>
       </thead>
       <tbody class="grid-body" *ngIf="displayData.isNotEmpty()">
-        <ng-container *ngFor="let item of displayData">
-          <tr class="grid-row"
-          (click)="onSetEdit(item.id)"
-          >
+        <ng-container *ngFor="let item of displayData; let index = index">
+          <tr class="grid-row" (click)="onSetEdit(item.id)">
+            <td *ngIf="_gridSettings.isShowIndex">{{ index + 1 }}</td>
             <td *ngFor="let key of _gridSettings.columns">
               <ng-container [ngSwitch]="key.type">
                 <ng-container *ngSwitchCase="'STATUS'">
@@ -53,8 +53,7 @@
                     [ngTemplateOutlet]="statusTemplate"
                     [ngTemplateOutletContext]="{ record: item, column: key }"
                   >
-                  </ng-container>              
-                  
+                  </ng-container>
                 </ng-container>
                 <ng-container *ngSwitchCase="'LOGINSTATUS'">
                   <ng-container
@@ -62,12 +61,20 @@
                     [ngTemplateOutletContext]="{ record: item, column: key }"
                   >
                   </ng-container>
-                </ng-container>  
+                </ng-container>
                 <ng-container *ngSwitchCase="'EQUIPMENTTYPE'">
-                  <span *ngIf="isEquipmentTypeEditable && item.id==selectedId">
-                     <input  type="text" class="form-control" [(ngModel)]="equipmentType" />
+                  <span
+                    *ngIf="isEquipmentTypeEditable && item.id == selectedId"
+                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="equipmentType"
+                    />
                   </span>
-                  <span *ngIf="!isEquipmentTypeEditable || item.id != selectedId">
+                  <span
+                    *ngIf="!isEquipmentTypeEditable || item.id != selectedId"
+                  >
                     {{ item[key.name] }}
                   </span>
                 </ng-container>
@@ -78,30 +85,48 @@
                 </ng-container>
               </ng-container>
             </td>
-            <td *ngIf="isShowAction() ">
-                <a *ngIf="_gridSettings.showEquipmentTypeEdit  && item.id != selectedId "
+            <td *ngIf="isShowAction()">
+              <a
+                *ngIf="
+                  _gridSettings.showEquipmentTypeEdit && item.id != selectedId
+                "
                 class="action-icon action-edit-icon"
                 (click)="onEquipmentEdit.emit(item)"
-                > 
-                </a>
-                
-                <a *ngIf="_gridSettings.showEquipmentTypeSave  && item.id==selectedId "
+              >
+              </a>
+
+              <a
+                *ngIf="
+                  _gridSettings.showEquipmentTypeSave && item.id == selectedId
+                "
                 class="action-icon action-save-icon"
-                (click)="onEquipmentSave.emit(equipmentType)">
-                </a>
-                <a *ngIf="_gridSettings.showEquipmentTypeDelete && !item['isBeingUsed']"
+                (click)="onEquipmentSave.emit(equipmentType)"
+              >
+              </a>
+              <a
+                *ngIf="
+                  _gridSettings.showEquipmentTypeDelete && !item['isBeingUsed']
+                "
                 class="action-icon action-delete-icon"
                 (click)="onEquipmentDelete.emit(item.id)"
-                ></a>
-              
+              ></a>
+              <a
+                *ngIf="
+                  this._gridSettings.showRolePermissionEdit &&
+                  item['hasEditRights']
+                "
+                class="action-icon action-edit-icon"
+                (click)="this.onEditEvent.emit(item.id)"
+              >
+              </a>
             </td>
           </tr>
         </ng-container>
       </tbody>
     </table>
   </div>
-  <div class="grid-footer">
-    <ul class="pagination m-0 " >
+  <div class="grid-footer" *ngIf="this.showPagination">
+    <ul class="pagination m-0">
       <li
         class="page-item"
         [ngClass]="paginationSetting.currentPage <= 1 ? 'disabled' : ''"
@@ -109,11 +134,15 @@
         <button class="page-link" (click)="goToPreviousPage()"><</button>
       </li>
 
-      <ng-container *ngIf="pageNumbers.length > 5 else PaginationwithLessNumber"  >
+      <ng-container
+        *ngIf="pageNumbers.length > 5; else PaginationwithLessNumber"
+      >
         <li class="page-item" *ngFor="let page of pageNumbers; let i = index">
           <button
             class="page-link"
-            [ngClass]="paginationSetting.currentPage === page ? 'page-active' : ''"
+            [ngClass]="
+              paginationSetting.currentPage === page ? 'page-active' : ''
+            "
             (click)="goToPage(page)"
             *ngIf="i < 5"
           >
@@ -123,35 +152,43 @@
         <li>
           <button class="page-link" disabled>...</button>
         </li>
-         <li>
-            <button  class="page-link"
-            [ngClass]="paginationSetting.currentPage === pageNumbers[pageNumbers.length-1] ? 'page-active' : ''"
-            (click)="goToPage(pageNumbers[pageNumbers.length-1])">
-            {{ pageNumbers[pageNumbers.length-1] }}
-        </button>
-         </li>
+        <li>
+          <button
+            class="page-link"
+            [ngClass]="
+              paginationSetting.currentPage ===
+              pageNumbers[pageNumbers.length - 1]
+                ? 'page-active'
+                : ''
+            "
+            (click)="goToPage(pageNumbers[pageNumbers.length - 1])"
+          >
+            {{ pageNumbers[pageNumbers.length - 1] }}
+          </button>
+        </li>
       </ng-container>
-      
+
       <ng-template #PaginationwithLessNumber>
         <li class="page-item" *ngFor="let page of pageNumbers">
-            <button
-              class="page-link"
-              [ngClass]="paginationSetting.currentPage === page ? 'page-active' : ''"
-              (click)="goToPage(page)"
-            >
-              {{ page }}
-            </button>
-          </li>
-
+          <button
+            class="page-link"
+            [ngClass]="
+              paginationSetting.currentPage === page ? 'page-active' : ''
+            "
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        </li>
       </ng-template>
-      
-  
+
       <li class="page-item" [ngClass]="isLastPage() ? 'disabled' : ''">
         <button class="page-link" (click)="goToNextPage()">></button>
       </li>
     </ul>
 
     <app-common-selectmenu
+      *ngIf="this.showPagination"
       #pageSizerChild
       [optionData]="pageSizeOptions"
       [defaultOption]="pageSizeOptions[0].option"
@@ -170,7 +207,3 @@
   <span *ngIf="record[column.name] == 1" class="status-active">Active</span>
   <span *ngIf="record[column.name] == 0" class="status-inactive">Inactive</span>
 </ng-template>
-
-
-
-

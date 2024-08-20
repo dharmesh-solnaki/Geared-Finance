@@ -48,6 +48,7 @@ namespace Geared_Finance_API
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IVendorRepo, VendorRepo>();
             services.AddScoped<IEquipmentRepo, EquipmentRepo>();
+            services.AddScoped<IRolePermisionRepo, RolePermisionRepo>();
 
         }
 
@@ -58,6 +59,7 @@ namespace Geared_Finance_API
             services.AddTransient<IVendorService, VendorService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddScoped<IRolePermisionService, RolePermisionService>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)
@@ -71,7 +73,7 @@ namespace Geared_Finance_API
     {
         Description = "Bearer yourToken",
         Name = "Authentication",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer"
     });
@@ -92,7 +94,7 @@ namespace Geared_Finance_API
             new List<String> ()
         }
     });
-    }
+}
               );
         }
 

@@ -13,7 +13,7 @@
 .btn-primary {
   background-color: #ffa737 !important;
   color: black !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 .btn-primary:hover{
   background-color: #ec9527 !important;
@@ -127,6 +127,20 @@ button:disabled {
   height: 4.8rem;
   width: 3.75rem;
   background-color: black;
+}
+.afterLogoDiv{
+  position:fixed ;
+  margin-left: 14rem !important;
+  height: 4.8rem;
+  width: 3.75rem;
+  background-color: transparent;
+}
+.afterLogoDivShrinked{
+  position:fixed ;
+  margin-left: 5rem !important;
+  height: 4.8rem;
+  width: 3.75rem;
+  background-color: transparent;
 }
 #siteicon {
   /* width: rem; */
@@ -524,14 +538,73 @@ background-image: url('../Images/ic-save-orange.svg') !important;
   background-position: calc(100% - 1%);
   background-size:1.2rem ;
 }
+.custom-checkbox-container{
+  display: inline-block;
+  position: relative;
+  width: 1.06rem;
+  height: 1rem;
 
+}
 
+.input-checkbox{
+  position: absolute;
+  opacity: 0;
+  height: inherit;
+  width: inherit;
+}
+
+.custom-checkbox{
+  width: inherit;
+ height:inherit;
+  background-color: #eef4f7;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  display: grid;
+}
+.input-checkbox:checked + .custom-checkbox::after {
+  background-image: url('../Images/ic-check.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.6rem;
+}
+.custom-checkbox::after{
+  content: "";
+  display: none;
+}
+.input-checkbox:checked + .custom-checkbox::after {
+  display: block;
+}
+
+.headerDivSection{
+  position:fixed ;
+  margin-top: 2rem !important;
+  width: calc(100% - 15rem);
+}
+.headerDivSectionShrinked{
+  margin-left: 5rem !important;
+  width: calc(100% - 6rem) !important;
+}
+.headerDivSectionNotShrinked{
+  margin-left: 14rem !important;
+  width: calc(100% - 15rem) !important;
+}
+.header-tab {
+  padding: 7px;
+  text-decoration: none;
+  color: #000;
+  border-bottom: 2px solid transparent;
+  font-weight: bold;
+}
+.header-active-tab{
+   border: 1px solid black;
+   border-radius:10px;
+}
 
 @media (min-width: 426px) and (max-width: 768px) {
   .appheader {
     width: 100%;
     /* top: 0; */
-    background-color: rgb(211, 170, 95);
+    background-color: rgb(240, 42, 42);
   }
   .setting-title-items{
     padding-left:  0px;

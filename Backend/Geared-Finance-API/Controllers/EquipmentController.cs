@@ -1,5 +1,6 @@
 ﻿using Entities.DTOs;
 using Entities.UtilityModels;
+using Geared_Finance_API.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
@@ -9,7 +10,7 @@ namespace Geared_Finance_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+        
     public class EquipmentController : ControllerBase
     {
         private readonly IEquipmentService _equipmentService;
@@ -20,7 +21,7 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpGet("GetAllCategories")]
-
+        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_VIEW)]
         public async Task<IActionResult> GetAll()
         {
             IEnumerable<FundingCategoryDTO> categories = await _equipmentService.GetEquipmentCategoriesAsync();
@@ -32,6 +33,7 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpPost("GetEquipments")]
+        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_VIEW)]
         public async Task<IActionResult> GetAllEquipmentType(BaseModelSearchEntity searchModal)
         {
             BaseRepsonseDTO<EquipmentRepsonseDTO> responseDTO = await _equipmentService.GetAllEquipmentType(searchModal);
@@ -43,6 +45,7 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpPost]
+        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_UPSERT, "Id")]
         public async Task<IActionResult> Upsert(EquipmentTypeDTO model)
         {
             if (!ModelState.IsValid)
@@ -53,6 +56,7 @@ namespace Geared_Finance_API.Controllers
             return Ok();
         }
         [HttpDelete]
+        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_DELETE)]
         public async Task<IActionResult> Delete([FromQuery] int id)
         {
             if (id <= 0) return BadRequest();

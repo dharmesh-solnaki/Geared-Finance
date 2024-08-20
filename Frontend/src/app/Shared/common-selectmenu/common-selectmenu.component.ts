@@ -13,7 +13,6 @@ import {
 import { selectMenu } from '../constants';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-
 @Component({
   selector: 'app-common-selectmenu',
   templateUrl: './common-selectmenu.component.html',
@@ -28,11 +27,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   @Input() optionData: selectMenu[] = [];
   @Input() defaultOption: string = '';
-  @Input() defaultValue: string | number = '';
+  @Input() defaultValue: string | number | boolean = '';
   @Input() needsSearching: boolean = false;
-  @Output() valueChangeEmitter = new EventEmitter<number | string>();
-  @ViewChild('searchFromSelectList') searchFromSelectList!:ElementRef
-  selectedValue: string | number = '';
+  @Output() valueChangeEmitter = new EventEmitter();
+  @ViewChild('searchFromSelectList') searchFromSelectList!: ElementRef;
+  selectedValue: string | number | boolean = '';
   selectedOption: string | number = '';
   isMenuOpen: boolean = false;
   @Input() workingOptionData: selectMenu[] = [];
@@ -43,7 +42,6 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   onTouched: any = () => {};
 
   writeValue(value: any): void {
-
     if (value) {
       this.selectedValue = value;
       const selectedOption = this.optionData.find(
@@ -51,7 +49,6 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
       );
       if (selectedOption) {
         this.selectedOption = selectedOption.option;
-  
       }
     }
   }
@@ -65,26 +62,25 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   updateTheOptionData(newData: selectMenu[]) {
     this.optionData = newData;
     this.workingOptionData = this.optionData;
-
   }
 
-  ngOnChanges(changes: SimpleChanges): void { 
+  ngOnChanges(changes: SimpleChanges): void {
     // this.resetElement()
-   const currentValue = changes['optionData']?.currentValue;
+    const currentValue = changes['optionData']?.currentValue;
 
-  if (
-    currentValue == null ||
-    (typeof currentValue === 'string' && currentValue.trim() === '') ||
-    (Array.isArray(currentValue) && currentValue.length === 0) ||
-    Object.keys(currentValue).length===0
-  ) {
-    this.resetElement()
-    this.optionData = [{ option: 'No data', value: 0 }];
-  } else {    
-    this.optionData = currentValue;
-  }
-  // this.optionData = changes['optionData'].currentValue
-  this.workingOptionData = this.optionData;  
+    if (
+      currentValue == null ||
+      (typeof currentValue === 'string' && currentValue.trim() === '') ||
+      (Array.isArray(currentValue) && currentValue.length === 0) ||
+      Object.keys(currentValue).length === 0
+    ) {
+      this.resetElement();
+      this.optionData = [{ option: 'No data', value: 0 }];
+    } else {
+      this.optionData = currentValue;
+    }
+    // this.optionData = changes['optionData'].currentValue
+    this.workingOptionData = this.optionData;
   }
   ngOnInit(): void {
     this.selectedValue = this.defaultValue;
@@ -109,11 +105,14 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
     this.selectedValue = this.defaultValue;
     this.selectedOption = this.defaultOption;
     this.isMenuOpen = false;
-    if(this.needsSearching){
-     if( this.searchFromSelectList && this.searchFromSelectList.nativeElement){
-      this.searchFromSelectList.nativeElement.value=''
-    } 
-   }
+    if (this.needsSearching) {
+      if (
+        this.searchFromSelectList &&
+        this.searchFromSelectList.nativeElement
+      ) {
+        this.searchFromSelectList.nativeElement.value = '';
+      }
+    }
   }
 
   menuToggler() {
@@ -129,8 +128,7 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
       );
     }
   }
-  setDefaults(item: selectMenu){
-    console.log(item,'fromsad')
+  setDefaults(item: selectMenu) {
     this.selectedValue = item.value;
     this.selectedOption = item.option;
     this.isMenuOpen = false;

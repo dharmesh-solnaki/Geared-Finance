@@ -14,9 +14,9 @@ namespace Utilities
 
         private static readonly char[] Numbers = "0123456789".ToCharArray();
         private static readonly char[] Letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
-        public static string GenerateOtp(int length,bool isOnlyNumbers)
+        public static string GenerateOtp(int length, bool isOnlyNumbers)
         {
-            char[] charSet = isOnlyNumbers? Numbers:Letters;
+            char[] charSet = isOnlyNumbers ? Numbers : Letters;
             byte[] randomNumber = new byte[length];
             char[] otp = new char[length];
 
@@ -25,8 +25,9 @@ namespace Utilities
                 rng.GetBytes(randomNumber);
             }
 
-            for (int i = 0; i < length; i++) {
-                otp[i]=charSet[ randomNumber[i] % charSet.Length ];
+            for (int i = 0; i < length; i++)
+            {
+                otp[i] = charSet[randomNumber[i] % charSet.Length];
             }
             return new string(otp);
         }

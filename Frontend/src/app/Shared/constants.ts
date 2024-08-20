@@ -1,23 +1,20 @@
 export interface selectMenu {
   option: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export const menuBarItems = [
   {
     menuItem: 'Dashboard',
     imagePath: '../../assets/Images/icon-home.svg',
-    routerPath: '/dashboard',
   },
   {
     menuItem: 'Applications',
     imagePath: '../../assets/Images/icon-applications.svg',
-    routerPath: '/applications',
   },
   {
     menuItem: 'Clients',
     imagePath: '../../assets/Images/icon-clients.svg',
-    routerPath: '/clients',
   },
   {
     menuItem: 'Funders',
@@ -27,7 +24,6 @@ export const menuBarItems = [
   {
     menuItem: 'Vendors',
     imagePath: '../../assets/Images/icon-vendors.svg',
-    routerPath: '/vendors',
   },
   {
     menuItem: 'Settings',
@@ -36,22 +32,22 @@ export const menuBarItems = [
   },
 ];
 
-export interface SettingMenuType{
- menuItem:string,
- routerPath?:string
+export interface SettingMenuType {
+  menuItem: string;
+  routerPath?: string;
 }
 
-export const settingSystemProperties:SettingMenuType[] = [
-  { menuItem: 'Role Permission', },
+export const settingSystemProperties: SettingMenuType[] = [
+  { menuItem: 'Role Permission', routerPath: 'role' },
   { menuItem: 'Funding categories', routerPath: 'equipmentType' },
-  { menuItem: 'Vendor industries',},
-  { menuItem: 'Geared doc fee ',  },
-  { menuItem: 'Vendor rate charts',  },
-  { menuItem: 'Clients in arrears',  },
-  { menuItem: 'Delete a deal', },
-  { menuItem: 'Configuration', },
-  { menuItem: 'Privacy funder list', },
-  { menuItem: 'Website Calculator', },
+  { menuItem: 'Vendor industries' },
+  { menuItem: 'Geared doc fee ' },
+  { menuItem: 'Vendor rate charts' },
+  { menuItem: 'Clients in arrears' },
+  { menuItem: 'Delete a deal' },
+  { menuItem: 'Configuration' },
+  { menuItem: 'Privacy funder list' },
+  { menuItem: 'Website Calculator' },
 ];
 
 export const settingsSalesAndMarketing = [
@@ -69,6 +65,15 @@ export enum RoleEnum {
   VendorManager = 'Vendor Manager',
   VendorSalesRep = 'Vendor Sales Rep',
 }
+
+export const SiteRolesId = {
+  GearedAdmin: 1,
+  GearedSalesRep: 2,
+  GearedSuperAdmin: 3,
+  VendorGuestUser: 4,
+  VendorManager: 5,
+  VendorSalesRep: 6,
+};
 export enum MonthEnum {
   Jan = 1,
   Feb = 2,
@@ -83,7 +88,6 @@ export enum MonthEnum {
   Nov = 11,
   Dec = 12,
 }
-
 
 export const roleSelectionMenu = [
   { option: RoleEnum.GearedAdmin, value: RoleEnum.GearedAdmin },
@@ -110,7 +114,6 @@ export const roleSelectionMenu = [
 ];
 
 export const dateSelectonMenu = (days: number) => {
-
   let dateArray = [];
   for (let i = 1; i <= days; i++) {
     dateArray.push({ option: i.toString(), value: i });
@@ -119,7 +122,6 @@ export const dateSelectonMenu = (days: number) => {
   return dateArray;
 };
 export const monthSelectonMenu = (month: number): selectMenu[] => {
-  
   let monthArray: selectMenu[] = [];
   if (month == -1) {
     Object.keys(MonthEnum).forEach((key) => {
@@ -132,7 +134,7 @@ export const monthSelectonMenu = (month: number): selectMenu[] => {
     return monthArray;
   }
 
-  let monthDays:number;
+  let monthDays: number;
   switch (month) {
     case MonthEnum.Feb:
       monthDays = isLeapYear(new Date().getFullYear()) ? 29 : 28;
@@ -141,7 +143,8 @@ export const monthSelectonMenu = (month: number): selectMenu[] => {
     case MonthEnum.Jun:
     case MonthEnum.Sep:
     case MonthEnum.Nov:
-      monthDays = 30; break;
+      monthDays = 30;
+      break;
     default:
       monthDays = 31;
   }
@@ -184,36 +187,39 @@ export const recordsPerPage = [
   { option: '100 Per Page', value: 100 },
 ];
 
-export const alertResponses={
-  DELETION_CONFIRMATION:'Are you sure you want to delete this record?',
-  ADD_RECORD:'Record added successfully',
-  UPDATE_RECORD:'Record updated successfully',
-  DELETE_RECORD:'Record deleted successfully',
-  ERROR:'Something went wrong',
-  ON_LOGIN_SUCCESS:"Logged in successfully",
-  ON_LOGIN_ERROR:"Please provide valid credentials",
-  ON_OTP_SUCCESS:"Otp sent successfully",
-  ON_OTP_INVALID:"Invalid Otp!",
-  ON_EMAIL_NOT_EXIST:"Given username not exists",
-  ON_PASSWORD_CHANGE_SUCCESS:"Password updated successfully",
-}
+export const alertResponses = {
+  DELETION_CONFIRMATION: 'Are you sure you want to delete this record?',
+  ADD_RECORD: 'Record added successfully',
+  UPDATE_RECORD: 'Record updated successfully',
+  DELETE_RECORD: 'Record deleted successfully',
+  ERROR: 'Something went wrong',
+  ON_LOGIN_ERROR: 'Please provide valid credentials',
+  ON_OTP_SUCCESS: 'Otp sent successfully',
+  ON_OTP_INVALID: 'Invalid Otp!',
+  ON_EMAIL_NOT_EXIST: 'Given username not exists',
+  ON_PASSWORD_CHANGE_SUCCESS: 'Password updated successfully',
+};
 
-export const errorResponses={
-  CLIEENTSIDE_ERROR:'Client-side error',
-  BAD_REQUEST:'Bad Request',
-  FORBIDDEN:'Forbidden',
-  UNAUTHORIZED:'Forbidden',
-  NOT_FOUND:'Not Found',
-  INTERNAL_SERVER_ERROR:'Internal Server Error',
-  CONFLICT_ERROR:'Request can\'t be fulfilled ',
-  UNKNOWN_ERROR:'Unknown Error'
-}
+export const errorResponses = {
+  CLIEENTSIDE_ERROR: 'Client-side error',
+  BAD_REQUEST: 'Bad Request',
+  FORBIDDEN: 'Forbidden',
+  UNAUTHORIZED: 'Forbidden',
+  NOT_FOUND: 'Not Found',
+  INTERNAL_SERVER_ERROR: 'Internal Server Error',
+  CONFLICT_ERROR: "Request can't be fulfilled ",
+  UNKNOWN_ERROR: 'Unknown Error',
+};
 
-export const modalTitles={
- ADDEQUIPMENTTYPE:'ADD FUNDING/EQUIPMENT',
- DELETEEQUIPMENTTYPE:'DELETE EQUIPMENT TYPE'
-}
+export const modalTitles = {
+  ADDEQUIPMENTTYPE: 'ADD FUNDING/EQUIPMENT',
+  DELETEEQUIPMENTTYPE: 'DELETE EQUIPMENT TYPE',
+};
 
+export const statusSelectMenu: selectMenu[] = [
+  { option: 'Active', value: true },
+  { option: 'Inactive', value: false },
+];
 // extensions methods..
 
 declare global {
@@ -221,10 +227,10 @@ declare global {
     isNotEmpty(): boolean;
   }
   interface NumberConstructor {
-      INT_MAX_VALUE : number  ;
+    INT_MAX_VALUE: number;
   }
 }
-Number.INT_MAX_VALUE=2147483647;
+Number.INT_MAX_VALUE = 2147483647;
 Array.prototype.isNotEmpty = function <T>(): boolean {
   return this && this.length > 0;
 };

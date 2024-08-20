@@ -10,6 +10,8 @@ namespace Service.Interface
         public IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData);
         public Task<T> GetByIdAsync(int id);
         public Task AddAsync(T item);
+        public Task AddRangeAsync(IEnumerable<T> items);
+        public Task UpdateRangeAsync(IEnumerable<T> items);
         public Task UpdateAsync(T item);
         public Task Delete(T item);
         public Task SaveChangesAsync();

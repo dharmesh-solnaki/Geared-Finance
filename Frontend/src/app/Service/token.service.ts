@@ -18,18 +18,21 @@ export class TokenService {
   }
 
   isAccessTokenExpired() {
-    const accToken = this.getAccessToken();
-    const decToken = accToken && parseJwt(accToken);
-    return  new Date(decToken.refreshTokenExp) < new Date();
+    const decToken = this.getDecryptedToken();
+    return Math.floor(Date.now() / 1000) > decToken.exp;
   }
 
   clearToken() {
     localStorage.removeItem(this.ACCESS_TOKEN);
-    this._router.navigate(['/']);
+    this._router.navigate(['/login']);
   }
   getUserNameFromToken(): string {
     const accToken = this.getAccessToken();
     const decToken = accToken && parseJwt(accToken);
     return decToken.userName;
+  }
+  getDecryptedToken() {
+    const accToken = this.getAccessToken();
+    return accToken && parseJwt(accToken);
   }
 }

@@ -9,6 +9,4 @@
         VendorManager = 5,
         VendorSalesRep = 6,
     }
-
-
 }

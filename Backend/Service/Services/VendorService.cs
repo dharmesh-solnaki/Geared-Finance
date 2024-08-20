@@ -30,16 +30,14 @@ namespace Service.Services
             {
                 searchEntity2.predicate = x => x.Id == searchEntity.id;
             }
-            IEnumerable<Vendor> venodrData = await _vendorRepo.GetAllAsync(searchEntity2);
-            return MapperHelper.MapTo<IEnumerable<Vendor>, IEnumerable<VendorDTO>>(venodrData);
+            return MapperHelper.MapTo<IEnumerable<Vendor>, IEnumerable<VendorDTO>>(await _vendorRepo.GetAllAsync(searchEntity2));
 
         }
 
 
         public async Task<IEnumerable<ManagerLevelDTO>> GetManagerLevels(int id)
         {
-            IEnumerable<ManagerLevel> managerLevels = await _vendorRepo.GetManagerLevelsById(id);
-            return MapperHelper.MapTo<IEnumerable<ManagerLevel>, IEnumerable<ManagerLevelDTO>>(managerLevels);
+            return MapperHelper.MapTo<IEnumerable<ManagerLevel>, IEnumerable<ManagerLevelDTO>>(await _vendorRepo.GetManagerLevelsById(id));
         }
     }
 }

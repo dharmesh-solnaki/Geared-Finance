@@ -60,7 +60,7 @@ namespace Service.Implementation
             return userDataResponse;
         }
 
-        public async Task<IsExistData> AddUserAsync(UserDTO model)
+        public async Task<IsExistData> UpsertUserAsync(UserDTO model)
         {
             User user = MapperHelper.MapTo<UserDTO, User>(model);
             IsExistData response = new IsExistData();
@@ -96,6 +96,7 @@ namespace Service.Implementation
                             response.isEmailExist = false;
                             return response;
                         }
+                    
                     }
 
                     await _userRepo.UpdateUserAsync(user);
@@ -110,15 +111,9 @@ namespace Service.Implementation
 
         private Expression<Func<User, object>>[] GenerateInclude()
         {
-            return new Expression<Func<User, object>>[] { x => x.Role, x => x.Manager, x => x.Vendor };
+            return new Expression<Func<User, object>>[] { x => x.Role, x => x.Manager, x => x.Vendor, x => x.RelationshipManagerNavigation };
         }
 
-
-        public async Task UpdateUserAsync(UserDTO model)
-        {
-            User user = MapperHelper.MapTo<UserDTO, User>(model);
-            await _userRepo.UpdateUserAsync(user);
-        }
 
         public async Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers()
         {
@@ -129,8 +124,7 @@ namespace Service.Implementation
                 predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || (x.RoleId == (int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
 
             };
-            IEnumerable<User> users = await GetAllAsync(baseSearchEntity);
-            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
+            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(await GetAllAsync(baseSearchEntity));
         }
 
 
@@ -161,8 +155,8 @@ namespace Service.Implementation
             searchEntity.predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1);
             searchEntity.includes = new Expression<Func<User, object>>[] { x => x.Manager };
 
-            IEnumerable<User> users = await _userRepo.GetAllAsync(searchEntity);
-            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(users);
+        
+            return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(await _userRepo.GetAllAsync(searchEntity));
 
         }
 
@@ -190,6 +184,11 @@ namespace Service.Implementation
             }
 
             return isExistData;
+        }
+      
+        public async Task<User> GetUserById(int id)
+        {
+            return await GetByIdAsync(id);
         }
     }
 }

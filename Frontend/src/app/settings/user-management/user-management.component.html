@@ -2,10 +2,11 @@
   <div class="inner-page-heading d-lg-flex justify-content-between">
     <span class="inner-page-heading-title"> USER MANAGEMENT </span>
 
-
-    <ul class="d-lg-flex justify-content-end align-items-center setting-title-items">
-      <form class="form d-flex " [formGroup]="userHeaderSearchForm">
-      <li class="m-2">
+    <ul
+      class="d-lg-flex justify-content-end align-items-center setting-title-items"
+    >
+      <form class="form d-flex" [formGroup]="userHeaderSearchForm">
+        <li class="m-2">
           <div class="from-control">
             <input
               type="text"
@@ -20,17 +21,20 @@
             #roleSelectionMenu
             [optionData]="selectMenuRoles"
             defaultOption="All Roles"
-             formControlName="selectedRole"
+            formControlName="selectedRole"
           >
           </app-common-selectmenu>
         </li>
       </form>
-     
+
       <li class="d-lg-flex flex-row align-item-center">
-        <button class="btn btn-secondary mx-1 my-auto" (click)="searchHandler()">
+        <button
+          class="btn btn-secondary mx-1 my-auto"
+          (click)="searchHandler()"
+        >
           Search
         </button>
-        <button class="btn btn-secondary mx-1 my-auto " (click)="resetForm()">
+        <button class="btn btn-secondary mx-1 my-auto" (click)="resetForm()">
           Clear
         </button>
         <a
@@ -39,34 +43,19 @@
           >Add User</a
         >
       </li>
-    
     </ul>
-  </div>
-  <div class="d-flex justify-content-start">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" >Users</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" >Login History</a>
-      </li>
-     
-    </ul>
-
   </div>
   <app-common-grid
-  [data]="userData"
-  [gridSettings]="gridSetting"
-  [paginationSettings]="paginationSettings"
-  (onSortEvent)="sortHandler($event)"
-  [isEditable]=true
-  (onEditEvent)="onEditEventRecevier($event)"
-  (onPageChange)="pageChangeEventHandler($event)"
-  (onpageSizeChange)="pageSizeChangeHandler($event)"
+    [data]="userData"
+    [gridSettings]="gridSetting"
+    [paginationSettings]="paginationSettings"
+    (onSortEvent)="sortHandler($event)"
+    [isEditable]="true"
+    (onEditEvent)="onEditEventRecevier($event)"
+    (onPageChange)="pageChangeEventHandler($event)"
+    (onpageSizeChange)="pageSizeChangeHandler($event)"
   >
-</app-common-grid>
+  </app-common-grid>
 
-
-  <div>
-  </div>
+  <div></div>
 </div>

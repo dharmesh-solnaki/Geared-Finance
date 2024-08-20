@@ -4,29 +4,33 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { errorResponses } from './Shared/constants';
 import { AuthService } from './Service/auth.service';
 import { TokenService } from './Service/token.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class GeneralInterceptor implements HttpInterceptor {
-
   constructor(
-    private _authService:AuthService,
-    private _tokenService:TokenService
+    private _authService: AuthService,
+    private _tokenService: TokenService,
+    private _route: Router
   ) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
     const accessToken = this._tokenService.getAccessToken();
-    if(accessToken){
-      request  = request.clone({
-        setHeaders:{
-          Authorization:`Bearer ${accessToken}`
-        }
-      })
+    if (accessToken) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
     }
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -39,16 +43,18 @@ export class GeneralInterceptor implements HttpInterceptor {
               errorMessage = `${errorResponses.BAD_REQUEST}: ${error.message}`;
               break;
             case 401:
-               return this.handle401Error(request,next)
-            case 403:
-              errorMessage = `${errorResponses.FORBIDDEN}: ${error.message}`;
-              break;
+              if (!this._tokenService.isAccessTokenExpired()) {
+                this._route.navigate(['access-denied']);
+                return throwError(errorResponses.UNAUTHORIZED);
+              } else {
+                return this.handle401Error(request, next);
+              }
             case 404:
               errorMessage = `${errorResponses.NOT_FOUND}: ${error.message}`;
               break;
-              case 409:
-                errorMessage = `${errorResponses.CONFLICT_ERROR}: ${error.message}`;
-                break;
+            case 409:
+              errorMessage = `${errorResponses.CONFLICT_ERROR}: ${error.message}`;
+              break;
             case 500:
               errorMessage = `${errorResponses.INTERNAL_SERVER_ERROR}: ${error.message}`;
               break;
@@ -57,31 +63,24 @@ export class GeneralInterceptor implements HttpInterceptor {
               break;
           }
         }
-        alert(errorMessage)
-          return throwError(()=> new Error(errorMessage))
+        alert(errorMessage);
+        return throwError(() => new Error(errorMessage));
       })
-
     );
   }
-  private  handle401Error(request: HttpRequest<any> , next:HttpHandler){
-     const isTokenExpired = this._tokenService.isAccessTokenExpired()
-    if(!isTokenExpired){
-      return this._authService.validateToken().pipe(
-       switchMap((res:{accessToken:string})=>{
-      this._tokenService.setToken(res.accessToken)
-      request = request.clone({
-       setHeaders:{ Authorization: `Bearer ${res.accessToken}`}
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+    return this._authService.validateToken().pipe(
+      switchMap((res: { accessToken: string }) => {
+        this._tokenService.setToken(res.accessToken);
+        request = request.clone({
+          setHeaders: { Authorization: `Bearer ${res.accessToken}` },
+        });
+        return next.handle(request);
+      }),
+      catchError((err) => {
+        this._tokenService.clearToken();
+        return throwError(() => new Error(err));
       })
-      return next.handle(request);
-       }),
-       catchError(err=>{
-         this._tokenService.clearToken();
-         return throwError(()=> new Error(err));
-       })
-      )
-    }else{
-     this._tokenService.clearToken();
-     return throwError(errorResponses.UNAUTHORIZED);
-    }
-   }
+    );
+  }
 }

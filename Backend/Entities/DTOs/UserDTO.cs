@@ -15,7 +15,7 @@ namespace Entities.DTOs
 
         [Required]
         [StringLength(100)]
-        //[RegularExpression(Constants.EMAIL_REGEX)]
+        [EmailAddress]
         public string Email { get; set; } = null!;
 
 
@@ -63,5 +63,6 @@ namespace Entities.DTOs
 
         public VendorDTO? vendor { get; set; }
         public ManagerLevelDTO? manager { get; set; }
+        public string? RelationshipManagerName { get; set; }
     }
 }

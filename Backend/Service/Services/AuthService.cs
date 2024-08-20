@@ -1,12 +1,13 @@
 ﻿using Entities.DTOs;
 using Entities.Models;
+using Entities.UtilityModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Implementation;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
-using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Text;
 using Utilities;
@@ -28,16 +29,18 @@ namespace Service.Services
         public async Task<string> GenerateToken(LoginDTO model)
         {
             model.Password = SecretHasher.EnryptString(model.Password.Trim());
-            Expression<Func<User, bool>> predicate = x => (x.Email == model.Email && x.Password == model.Password);
-            var includes = new Expression<Func<User, object>>[]
-             {
-                x=>x.Role
-             };
-            User user = await _userRepo.GetByOtherAsync(predicate, includes);
-            if (user == null)
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
+                predicate = x => (x.Email == model.Email && x.Password == model.Password),
+                includes = new Expression<Func<User, object>>[] { x => x.Role }
+            };
+            IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
+            if (!userData.Any())
             {
                 return null;
             }
+            User user = await userData.FirstOrDefaultAsync();
+
             var jwtSettings = _configuration.GetSection("ApiSettings");
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]);
@@ -51,12 +54,13 @@ namespace Service.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Role , user.Role.RoleName),
-                    new Claim("userName",user.Name),
-                    new Claim("userId",user.Id.ToString()),
-                    new Claim("refreshTokenExp",refreshTokenExpTime.ToString("o"))
+                    new Claim(JWTTokenClaims.USER_ROLE, user.Role.RoleName),
+                    //new Claim(JWTTokenClaims.ROLE_ID,user.RoleId.ToString()),
+                    new Claim(JWTTokenClaims.USER_NAME,user.Name),
+                    new Claim(JWTTokenClaims.USER_ID,user.Id.ToString()),
+                    new Claim(JWTTokenClaims.REF_TOKEN_EXP_TIME,refreshTokenExpTime.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpTime"])),
+                Expires = DateTime.UtcNow.AddHours(double.Parse(jwtSettings["AccessTokenExpTime"])),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
@@ -65,7 +69,7 @@ namespace Service.Services
             return token;
         }
 
-      
+
 
         public async Task<string> ValidateRefreshToken(string token)
         {
@@ -79,6 +83,7 @@ namespace Service.Services
             if (string.IsNullOrEmpty(refreshTokenExpClaim) || !DateTime.TryParse(refreshTokenExpClaim, out var refreshTokenExp))
             {
                 return null;
+
             }
             if (refreshTokenExp < DateTime.UtcNow)
             {
@@ -87,7 +92,7 @@ namespace Service.Services
 
             var validationParameters = new TokenValidationParameters
             {
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
                 ValidateAudience = false,
                 ValidateIssuer = false,
@@ -102,7 +107,7 @@ namespace Service.Services
                 return null;
             }
             var key = Encoding.ASCII.GetBytes(_configuration["ApiSettings:Secret"]);
-            var newExpTime = DateTime.UtcNow.AddMinutes(1);
+            var newExpTime = DateTime.UtcNow.AddHours(double.Parse(_configuration["ApiSettings:AccessTokenExpTime"]));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(jwtToken.Claims),
@@ -120,32 +125,59 @@ namespace Service.Services
         public async Task<bool> IsValidMailAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return false;
-            Expression<Func<User,bool>> predicate = x=>x.Email == email;
-            User user = await _userRepo.GetByOtherAsync(predicate,null);
-            if (user == null) return false;
-            string otp = StringGenerator.GenerateOtp(6,false);
-            user.Otp = otp;
-            await _userRepo.UpdateAsync(user);
-            string mailTo = "gfivhcrte@emltmp.com";
-            string subject = "About Forgot Password";
-            string body=$" This is otp to set your new password: \n {otp}" ;
-            await new MailSenderAsync().SendMailAsync(mailTo,subject,body);
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
+                predicate = x => x.Email == email
+            };
+            IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
+            if (!userData.Any())
+            {
+                return false;
+            }
+            User user = await userData.FirstOrDefaultAsync();
+            await GenerateMailAsync(user);
             return true;
         }
 
+        private async Task GenerateMailAsync(User user)
+        {
+            string otp = StringGenerator.GenerateOtp(6, false);
+            user.Otp = otp;
+            await _userRepo.UpdateAsync(user);
+            string mailTo = "dharmesh.solanki@tatvasoft.com";
+            string subject = "About Forgot Password";
+            string body = $" This is otp to set your new password: \n {otp}";
+            await MailSenderAsync.SendMailAsync(mailTo, subject, body);
+        }
+
+
         public async Task<bool> ValidateOtpAsync(OtpRequest model)
         {
-            Expression<Func<User,bool>> predicate = x=>x.Email==model.Email;
-            User user = await _userRepo.GetByOtherAsync(predicate, null);
-            if (user == null) return false;
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
+                predicate = x => x.Email == model.Email
+            };
+            IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
+            if (!userData.Any())
+            {
+                return false;
+            }
+            User user = await userData.FirstOrDefaultAsync();
             return user.Otp == model.Otp;
         }
 
         public async Task<bool> UpdatePasswordAsync(PasswordUpdateReq model)
         {
-            Expression<Func<User, bool>> predicate = x => x.Email == model.Email;
-            User user = await _userRepo.GetByOtherAsync(predicate, null);
-            if (user == null) return false;
+            BaseSearchEntity<User> baseSearchEntity = new BaseSearchEntity<User>()
+            {
+                predicate = x => x.Email == model.Email
+            };
+            IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
+            if (!userData.Any())
+            {
+                return false;
+            }
+            User user = await userData.FirstOrDefaultAsync();
             user.Password = SecretHasher.EnryptString(model.Password);
             await _userRepo.UpdateAsync(user);
             return true;

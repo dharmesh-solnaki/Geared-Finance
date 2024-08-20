@@ -74,26 +74,19 @@ namespace Repository.Implementation
 
         public async Task UpdateAsync(T item)
         {
+            var createdDateProperty = typeof(T).GetProperty("CreatedDate");
+            var createdByProperty = typeof(T).GetProperty("CreatedBy");
+            var idProperty = typeof(T).GetProperty("Id");
+            if (createdDateProperty != null && createdByProperty != null && idProperty != null)
+            {
+                var oldItem = await _dbSet.FindAsync(idProperty.GetValue(item));
+                createdDateProperty.SetValue(item, createdDateProperty.GetValue(oldItem));
+
+                createdByProperty.SetValue(item, createdByProperty.GetValue(oldItem));
+            }
             _dbSet.Update(item);
             await SaveChangesAsync();
         }
-
-        private static Expression<Func<T, object>> GetSortingExpression(string propertyName)
-        {
-
-            var param = Expression.Parameter(typeof(T), "x");
-            var property = typeof(T).GetProperty(propertyName);
-            if (property == null)
-            {
-                return null;
-            }
-            var propertyAcess = Expression.MakeMemberAccess(param, property);
-            var conversion = Expression.Convert(propertyAcess, typeof(object));
-            return Expression.Lambda<Func<T, object>>(conversion, param);
-        }
-
-
-
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
@@ -113,5 +106,37 @@ namespace Repository.Implementation
             return await query.FirstOrDefaultAsync(predicate);
         }
 
+        public async Task AddRangeAsync(IEnumerable<T> item)
+        {
+            await _dbSet.AddRangeAsync(item);
+            await SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> items)
+        {
+
+            var createdDate = typeof(T).GetProperty("CreatedDate");
+            var createdBy = typeof(T).GetProperty("CreatedBy");
+            var idProperty = typeof(T).GetProperty("Id");
+
+            if (createdDate != null && createdBy != null && idProperty != null)
+            {
+                IQueryable<T> query = _dbSet.AsQueryable().AsNoTracking();
+                var updatedItems = items.Join(query, item => idProperty.GetValue(item), entity => idProperty.GetValue(entity), (item, entity) =>
+                {
+                    createdDate.SetValue(item, createdDate.GetValue(entity));
+                    createdBy.SetValue(item, createdBy.GetValue(entity));
+                    return item;
+
+                }).ToList();
+                _dbContext.UpdateRange(updatedItems);
+            }
+            else
+            {
+                _dbContext.UpdateRange(items);
+            }
+
+            await SaveChangesAsync();
+        }
     }
 }

@@ -1,9 +1,9 @@
-import {   Component, OnInit, } from '@angular/core';
-import { FormBuilder, FormGroup,  Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {  forkJoin, of, } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { CommonSearch } from 'src/app/Models/common-search.model';
-import {PhonePipe} from 'src/app/Pipes/phone.pipe'
+import { PhonePipe } from 'src/app/Pipes/phone.pipe';
 import {
   dateSelectonMenu,
   monthSelectonMenu,
@@ -20,8 +20,6 @@ import { UserService } from 'src/app/Service/user.service';
 import { VendorService } from 'src/app/Service/vendor.service';
 import { ToastrService } from 'ngx-toastr';
 
-
-
 @Component({
   selector: 'app-add-site-user',
   templateUrl: './add-site-user.component.html',
@@ -35,24 +33,24 @@ export class AddSiteUserComponent implements OnInit {
   defaultDateSelection: selectMenu[] = [];
   defaultMonthSelection: selectMenu[] = [];
   selectMenuRelationshipManager: selectMenu[] = [];
-  selectMenuReportingTo:selectMenu[]=[]
-  selectMenuManagerLevels:selectMenu[]=[]
+  selectMenuReportingTo: selectMenu[] = [];
+  selectMenuManagerLevels: selectMenu[] = [];
   userForm: FormGroup = new FormGroup({});
   isEditable: boolean = false;
-  isShowFieldReportTo:boolean=true;
-  isFormSubmitted:boolean=false;
+  isShowFieldReportTo: boolean = true;
+  isShowVenderManagerField: boolean = true;
+  isFormSubmitted: boolean = false;
   userDataOnEdit: User = new User(0, '', '', '', '');
 
   constructor(
     private _fb: FormBuilder,
     private _userService: UserService,
     private _route: ActivatedRoute,
-    private _router:Router,
-    private _vendorService:VendorService,
-    private _toaster:ToastrService
+    private _router: Router,
+    private _vendorService: VendorService,
+    private _toaster: ToastrService
   ) {
     this.formInitializer();
-
   }
 
   ngOnInit(): void {
@@ -64,7 +62,6 @@ export class AddSiteUserComponent implements OnInit {
     this.selectMenuDate = this.defaultDateSelection;
     this.addFormBirthHandler();
 
-     
     this.isEditable = this._route.snapshot.params['id'] != undefined;
     if (this.isEditable) {
       const id = this._route.snapshot.params['id'];
@@ -84,108 +81,124 @@ export class AddSiteUserComponent implements OnInit {
 
     this.userForm.controls['role'].valueChanges.subscribe((res) => {
       this.userForm.markAsUntouched();
-      const role=res
-      this.isFormSubmitted=false;
+      const role = res;
+      this.isFormSubmitted = false;
       if (
-        [ RoleEnum.VendorGuestUser,
-       RoleEnum.VendorManager,
-       RoleEnum.VendorSalesRep].includes(res)
+        [
+          RoleEnum.VendorGuestUser,
+          RoleEnum.VendorManager,
+          RoleEnum.VendorSalesRep,
+        ].includes(res)
       ) {
-       
-         this.vendorDataSetter()
+        this.vendorDataSetter();
         this.relationshipManagerDataSetter();
 
-        
-          this.userForm.controls['vendor'].valueChanges.subscribe(res=>{ 
-            const vendorId=res||0; 
-          
-            this.reportingToDataSetter(vendorId,0)  
-            if(role ==  RoleEnum.VendorManager){
-            this.managerLevelsDataSetter(vendorId)
-           
-            this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(res=>{
-              const managerLevelId = res||0
-              let maxLevel  = 0;
-              let selectedValueLevel=0;
-              this.selectMenuManagerLevels.forEach(e=> {
-                 let tempMax =   +e.option.charAt(e.option.length-1)
-             
-                 if(tempMax >= maxLevel){
-                   maxLevel=tempMax
-                 }
-                 if(managerLevelId==e.value){
-                  selectedValueLevel=tempMax
-                 }
-              })
-             if(maxLevel==selectedValueLevel){
-                this.isShowFieldReportTo=false;
-             }else{
-              this.isShowFieldReportTo=true;
-              this.reportingToDataSetter(vendorId,managerLevelId);
-             }
-            })
-            }
-          })
-        }
+        this.userForm.controls['vendor'].valueChanges.subscribe((res) => {
+          const vendorId = res || 0;
+
+          this.reportingToDataSetter(vendorId, 0);
+          if (role == RoleEnum.VendorManager) {
+            this.managerLevelsDataSetter(vendorId);
+            this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(
+              (res) => {
+                const managerLevelId = res || 0;
+                let maxLevel = 0;
+                let selectedValueLevel = 0;
+
+                this.selectMenuManagerLevels.forEach((e) => {
+                  let tempMax = +e.option.charAt(e.option.length - 1);
+
+                  if (tempMax >= maxLevel) {
+                    maxLevel = tempMax;
+                  }
+                  if (managerLevelId == e.value) {
+                    selectedValueLevel = tempMax;
+                  }
+                });
+                if (maxLevel == selectedValueLevel) {
+                  this.isShowFieldReportTo = false;
+                } else {
+                  this.isShowFieldReportTo = true;
+                  this.reportingToDataSetter(vendorId, managerLevelId);
+                }
+              }
+            );
+          }
+        });
+      }
     });
-   
   }
   userFormInitializerOnEdit() {
     const formdata = this.userDataOnEdit;
-    const searchModel:CommonSearch ={
+    const searchModel: CommonSearch = {
       pageNumber: 1,
-      pageSize: Number.INT_MAX_VALUE
-    } 
-    formdata.vendorManagerLevelId = formdata.vendorManagerLevelId||0
-     forkJoin(
-      [         
-        this._vendorService.getVendors(searchModel),
-        this._userService.getRelationshipManagers(),
-        formdata.vendor ? this._vendorService.getManagerLevels(formdata.vendor.id):of([]),
-        formdata.vendorId ?  this._userService.getReportingTo(formdata.vendorId,formdata.vendorManagerLevelId):of([])
-  
-    ]).subscribe((res)=>{   
-        res[0].map(e=> {
-          this.selectMenuVendors.push({ option: e.name, value: e.id })
-       });
-        res[1].map(e=> {
-          this.selectMenuRelationshipManager.push({ option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`, value: e.id });
-       });
-       res[2] && res[2].map(e=> {
-          this.selectMenuManagerLevels.push({  option:`${e.levelName} - Level ${e.levelNo}`, value: e.id });
-       });
-       res[3] && res[3].map(e=> {
-          this.selectMenuReportingTo.push({ option:`${e.name} ${e.surName}`, value: e.id });
-       });
-      
-       const pipe =new PhonePipe(); 
-       this.userForm.patchValue({
-      name: formdata.name,
-      surname: formdata.surName,
-      email: formdata.email,
-      password: formdata.password,
-      role: formdata.roleName,
-      notificationPref: formdata.notificationPreferences,
-      month: formdata.monthOfBirth,
-      day: formdata.dayOfBirth,
-      mobileNumber: pipe.transform(formdata.mobile),
-      roleStatus: formdata.status,
-      portalLogin: formdata.isPortalLogin,
-      sendEOTreports: formdata.isSendEndOfTermReport,
-      vendorSalesRepList: formdata.isUserInVendorSalesRepList,
-      unassignedApplications: formdata.unassignedApplications,
-      funderProfile: formdata.isFunderProfile,
-      proceedBtnInApp: formdata.isProceedBtnInApp,
-      clacRateEditor: formdata.isCalcRateEditor,
-      gearedSalesRepList: formdata.isUserInGafsalesRepList,
-      reportTo: formdata.reportingTo,
-      relationshipManager: formdata.relationshipManager,
-      vendor:formdata.vendor && +formdata.vendor.id,
-      vendorManagerLevel: formdata.vendorManagerLevelId
+      pageSize: Number.INT_MAX_VALUE,
+    };
+    formdata.vendorManagerLevelId = formdata.vendorManagerLevelId || 0;
+    forkJoin([
+      this._vendorService.getVendors(searchModel),
+      this._userService.getRelationshipManagers(),
+      formdata.vendor
+        ? this._vendorService.getManagerLevels(formdata.vendor.id)
+        : of([]),
+      formdata.vendorId
+        ? this._userService.getReportingTo(
+            formdata.vendorId,
+            formdata.vendorManagerLevelId
+          )
+        : of([]),
+    ]).subscribe((res) => {
+      res[0].map((e) => {
+        this.selectMenuVendors.push({ option: e.name, value: e.id });
+      });
+      res[1].map((e) => {
+        this.selectMenuRelationshipManager.push({
+          option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`,
+          value: e.id,
+        });
+      });
+      res[2] &&
+        res[2].map((e) => {
+          this.selectMenuManagerLevels.push({
+            option: `${e.levelName} - Level ${e.levelNo}`,
+            value: e.id,
+          });
+        });
+      res[3] &&
+        res[3].map((e) => {
+          this.selectMenuReportingTo.push({
+            option: `${e.name} ${e.surName}`,
+            value: e.id,
+          });
+        });
+
+      const pipe = new PhonePipe();
+      this.userForm.patchValue({
+        name: formdata.name,
+        surname: formdata.surName,
+        email: formdata.email,
+        password: formdata.password,
+        role: formdata.roleName,
+        notificationPref: formdata.notificationPreferences,
+        month: formdata.monthOfBirth,
+        day: formdata.dayOfBirth,
+        mobileNumber: pipe.transform(formdata.mobile),
+        roleStatus: formdata.status,
+        portalLogin: formdata.isPortalLogin,
+        sendEOTreports: formdata.isSendEndOfTermReport,
+        vendorSalesRepList: formdata.isUserInVendorSalesRepList,
+        unassignedApplications: formdata.unassignedApplications,
+        funderProfile: formdata.isFunderProfile,
+        proceedBtnInApp: formdata.isProceedBtnInApp,
+        clacRateEditor: formdata.isCalcRateEditor,
+        gearedSalesRepList: formdata.isUserInGafsalesRepList,
+        reportTo: formdata.reportingTo,
+        relationshipManager: formdata.relationshipManager,
+        vendor: formdata.vendor && +formdata.vendor.id,
+        vendorManagerLevel: formdata.vendorManagerLevelId,
+      });
     });
-  })
   }
-  
 
   addFormBirthHandler() {
     this.userForm.get('month')?.valueChanges.subscribe((selectedMonth) => {
@@ -217,7 +230,7 @@ export class AddSiteUserComponent implements OnInit {
       notificationPref: [0, [Validators.required]],
       month: [0],
       day: [0],
-      mobileNumber: ['', [Validators.required]],
+      mobileNumber: ['', [Validators.required, Validators.minLength(12)]],
       roleStatus: [true],
       portalLogin: [true],
       sendEOTreports: [true],
@@ -294,14 +307,15 @@ export class AddSiteUserComponent implements OnInit {
         return (
           (role == RoleEnum.VendorGuestUser ||
             role == RoleEnum.VendorManager ||
-            role == RoleEnum.VendorSalesRep) && this.isShowFieldReportTo
+            role == RoleEnum.VendorSalesRep) &&
+          this.isShowFieldReportTo
         );
 
       case 'portalLogin':
         return role != RoleEnum.VendorGuestUser;
 
       case 'vendorManagerLevel':
-        return role == RoleEnum.VendorManager;
+        return role == RoleEnum.VendorManager && this.isShowVenderManagerField;
 
       case 'relaionshipManager':
         return (
@@ -342,79 +356,65 @@ export class AddSiteUserComponent implements OnInit {
 
   userFormHandler() {
     this.isFieldRequired();
-    this.isFormSubmitted = true
-    if (this.userForm.invalid) {    
+    console.log(this.userForm.get('mobileNumber'));
+    this.isFormSubmitted = true;
+    if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
-    const formValues = this.userForm.value;      
-    
-        const user = new User(
-          this.isEditable ? this.userDataOnEdit.id : 0,
-          formValues.name,
-          formValues.surname,
-          formValues.email,
-          formValues.mobileNumber.replace(' ', '').replace(' ', '').slice(0, 10),
-          formValues.password,
-          formValues.notificationPref,
-          formValues.roleStatus,
-          formValues.portalLogin,
-          formValues.gearedSalesRepList,
-          formValues.day,
-          formValues.month,
-          formValues.relationshipManager,
-          formValues.reportTo,
-          formValues.vendorSalesRepList,
-          formValues.unassignedApplications,
-          formValues.role,
-          formValues.sendEOTreports,
-          formValues.funderProfile,
-          formValues.proceedBtnInApp,
-          formValues.clacRateEditor,
-          this.isEditable ? this.userDataOnEdit.staffCode : '',
-          formValues.vendor==0?null:formValues.vendor,
-          formValues.vendorManagerLevel && formValues.vendorManagerLevel.toString()
+    const formValues = this.userForm.value;
+
+    const user = new User(
+      this.isEditable ? this.userDataOnEdit.id : 0,
+      formValues.name,
+      formValues.surname,
+      formValues.email,
+      formValues.mobileNumber.replace(' ', '').replace(' ', '').slice(0, 10),
+      formValues.password,
+      formValues.notificationPref,
+      formValues.roleStatus,
+      formValues.portalLogin,
+      formValues.gearedSalesRepList,
+      formValues.day,
+      formValues.month,
+      formValues.relationshipManager,
+      formValues.reportTo,
+      formValues.vendorSalesRepList,
+      formValues.unassignedApplications,
+      formValues.role,
+      formValues.sendEOTreports,
+      formValues.funderProfile,
+      formValues.proceedBtnInApp,
+      formValues.clacRateEditor,
+      this.isEditable ? this.userDataOnEdit.staffCode : '',
+      formValues.vendor == 0 ? null : formValues.vendor,
+      formValues.vendorManagerLevel && formValues.vendorManagerLevel.toString()
+    );
+    this._userService.addUser(user).subscribe((res) => {
+      if (res.isEmailExist || res.isExistMobile) {
+        this._toaster.error(
+          `${res.isEmailExist ? 'email' : ''} ${
+            res.isExistMobile ? 'mobile' : ''
+          } already exist`
         );
-    
-        // if (this.isEditable) {
-        //   console.log(user)
-        //       this._userService.updateUser(user).subscribe(
-        //       (res) => {
-        //         alert(alertResponses.UPDATE_RECORD);
-        //       },
-        //       (err) => {
-        //         console.log(err);
-        //       }
-        //     );
-        // } else {
-   
-          this._userService.addUser(user).subscribe(
-            (res) => {
-              if(res.isEmailExist || res.isExistMobile){
-                this._toaster.error( `${res.isEmailExist?'email':''} ${res.isExistMobile?'mobile':''} already exist`)
-              }else {
-                this._toaster.success(this.isEditable?alertResponses.UPDATE_RECORD:alertResponses.ADD_RECORD);
-                this._router.navigate(['settings/user-management'])
-              }
-            },
-            (err) => {
-              console.log(err);
-            }
-          );
-        // }
+      } else {
+        this._toaster.success(
+          this.isEditable
+            ? alertResponses.UPDATE_RECORD
+            : alertResponses.ADD_RECORD
+        );
+        this._router.navigate(['settings/user-management']);
       }
+    });
+  }
 
   hasError(field: string, error: string) {
     const control = this.userForm.get(field);
-
     return control?.hasError(error) && control?.touched;
   }
   checkValidityOfField(field: string) {
-    const control = this.userForm.get(field); 
-
-    // return  !control?.valid || control?.touched ;
-    return this.isFormSubmitted && !control?.valid ;
-
+    const control = this.userForm.get(field);
+    return this.isFormSubmitted && !control?.valid;
   }
   roleStatusChangeHandler() {
     if (this.userForm.get('roleStatus')?.value) {
@@ -425,41 +425,29 @@ export class AddSiteUserComponent implements OnInit {
   isFieldRequired() {
     const userForm = this.userForm;
     const role = userForm.get('role')?.value;
-    // if (role == "") {
-    //   userForm.get('role')?.setValidators([Validators.required]);
-    // } else {
-    //   userForm.get('role')?.clearValidators();
-    // }
-    // userForm.get('role')?.updateValueAndValidity();
     if (
       // userForm.get('vendor')?.value == 0 &&
-      (role == RoleEnum.VendorSalesRep ||
-        role == RoleEnum.VendorManager ||
-        role == RoleEnum.VendorGuestUser)
+      role == RoleEnum.VendorSalesRep ||
+      role == RoleEnum.VendorManager ||
+      role == RoleEnum.VendorGuestUser
     ) {
       userForm.get('vendor')?.setValidators([Validators.required]);
-
     } else {
       userForm.get('vendor')?.clearValidators();
-
     }
     userForm.get('vendor')?.updateValueAndValidity();
 
-    if (
-      // userForm.get('vendorManagerLevel')?.value == 0 &&
-      role == RoleEnum.VendorManager
-    ) {
+    if (role == RoleEnum.VendorManager && this.isShowVenderManagerField) {
       userForm.get('vendorManagerLevel')?.setValidators([Validators.required]);
-    
     } else {
       userForm.get('vendorManagerLevel')?.clearValidators();
     }
     userForm.get('vendorManagerLevel')?.updateValueAndValidity();
-   if (
+    if (
       // userForm.get('relationshipManager')?.value == 0 &&
-      (role == RoleEnum.VendorSalesRep ||
-        role == RoleEnum.VendorManager ||
-        role == RoleEnum.VendorGuestUser)
+      role == RoleEnum.VendorSalesRep ||
+      role == RoleEnum.VendorManager ||
+      role == RoleEnum.VendorGuestUser
     ) {
       userForm.get('relationshipManager')?.setValidators([Validators.required]);
     } else {
@@ -487,58 +475,101 @@ export class AddSiteUserComponent implements OnInit {
     }
     userForm.get('month')?.updateValueAndValidity();
 
+    if (
+      [
+        RoleEnum.GearedAdmin,
+        RoleEnum.GearedSalesRep,
+        RoleEnum.GearedSuperAdmin,
+      ].includes(role) &&
+      userForm.get('portalLogin')?.value
+    ) {
+      userForm.get('password')?.setValidators([Validators.required]);
+    } else {
+      userForm.get('password')?.clearValidators;
+    }
+    userForm.get('password')?.updateValueAndValidity();
   }
 
-  deleteUser(){
-    const id = this._route.snapshot.params['id'];  
-    const res = confirm(alertResponses.DELETION_CONFIRMATION) 
-    if(res){
+  deleteUser() {
+    const id = this._route.snapshot.params['id'];
+
+    const res = confirm(alertResponses.DELETION_CONFIRMATION);
+    if (res) {
       if (id) {
-        this._userService.deleteUser(id).subscribe((res) => {   
-      },err=>console.log(err));
+        this._userService.deleteUser(id).subscribe(
+          () => {
+            this._toaster.success(alertResponses.DELETE_RECORD);
+            this._router.navigate(['settings/user-management']);
+          },
+          () => this._toaster.error(alertResponses.ERROR)
+        );
+      }
     }
-    }
-  
   }
-  vendorDataSetter()  {
-    const searchModel:CommonSearch ={
+  vendorDataSetter() {
+    const searchModel: CommonSearch = {
       pageNumber: 1,
-      pageSize: Number.INT_MAX_VALUE
-    }   
-    
-    this._vendorService.getVendors(searchModel).subscribe(res => {
+      pageSize: Number.INT_MAX_VALUE,
+    };
+
+    this._vendorService.getVendors(searchModel).subscribe((res) => {
       this.selectMenuVendors = [];
       res.map((e) => {
         this.selectMenuVendors.push({ option: e.name, value: e.id });
       });
     });
-
   }
   relationshipManagerDataSetter() {
-    this._userService.getRelationshipManagers().subscribe(res=>{
-      this.selectMenuRelationshipManager = [];
-      res.map((e) => {
-        this.selectMenuRelationshipManager.push({ option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`, value: e.id });
-      });
-    },err=>  this.selectMenuRelationshipManager = [])
-
-  }
-  managerLevelsDataSetter(id:number,){    
-      this._vendorService.getManagerLevels(id).subscribe((res)=>{
-        this.selectMenuManagerLevels=[];  
-       res && res.map((e) => {
-          this.selectMenuManagerLevels.push({  option:`${e.levelName} - Level ${e.levelNo}`, value: e.id });
+    this._userService.getRelationshipManagers().subscribe(
+      (res) => {
+        this.selectMenuRelationshipManager = [];
+        res.map((e) => {
+          this.selectMenuRelationshipManager.push({
+            option: `${e.name} ${e.surName}${e.status ? '' : ' - inactive'}`,
+            value: e.id,
+          });
         });
-      },err=>  this.selectMenuManagerLevels=[])
-   
-    
+      },
+      () => (this.selectMenuRelationshipManager = [])
+    );
   }
-  reportingToDataSetter(vendorId:number,managerLevelId:number){
-    this._userService.getReportingTo(vendorId,managerLevelId).subscribe(res=>{
-      this.selectMenuReportingTo=[];
-       res &&  res.map((e) => {
-        this.selectMenuReportingTo.push({ option:`${e.name} ${e.surName}`, value: e.id });
-      });
-    },err=>  this.selectMenuReportingTo=[])    
-   }
+  managerLevelsDataSetter(id: number) {
+    this._vendorService.getManagerLevels(id).subscribe(
+      (res) => {
+        this.selectMenuManagerLevels = [];
+        res &&
+          res.map((e) => {
+            this.selectMenuManagerLevels.push({
+              option: `${e.levelName} - Level ${e.levelNo}`,
+              value: e.id,
+            });
+          });
+        this.isShowVenderManagerField = true;
+        if (!res) {
+          this.isShowFieldReportTo = false;
+          this.isShowVenderManagerField = false;
+        }
+      },
+      () => (this.selectMenuManagerLevels = [])
+    );
+  }
+  reportingToDataSetter(vendorId: number, managerLevelId: number) {
+    this._userService.getReportingTo(vendorId, managerLevelId).subscribe(
+      (res) => {
+        this.selectMenuReportingTo = [];
+        res &&
+          res.map((e) => {
+            this.selectMenuReportingTo.push({
+              option: `${e.name} ${e.surName}`,
+              value: e.id,
+            });
+          });
+        this.isShowFieldReportTo = true;
+        if (!res) {
+          this.isShowFieldReportTo = false;
+        }
+      },
+      () => (this.selectMenuReportingTo = [])
+    );
+  }
 }

@@ -1,7 +1,6 @@
 ﻿using Entities.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
-using System.ComponentModel.DataAnnotations;
 
 namespace Geared_Finance_API.Controllers
 {
@@ -18,7 +17,6 @@ namespace Geared_Finance_API.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAuthenticate(LoginDTO model)
         {
-            //password : %^tyER34
             var accessToken = await _authService.GenerateToken(model);
             return Ok(new { accessToken });
         }
@@ -32,14 +30,14 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ForgotPass([FromQuery]string email)
+        public async Task<IActionResult> ForgotPass([FromQuery] string email)
         {
             bool isMailExist = await _authService.IsValidMailAsync(email);
             return Ok(new { isMailExist });
         }
 
         [HttpPost("validateOtp")]
-        public async Task<IActionResult> ValidateOtp(OtpRequest model )
+        public async Task<IActionResult> ValidateOtp(OtpRequest model)
         {
             bool isValidOtp = await _authService.ValidateOtpAsync(model);
             return Ok(new { isValidOtp });
@@ -49,7 +47,8 @@ namespace Geared_Finance_API.Controllers
         public async Task<IActionResult> UpdatePassword(PasswordUpdateReq model)
         {
             bool isPassUpdated = await _authService.UpdatePasswordAsync(model);
-            return Ok(new { isPassUpdated});
+            return Ok(new { isPassUpdated });
         }
+
     }
 }

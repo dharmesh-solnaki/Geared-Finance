@@ -1,0 +1,71 @@
+<div>
+  <div
+    class="inner-page-heading d-lg-flex justify-content-between align-items-center"
+  >
+    <span class="inner-page-heading-title mb-2 text-uppercase"
+      >Manage Role Permission</span
+    >
+    <a
+      href="javascript: history.go(-1)"
+      role="button"
+      class="btn btn-secondary m-2"
+      >Back</a
+    >
+  </div>
+
+  <div class="mt-2">
+    <div
+      class="d-lg-flex justify-content-between p-4 fw-semibold mb-1"
+      style="background-color: #bec7ce"
+    >
+      <span>Role Name: {{ roleName }}</span>
+      <button class="btn btn-primary" (click)="rightsFormHandler()">
+        Save
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <form [formGroup]="rightsForm" (ngSubmit)="rightsFormHandler()">
+        <table class="table">
+          <thead class="grid-header" style="z-index: 100">
+            <tr>
+              <th>Module</th>
+              <th>View</th>
+              <th>Add</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of moduleList">
+              <tr>
+                <td>
+                  <strong>{{ item.moduleName }}</strong>
+                </td>
+                <ng-container
+                  *ngFor="let action of ['View', 'Add', 'Edit', 'Delete']"
+                >
+                  <td>
+                    <span class="custom-checkbox-container">
+                      <input
+                        type="checkbox"
+                        class="input-checkbox"
+                        [formControlName]="getFomControlName(item, action)"
+                        (change)="
+                          action === 'View'
+                            ? setOtherControlValidity(item.moduleName)
+                            : setViewControlValidity(item.moduleName, action)
+                        "
+                      />
+                      <span class="custom-checkbox"></span>
+                    </span>
+                  </td>
+                </ng-container>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>

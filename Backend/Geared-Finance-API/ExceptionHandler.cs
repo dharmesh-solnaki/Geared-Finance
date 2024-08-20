@@ -35,6 +35,7 @@ namespace Geared_Finance_API
                 Message = Constants.INTERNAL_SERVER_ERR,
                 Detail = exception.Message
             };
+
             return context.Response.WriteAsJsonAsync(response);
         }
     }

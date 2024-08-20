@@ -10,8 +10,10 @@ namespace Repository.Interface
         Task<T> GetByIdAsync(int id);
 
         Task AddAsync(T item);
+        Task AddRangeAsync(IEnumerable<T> item);
 
         Task UpdateAsync(T item);
+        Task UpdateRangeAsync(IEnumerable<T> item);
 
         Task Delete(T item);
 

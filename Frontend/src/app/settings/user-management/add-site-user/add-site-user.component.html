@@ -1,15 +1,13 @@
 <div class="inner-page-heading pt-1 pb-3 text-uppercase">
-<ng-container *ngIf="!isEditable else pageTitleOnEdit">
-  <span class="inner-page-heading-title">Add user</span>
-</ng-container>
-
+  <ng-container *ngIf="!isEditable; else pageTitleOnEdit">
+    <span class="inner-page-heading-title">Add user</span>
+  </ng-container>
 </div>
 <ng-template #pageTitleOnEdit>
   <span class="inner-page-heading-title">Edit user</span>
 </ng-template>
 
-
-<div >
+<div>
   <form [formGroup]="userForm" (ngSubmit)="userFormHandler()">
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
@@ -46,22 +44,18 @@
           [optionData]="selectMenuRoles"
           defaultOption="Select"
           defaultValue="Select"
-          formControlName="role" 
-          [ngClass]="checkValidityOfField('role')?'ng-in-valid':''"
+          formControlName="role"
+          [ngClass]="checkValidityOfField('role') ? 'ng-in-valid' : ''"
         >
         </app-common-selectmenu>
       </div>
 
-     <ng-container *ngIf="isEditable">
-      <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
-        <label class="form-label"
-          >Staff Code
-         
-        </label>
-         <span>{{userDataOnEdit.staffCode}}</span>
-      </div>
-     </ng-container>
-     
+      <ng-container *ngIf="isEditable">
+        <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
+          <label class="form-label">Staff Code </label>
+          <span>{{ userDataOnEdit.staffCode }}</span>
+        </div>
+      </ng-container>
     </div>
     <div class="row">
       <div class="col-xl-3 col-md-6 mt-3" *ngIf="isFieldVisible('vendor')">
@@ -73,7 +67,7 @@
           #addUserVendorSelection
           [optionData]="selectMenuVendors"
           defaultOption="Select"
-          defaultValue=0
+          defaultValue="0"
           formControlName="vendor"
           [ngClass]="{ 'ng-in-valid': checkValidityOfField('vendor') }"
           id="vendorSelectionMenu"
@@ -92,9 +86,11 @@
           #addUserVendorManagerLevelSelection
           [optionData]="selectMenuManagerLevels"
           defaultOption="Select"
-          defaultValue=0
+          defaultValue="0"
           formControlName="vendorManagerLevel"
-          [ngClass]="{ 'ng-in-valid': checkValidityOfField('vendorManagerLevel') }"
+          [ngClass]="{
+            'ng-in-valid': checkValidityOfField('vendorManagerLevel')
+          }"
         >
         </app-common-selectmenu>
       </div>
@@ -107,8 +103,8 @@
           #addUserReportToSelection
           [optionData]="selectMenuReportingTo"
           defaultOption="Select"
-          defaultValue=0
-          formControlName="reportTo"      
+          defaultValue="0"
+          formControlName="reportTo"
           [ngClass]="{ 'ng-in-valid': checkValidityOfField('reportTo') }"
         >
         </app-common-selectmenu>
@@ -138,9 +134,12 @@
         <input
           type="tel"
           formControlName="mobileNumber"
-          appPhoneMasking         
+          appPhoneMasking
           class="form-control"
         />
+        <div *ngIf="hasError('mobileNumber', 'minlength')" class="text-danger">
+          Minimum 10 digits required
+        </div>
       </div>
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3">
         <label class="form-label">Role Status</label>
@@ -211,7 +210,9 @@
           maxlength="30"
         />
         <div *ngIf="hasError('password', 'pattern')" class="text-danger">
-          Invalid password format [Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character ]
+          Invalid password format [Minimum eight characters, at least one
+          uppercase letter, one lowercase letter, one number and one special
+          character ]
         </div>
       </div>
     </div>
@@ -228,9 +229,11 @@
           #addUserRelationshipManagerSelection
           [optionData]="selectMenuRelationshipManager"
           defaultOption="Select"
-          defaultValue=0
-          formControlName="relationshipManager"          
-          [ngClass]="checkValidityOfField('relationshipManager')?'ng-in-valid':''"
+          defaultValue="0"
+          formControlName="relationshipManager"
+          [ngClass]="
+            checkValidityOfField('relationshipManager') ? 'ng-in-valid' : ''
+          "
         >
         </app-common-selectmenu>
       </div>
@@ -243,7 +246,7 @@
           #addUserNotificationPrefSelection
           [optionData]="selectMenuNotificationPref"
           defaultOption="None"
-          defaultValue=0
+          defaultValue="0"
           formControlName="notificationPref"
         >
         </app-common-selectmenu>
@@ -255,13 +258,13 @@
         <label class="form-label">Date Of Birth</label>
         <div class="d-flex gap-2 justify-content-between">
           <app-common-selectmenu
-          #addUserDaySelection
+            #addUserDaySelection
             class="w-100"
             [optionData]="selectMenuDate"
             defaultOption="Day"
             defaultValue="Day"
             [needsSearching]="true"
-            formControlName="day"           
+            formControlName="day"
             [ngClass]="{ 'ng-in-valid': checkValidityOfField('day') }"
           >
           </app-common-selectmenu>
@@ -481,16 +484,21 @@
     </ng-container>
 
     <div class="mt-3 d-flex justify-content-between align-item-center">
-   <div>
-    <button class="btn btn-primary me-2" type="submit">Save</button>
-    <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1">Cancel</a>
-   </div>
-   <button class="btn btn-secondary me-2 bg-secondary"
-    type="button" 
-    [ngClass]="isEditable?'d-block':'d-none'"
-     type="button"
-     (click)="deleteUser()"
-    ><img src="../../../../assets/Images/ic-delete-white.svg" width="15px"></button>
+      <div>
+        <button class="btn btn-primary me-2" type="submit">Save</button>
+        <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1"
+          >Cancel</a
+        >
+      </div>
+      <button
+        class="btn btn-secondary me-2 bg-secondary"
+        type="button"
+        [ngClass]="isEditable ? 'd-block' : 'd-none'"
+        type="button"
+        (click)="deleteUser()"
+      >
+        <img src="../../../../assets/Images/ic-delete-white.svg" width="15px" />
+      </button>
     </div>
   </form>
 </div>
