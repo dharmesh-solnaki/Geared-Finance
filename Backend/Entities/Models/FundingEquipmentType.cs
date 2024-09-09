@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -21,4 +24,7 @@ public partial class FundingEquipmentType
     [ForeignKey("CategoryId")]
     [InverseProperty("FundingEquipmentTypes")]
     public virtual FundingCategory Category { get; set; } = null!;
+
+    [InverseProperty("Equipment")]
+    public virtual ICollection<FunderProductFunding> FunderProductFundings { get; set; } = new List<FunderProductFunding>();
 }

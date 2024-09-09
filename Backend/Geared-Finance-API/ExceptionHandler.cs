@@ -1,4 +1,4 @@
-﻿using Utilities;
+﻿using System.Net;
 
 namespace Geared_Finance_API
 {
@@ -27,13 +27,22 @@ namespace Geared_Finance_API
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
+            var statusCode = ex switch
+            {
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                BadHttpRequestException => HttpStatusCode.BadRequest,
+                KeyNotFoundException => HttpStatusCode.NotFound,
+                _ => HttpStatusCode.InternalServerError
+            };
+
+            context.Response.StatusCode = (int)statusCode;
+
             var response = new
             {
-                StatusCode = context.Response.StatusCode,
-                Message = Constants.INTERNAL_SERVER_ERR,
-                Detail = exception.Message
+                StatusCode = statusCode,
+                ex.Message,
             };
 
             return context.Response.WriteAsJsonAsync(response);

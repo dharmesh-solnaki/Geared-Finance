@@ -18,15 +18,16 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpGet]
-        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_VIEW)]
+        [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
         public async Task<IActionResult> GetModules()
         {
             IEnumerable<ModulesDTO> modules = await _rolePermisionService.GetModulesAsync();
             if (!modules.Any()) return NoContent();
             return Ok(modules);
         }
-        [HttpGet("GetRights")]
-        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_VIEW)]
+
+        [HttpGet("Rights")]
+        [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
         public async Task<IActionResult> GetRolePermissions([FromQuery] int roleId)
         {
             IEnumerable<RightsDTO> rights = await _rolePermisionService.GetRolePermissionAsync(roleId);
@@ -35,7 +36,7 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpPost]
-        [AuthorizePermission(ModuleConstants.SETTINGS, PermissionConstants.CAN_UPSERT , "Id")]
+        [AuthorizePermission(Constants.SETTINGS, Constants.CAN_UPSERT, Constants.ID_TYPE)]
         public async Task<IActionResult> UpsertRights(IEnumerable<RightsDTO> rightsDTOs)
         {
             if (!rightsDTOs.Any()) return BadRequest();
@@ -43,8 +44,8 @@ namespace Geared_Finance_API.Controllers
             return Ok();
         }
 
-        [HttpPost("getRoles")]
-        public async Task<IActionResult> getAllRoles(BaseModelSearchEntity model)
+        [HttpPost("Roles")]
+        public async Task<IActionResult> GetAllRoles(BaseModelSearchEntity model)
         {
             IEnumerable<RoleDTO> roles = await _rolePermisionService.GetAllRolesAsync(model);
             if (!roles.Any()) return NoContent();

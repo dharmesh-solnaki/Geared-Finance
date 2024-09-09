@@ -19,7 +19,7 @@ export const menuBarItems = [
   {
     menuItem: 'Funders',
     imagePath: '../../assets/Images/icon-funder.svg',
-    routerPath: '/funders',
+    routerPath: '/funder',
   },
   {
     menuItem: 'Vendors',
@@ -198,6 +198,7 @@ export const alertResponses = {
   ON_OTP_INVALID: 'Invalid Otp!',
   ON_EMAIL_NOT_EXIST: 'Given username not exists',
   ON_PASSWORD_CHANGE_SUCCESS: 'Password updated successfully',
+  ON_FORM_INVALID: 'Please enter all mandatory details: \n',
 };
 
 export const errorResponses = {
@@ -220,6 +221,82 @@ export const statusSelectMenu: selectMenu[] = [
   { option: 'Active', value: true },
   { option: 'Inactive', value: false },
 ];
+
+export const MAPS_ADDRESS_TYPES = {
+  ADMINISTRATIVE_AREA_LEVEL_1: 'administrative_area_level_1',
+  POSTAL_CODE: 'postal_code',
+  LOCALITY: 'locality',
+  ROUTE: 'route',
+  STREET_NUMBER: 'street_number',
+};
+
+// export const textEditorToolsConfig: Toolbar = [
+//   [
+//     'bold',
+//     'italic',
+//     'underline',
+//     'ordered_list',
+//     'bullet_list',
+//     'horizontal_rule',
+//   ],
+// ];
+// export const editorConfig: AngularEditorConfig = {
+//   editable: true,
+//   spellcheck: true,
+//   height: 'auto',
+//   minHeight: '10rem',
+//   maxHeight: '18rem',
+//   width: 'auto',
+//   minWidth: '0',
+//   translate: 'yes',
+//   enableToolbar: true,
+//   showToolbar: true,
+//   defaultParagraphSeparator: '',
+//   outline: false,
+//   toolbarPosition: 'top',
+//   toolbarHiddenButtons: [
+//     [
+//       'undo',
+//       'redo',
+//       'strikeThrough',
+//       'subscript',
+//       'superscript',
+//       'justifyLeft',
+//       'justifyCenter',
+//       'justifyRight',
+//       'justifyFull',
+//       'indent',
+//       'outdent',
+//       'heading',
+//       'fontName',
+//     ],
+//     [
+//       'fontSize',
+//       'textColor',
+//       'backgroundColor',
+//       'customClasses',
+//       'link',
+//       'unlink',
+//       'insertImage',
+//       'insertVideo',
+//       'removeFormat',
+//       'toggleEditorMode',
+//     ],
+//   ],
+// };
+export const AddressOptions = {
+  componentRestrictions: {
+    country: ['AU'],
+  },
+};
+export const ckEditorConfig: CKEDITOR.config = {
+  forcePasteAsPlainText: true,
+  toolbar: [
+    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+    { name: 'lists', items: ['NumberedList', 'BulletedList'] },
+    { name: 'insert', items: ['HorizontalRule'] },
+  ],
+};
 // extensions methods..
 
 declare global {
@@ -231,6 +308,6 @@ declare global {
   }
 }
 Number.INT_MAX_VALUE = 2147483647;
-Array.prototype.isNotEmpty = function <T>(): boolean {
+Array.prototype.isNotEmpty = function (): boolean {
   return this && this.length > 0;
 };

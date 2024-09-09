@@ -8,7 +8,7 @@
 </ng-template>
 
 <div>
-  <form [formGroup]="userForm" (ngSubmit)="userFormHandler()">
+  <form [formGroup]="userForm">
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
         <label class="form-label"
@@ -117,7 +117,7 @@
           <span class="text-danger">*</span>
         </label>
         <input
-          type="text"
+          type="email"
           formControlName="email"
           class="form-control"
           maxlength="100"
@@ -485,7 +485,13 @@
 
     <div class="mt-3 d-flex justify-content-between align-item-center">
       <div>
-        <button class="btn btn-primary me-2" type="submit">Save</button>
+        <button
+          class="btn btn-primary me-2"
+          (click)="userFormHandler()"
+          type="button"
+        >
+          Save
+        </button>
         <a href="javascript: history.go(-1)" class="btn btn-secondary mx-1"
           >Cancel</a
         >
@@ -494,7 +500,7 @@
         class="btn btn-secondary me-2 bg-secondary"
         type="button"
         [ngClass]="isEditable ? 'd-block' : 'd-none'"
-        type="button"
+        type="submit"
         (click)="deleteUser()"
       >
         <img src="../../../../assets/Images/ic-delete-white.svg" width="15px" />

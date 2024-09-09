@@ -1,4 +1,6 @@
-﻿using Entities.Models;
+﻿using System;
+using System.Collections.Generic;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -14,6 +16,14 @@ public partial class ApplicationDBContext : DbContext
     {
     }
 
+    public virtual DbSet<Document> Documents { get; set; }
+
+    public virtual DbSet<Funder> Funders { get; set; }
+
+    public virtual DbSet<FunderProductFunding> FunderProductFundings { get; set; }
+
+    public virtual DbSet<FunderProductGuide> FunderProductGuides { get; set; }
+
     public virtual DbSet<FundingCategory> FundingCategories { get; set; }
 
     public virtual DbSet<FundingEquipmentType> FundingEquipmentTypes { get; set; }
@@ -21,6 +31,8 @@ public partial class ApplicationDBContext : DbContext
     public virtual DbSet<ManagerLevel> ManagerLevels { get; set; }
 
     public virtual DbSet<Module> Modules { get; set; }
+
+    public virtual DbSet<Note> Notes { get; set; }
 
     public virtual DbSet<Right> Rights { get; set; }
 
@@ -36,6 +48,54 @@ public partial class ApplicationDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Document>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Documents_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Funder).WithMany(p => p.Documents)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FUNDER_DOCUMENT_FUNDERID");
+        });
+
+        modelBuilder.Entity<Funder>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Funder_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<FunderProductFunding>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("SelectedFunding_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.EquipmentCategory).WithMany(p => p.FunderProductFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FUNDINGCATEGORY_SELECTEDFUNDING_EQUIPMENTCATEGORYID");
+
+            entity.HasOne(d => d.Equipment).WithMany(p => p.FunderProductFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EQUIPMENT_SELECTEDFUNDING_EUQIPMENTID");
+
+            entity.HasOne(d => d.FundingProductGuide).WithMany(p => p.FunderProductFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FUNDERGUIDE_SELECTEDFUNDING_FUNDERGUIDEID");
+        });
+
+        modelBuilder.Entity<FunderProductGuide>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("FunderProductGuide_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Funder).WithOne(p => p.FunderProductGuide)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Fk_Funder_Funder_Guide");
+        });
+
         modelBuilder.Entity<FundingCategory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("FundingCategory_pkey");
@@ -66,11 +126,24 @@ public partial class ApplicationDBContext : DbContext
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
         });
 
+        modelBuilder.Entity<Note>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Notes_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Funder).WithMany(p => p.Notes).HasConstraintName("FK_FUNDER_NOTES_FUNDERID");
+        });
+
         modelBuilder.Entity<Right>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Rights_pkey");
 
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+            entity.Property(e => e.CanAdd).HasDefaultValueSql("false");
+            entity.Property(e => e.CanDelete).HasDefaultValueSql("false");
+            entity.Property(e => e.CanEdit).HasDefaultValueSql("false");
+            entity.Property(e => e.CanView).HasDefaultValueSql("false");
 
             entity.HasOne(d => d.Module).WithMany(p => p.Rights)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -1,4 +1,5 @@
-<div class="">
+<app-loader [isShowLoader]="isEnableLoader"></app-loader>
+<div>
   <div
     class="inner-page-heading d-lg-flex justify-content-between align-item-center"
   >
@@ -24,7 +25,11 @@
       </li>
 
       <li class="d-flex align-item-center setting-title-btn">
-        <button class="btn btn-secondary download-icon-btn mx-1 px-4" type="button"  (click)="downloadClickHandler()">
+        <button
+          class="btn btn-secondary download-icon-btn mx-1 px-4"
+          type="button"
+          (click)="downloadClickHandler()"
+        >
           <img src="../../../assets/Images/icon-download.svg" />
         </button>
         <button
@@ -51,7 +56,7 @@
             <span class="text-danger">*</span>
           </label>
           <app-common-selectmenu
-          #selectMenuFundingCategories
+            #selectMenuFundingCategories
             [optionData]="fundingCategoties"
             defaultOption="Select"
             defaultValue="0"
@@ -60,7 +65,10 @@
             [ngClass]="
               equipmentTypeForm.get('name')?.touched &&
               equipmentTypeForm.get('category')?.invalid
-                ? 'ng-in-valid': ''">
+                ? 'ng-in-valid'
+                : ''
+            "
+          >
           </app-common-selectmenu>
         </div>
         <div class="col-12 my-2">
@@ -87,11 +95,12 @@
         <div class="col-12">
           <button type="submit" class="btn btn-primary m-1">Save</button>
           <button
-          id="closeBtnModal"
+            id="closeBtnModal"
             type="button"
             class="btn btn-secondary m-1"
             data-bs-dismiss="modal"
-            (click)="formCancelingHandler()">
+            (click)="formCancelingHandler()"
+          >
             Cancel
           </button>
         </div>
@@ -99,54 +108,64 @@
     </ng-template>
 
     <app-common-dialog
-    modalId="addFundingEquipment"
+      modalId="addFundingEquipment"
       [modalTitle]="modalTitle"
       [bodyData]="addEquipmentTypeForm"
       modalClass="modal-dialog-centered"
       (onModalCloseEventEmitter)="formCancelingHandler()"
     ></app-common-dialog>
 
-   <app-common-grid
-   [data]="equipmentData"
-   [gridSettings]="gridSetting"
-   [paginationSettings]="paginationSetting"
-   [isEquipmentTypeEditable]="isEquipmentTypeEditable"
-   [selectedId]="equipmentId"
-   [equipmentType]="equipmentType"
-   (onSortEvent)="sortHandler($event)"
-   (onPageChange)="pageChangeEventHandler($event)"
-   (onpageSizeChange)="pageSizeChangeHandler($event)"
-   (onEquipmentEdit)="onEditEquipment($event)"
-   (onEquipmentSave)="onSaveEquipment($event)"
-   (onEquipmentDelete)="onDeleteEquipment($event)"
-   >
-   </app-common-grid>
+    <app-common-grid
+      [data]="equipmentData"
+      [gridSettings]="gridSetting"
+      [paginationSettings]="paginationSetting"
+      [isEquipmentTypeEditable]="isEquipmentTypeEditable"
+      [selectedId]="equipmentId"
+      [equipmentType]="equipmentType"
+      (onSortEvent)="sortHandler($event)"
+      (onPageChange)="pageChangeEventHandler($event)"
+      (onpageSizeChange)="pageSizeChangeHandler($event)"
+      (onEquipmentEdit)="onEditEquipment($event)"
+      (onEquipmentSave)="onSaveEquipment($event)"
+      (onEquipmentDelete)="onDeleteEquipment($event)"
+    >
+    </app-common-grid>
 
-   <div>
-    <button
-    class="d-none"
-    data-bs-toggle="modal"
-    data-bs-target="#deleteConfirmationModal"
-    id="deleteConfirmationBtn"
-  >
-  </button>
+    <div>
+      <button
+        class="d-none"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteConfirmationModal"
+        id="deleteConfirmationBtn"
+      ></button>
 
+      <ng-template #deleteConfirmation>
+        <p class="text-muted">Are you sure you want to delete?</p>
+        <div class="d-flex justify-content-end">
+          <button
+            class="btn btn-primary mx-1"
+            type="button"
+            (click)="deleteOkHandler()"
+          >
+            Ok
+          </button>
+          <button
+            class="btn btn-secondary mx-1"
+            id="deleteModalCancelBtn"
+            type="button"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+        </div>
+      </ng-template>
 
-  <ng-template #deleteConfirmation>
-    <p class="text-muted">Are you sure you want to delete?</p>
-    <div class="d-flex justify-content-end">
-        <button class="btn btn-primary mx-1" type="button" (click)="deleteOkHandler()">Ok</button>
-        <button class="btn btn-secondary mx-1" id="deleteModalCancelBtn" type="button" data-bs-dismiss="modal">Cancel</button>
+      <app-common-dialog
+        [modalTitle]="deleteModalTitle"
+        [bodyData]="deleteConfirmation"
+        modalClass="modal-dialog-centered"
+        modalId="deleteConfirmationModal"
+      ></app-common-dialog>
     </div>
-  </ng-template>
-  
-  <app-common-dialog
-  [modalTitle]="deleteModalTitle"
-  [bodyData]="deleteConfirmation"
-  modalClass="modal-dialog-centered"
-  modalId="deleteConfirmationModal"
-></app-common-dialog>
-
-   </div>
   </div>
 </div>

@@ -27,6 +27,7 @@ export class UserManagementComponent implements OnInit {
     pageNumber: 1,
     pageSize: 10,
   };
+  isEnableLoader: boolean = false;
 
   @ViewChild('roleSelectionMenu') roleSelectionMenu!: CommonSelectmenuComponent;
 
@@ -50,16 +51,21 @@ export class UserManagementComponent implements OnInit {
 
   userDataSetter() {
     this.userData = [];
-    this._userService.getUsers(this.searchingModel).subscribe((res) => {
-      if (res && res.responseData) {
-        this.totalRecords = res.totalRecords;
-        this.userData = res.responseData;
-        this.userData.map((e) => {
-          e.venodrName = e.vendor?.name || '-';
-        });
-      }
-      this.paginationSetter();
-    });
+    this.isEnableLoader = true;
+    this._userService.getUsers(this.searchingModel).subscribe(
+      (res) => {
+        if (res && res.responseData) {
+          this.totalRecords = res.totalRecords;
+          this.userData = res.responseData;
+          this.userData.map((e) => {
+            e.venodrName = e.vendor?.name || '-';
+          });
+        }
+        this.isEnableLoader = false;
+        this.paginationSetter();
+      },
+      () => (this.isEnableLoader = false)
+    );
   }
 
   paginationSetter() {
@@ -85,11 +91,14 @@ export class UserManagementComponent implements OnInit {
   }
 
   searchHandler() {
+    const name = this.userHeaderSearchForm.get('searchString')?.value || '';
+    const roleName = this.userHeaderSearchForm.get('selectedRole')?.value;
+    if (!name && !roleName) return;
     this.searchingModel = {
-      name: this.userHeaderSearchForm.get('searchString')?.value || '',
+      name: name,
       pageNumber: 1,
       pageSize: 10,
-      roleName: this.userHeaderSearchForm.get('selectedRole')?.value,
+      roleName: roleName,
     };
     this.userDataSetter();
   }

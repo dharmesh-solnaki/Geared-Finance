@@ -1,3 +1,4 @@
+<app-loader [isShowLoader]="isEnableLoader"></app-loader>
 <ng-template #funderDefaultHeader>
   <div class="d-flex justify-content-between align-item-center">
     <span class="inner-page-heading-title"> FUNDERS </span>
@@ -6,5 +7,16 @@
     >
   </div>
 </ng-template>
-
-<router-outlet></router-outlet>
+<div class="m-3">
+  <app-common-grid
+    [data]="funderList"
+    [gridSettings]="gridSetting"
+    [paginationSettings]="paginationSettings"
+    (onSortEvent)="sortHandler($event)"
+    [isEditable]="true"
+    (onEditEvent)="onEditEventRecevier($event)"
+    (onPageChange)="pageChangeEventHandler($event)"
+    (onpageSizeChange)="pageSizeChangeHandler($event)"
+  >
+  </app-common-grid>
+</div>

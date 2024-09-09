@@ -11,5 +11,6 @@ namespace Repository.Interface
         Task<bool> UpdatePasswordAsync(PasswordUpdateReq model);
         Task<bool> ValidateOtpAsync(OtpRequest model);
         Task<string> ValidateRefreshToken(string token);
+        int GetUserId();
     }
 }

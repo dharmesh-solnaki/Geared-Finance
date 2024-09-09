@@ -1,4 +1,5 @@
-import { RoleEnum, SiteRolesId } from './constants';
+import { ApiAddress } from '../Models/common-models';
+import { MAPS_ADDRESS_TYPES, RoleEnum, SiteRolesId } from './constants';
 
 export const csvMaker = (data: any[], csvTitle: string) => {
   const headers = Object.keys(data[0]);
@@ -27,18 +28,13 @@ export const downloadCsvFile = (data: any, csvTitle: string) => {
 
 export function parseJwt(token: string) {
   try {
-    // Get Token Header
     const base64HeaderUrl = token.split('.')[0];
     const base64Header = base64HeaderUrl.replace('-', '+').replace('_', '/');
     const headerData = JSON.parse(window.atob(base64Header));
-
-    // Get Token payload and date's
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace('-', '+').replace('_', '/');
     const dataJWT = JSON.parse(window.atob(base64));
     dataJWT.header = headerData;
-
-    // TODO: add expiration at check ...
 
     return dataJWT;
   } catch (err) {
@@ -62,4 +58,47 @@ export function getRoleIdByRoleName(roleName: string): number {
       return SiteRolesId.VendorSalesRep;
   }
   return -1;
+}
+
+export function getAddressFromApi(
+  place: google.maps.places.PlaceResult
+): ApiAddress {
+  let address = '';
+  let postcode = '';
+  let state = '';
+  let suburb = '';
+  let streetNumber = '';
+  let route = '';
+  if (place && place.address_components) {
+    place.address_components.forEach((component) => {
+      const componentType = component.types[0];
+
+      switch (componentType) {
+        case MAPS_ADDRESS_TYPES.STREET_NUMBER:
+          streetNumber = component.short_name;
+          break;
+        case MAPS_ADDRESS_TYPES.ROUTE:
+          route = component.short_name;
+          break;
+        case MAPS_ADDRESS_TYPES.POSTAL_CODE:
+          postcode = component.short_name;
+          break;
+        case MAPS_ADDRESS_TYPES.LOCALITY:
+          suburb = component.short_name;
+          break;
+        case MAPS_ADDRESS_TYPES.ADMINISTRATIVE_AREA_LEVEL_1:
+          state = component.short_name;
+          break;
+      }
+    });
+
+    if (streetNumber || route) {
+      address = `${streetNumber} ${route}`.trim();
+    }
+
+    if (!address) {
+      address = `${suburb} ${state} ${postcode}`.trim();
+    }
+  }
+  return { address, postcode, state, suburb, streetNumber, route };
 }

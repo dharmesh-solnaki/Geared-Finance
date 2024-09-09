@@ -43,7 +43,6 @@ namespace Geared_Finance_API
                   .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.UserId))
                   .ForMember(dest => dest.Module, opt => opt.Ignore());
 
-
         }
     }
 

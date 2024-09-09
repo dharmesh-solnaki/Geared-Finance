@@ -1,0 +1,108 @@
+<div class="mt-2 row align-items-center gap-4">
+  <div class="my-1 col-lg-3 col-md-12">
+    <span class="fw-semibold">{{ title1 }}</span>
+
+    <div class="transfer-container mt-2 pt-0">
+      <ng-container *ngIf="isSearchingRequired">
+        <div class="sticky-top z-3 p-0">
+          <input
+            type="text"
+            placeholder="search"
+            class="search-input"
+            style="background-color: #eef4f7 !important"
+            (input)="availableDivDisplayListSearch($event)"
+          />
+          <hr class="m-0" />
+        </div>
+      </ng-container>
+      <ng-container *ngFor="let item of availableDivDisplayList">
+        <ul>
+          <li>
+            <span class="fw-semibold" (click)="handleListClick(item, 0)">
+              {{ item.name }}</span
+            >
+            <ng-container *ngFor="let subItem of item.subCategory">
+              <ul>
+                <li
+                  (click)="handleSublistClick(subItem.id, item.id, 0)"
+                  [ngClass]="{
+                    'common-transfer-selected-item': getHighlights(
+                      item.id,
+                      subItem.id,
+                      0
+                    )
+                  }"
+                >
+                  {{ subItem.name }}
+                </li>
+              </ul>
+            </ng-container>
+          </li>
+        </ul>
+      </ng-container>
+    </div>
+  </div>
+  <div class="col-lg-2 col-md-3 d-flex flex-column">
+    <button
+      class="d-block btn btn-transfer px-3 py-1 mb-2"
+      (click)="addToSelectedList()"
+    >
+      <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Add</span>
+      <img
+        src="../../../assets/Images/ic-right-arrow.svg"
+        width="14px"
+        alt=""
+      />
+    </button>
+    <button
+      class="d-block btn btn-transfer px-3 py-1"
+      (click)="removeFromSelectedList()"
+    >
+      <img src="../../../assets/Images/ic-left-arrow.svg" width="14px" alt="" />
+      <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Remove</span>
+    </button>
+  </div>
+
+  <div class="my-1 col-lg-3 col-md-12">
+    <span class="fw-bold">{{ title2 }} <span class="text-danger">*</span></span>
+    <div class="transfer-container mt-2 pt-0">
+      <ng-container *ngIf="isSearchingRequired">
+        <div class="sticky-top z-3 p-0">
+          <input
+            type="text"
+            placeholder="search"
+            class="search-input"
+            style="background-color: #eef4f7 !important"
+            (input)="selectedDivDisplayListSearch($event)"
+          />
+          <hr class="m-0" />
+        </div>
+      </ng-container>
+      <ng-container *ngFor="let item of selectedDivDisplayList">
+        <ul>
+          <li>
+            <span class="fw-semibold" (click)="handleListClick(item, 1)">
+              {{ item.name }}</span
+            >
+            <ng-container *ngFor="let subItem of item.subCategory">
+              <ul>
+                <li
+                  (click)="handleSublistClick(subItem.id, item.id, 1)"
+                  [ngClass]="{
+                    'common-transfer-selected-item': getHighlights(
+                      item.id,
+                      subItem.id,
+                      1
+                    )
+                  }"
+                >
+                  {{ subItem.name }}
+                </li>
+              </ul>
+            </ng-container>
+          </li>
+        </ul>
+      </ng-container>
+    </div>
+  </div>
+</div>

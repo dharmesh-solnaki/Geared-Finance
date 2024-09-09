@@ -2,7 +2,7 @@
 {
     public class IsExistData
     {
-        public bool isEmailExist { get; set; }
-        public bool isExistMobile { get; set; }
+        public bool IsEmailExist { get; set; }
+        public bool IsExistMobile { get; set; }
     }
 }

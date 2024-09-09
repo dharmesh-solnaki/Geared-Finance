@@ -1,6 +1,5 @@
 ﻿using Entities.DBContext;
 using Entities.Models;
-using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 

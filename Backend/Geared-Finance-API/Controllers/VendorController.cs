@@ -30,10 +30,9 @@ namespace Geared_Finance_API.Controllers
 
         }
 
-        [HttpGet("GetManagerLevels")]
+        [HttpGet("ManagerLevels")]
         public async Task<IActionResult> ManagerLevels([FromQuery] int id)
         {
-
             IEnumerable<ManagerLevelDTO> managerLevelData = await _vendorService.GetManagerLevels(id);
             if (!managerLevelData.Any())
             {

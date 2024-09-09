@@ -1,35 +1,35 @@
 ﻿using System.Security.Cryptography;
 
-namespace Utilities
+namespace Utilities;
+
+public class StringGenerator
 {
-    public class StringGenerator
+    private static Random random = new();
+
+    public static string GenerateUniqueString(int length = 3)
     {
-        private static Random random = new Random();
+        const string chars = Constants.CAPITAL_LETTERS;
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
 
-        public static string GenerateUniqueString(int length = 3)
+    public static string GenerateOtp(int length, bool isOnlyNumbers)
+    {
+        char[] Numbers = Constants.NUMBERS_ARRAY.ToCharArray();
+        char[] Letters = Constants.LETTERS_ARRAY.ToCharArray();
+        char[] charSet = isOnlyNumbers ? Numbers : Letters;
+        byte[] randomNumber = new byte[length];
+        char[] otp = new char[length];
+
+        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+            rng.GetBytes(randomNumber);
         }
 
-        private static readonly char[] Numbers = "0123456789".ToCharArray();
-        private static readonly char[] Letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
-        public static string GenerateOtp(int length, bool isOnlyNumbers)
+        for (int i = 0; i < length; i++)
         {
-            char[] charSet = isOnlyNumbers ? Numbers : Letters;
-            byte[] randomNumber = new byte[length];
-            char[] otp = new char[length];
-
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-            }
-
-            for (int i = 0; i < length; i++)
-            {
-                otp[i] = charSet[randomNumber[i] % charSet.Length];
-            }
-            return new string(otp);
+            otp[i] = charSet[randomNumber[i] % charSet.Length];
         }
+        return new string(otp);
     }
 }
+

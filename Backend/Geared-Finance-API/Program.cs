@@ -5,6 +5,8 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secret").ToString(
 
 builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.ConfigureCors();
+builder.Services.ConfigureAppsettingModel(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureRepositories();
 builder.Services.ConfigureJWTToken(key);

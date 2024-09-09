@@ -2,7 +2,9 @@
 using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
+using System.Linq;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Repository.Implementation
 {
@@ -31,14 +33,15 @@ namespace Repository.Implementation
                 {
                     return current.Include(include);
                 });
-            }
-            {
+            }            
                 if (searchEntity.thenIncludes != null)
+                {
                     query = searchEntity.thenIncludes.Aggregate(query, (current, include) =>
                     {
                         return current.Include(include);
                     });
-            }
+                }                   
+            
             if (searchEntity.selects != null)
             {
                 query = query.Select(searchEntity.selects);
@@ -79,7 +82,10 @@ namespace Repository.Implementation
             var idProperty = typeof(T).GetProperty("Id");
             if (createdDateProperty != null && createdByProperty != null && idProperty != null)
             {
-                var oldItem = await _dbSet.FindAsync(idProperty.GetValue(item));
+                var idValue = idProperty.GetValue(item);
+                var oldItem = await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => EF.Property<object>(e, "Id").Equals(idValue));
+                //var oldItem = await _dbSet.FindAsync(idProperty.GetValue(item));
+
                 createdDateProperty.SetValue(item, createdDateProperty.GetValue(oldItem));
 
                 createdByProperty.SetValue(item, createdByProperty.GetValue(oldItem));
@@ -105,6 +111,19 @@ namespace Repository.Implementation
 
             return await query.FirstOrDefaultAsync(predicate);
         }
+
+        public async Task<T> GetOneAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>[]? includes)
+        {
+            IQueryable<T> query = _dbContext.Set<T>().AsNoTracking().AsQueryable();
+
+            if (includes != null)
+            {
+                query = includes.Aggregate(query, (current, include) => current.Include(include));
+            }
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
 
         public async Task AddRangeAsync(IEnumerable<T> item)
         {
@@ -138,5 +157,6 @@ namespace Repository.Implementation
 
             await SaveChangesAsync();
         }
+      
     }
 }

@@ -21,12 +21,12 @@ export class RolePermissionService {
   }
   getRigthsForEdit(roleId: number): Observable<RolePermissionDTO[]> {
     return this._http.get<RolePermissionDTO[]>(
-      `${this.API_URL}/GetRights?roleId=${roleId}`
+      `${this.API_URL}/Rights?roleId=${roleId}`
     );
   }
   getRoles(searchingModel: CommonSearch): Observable<RoleModel[]> {
     return this._http.post<RoleModel[]>(
-      `${this.API_URL}/getRoles`,
+      `${this.API_URL}/Roles`,
       searchingModel
     );
   }

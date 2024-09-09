@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class AppLoginComponent {
   loginForm: FormGroup;
   isFormSubmitted: boolean = false;
+  isEnableLoader: boolean = false;
   constructor(
     private _fb: FormBuilder,
     private _authService: AuthService,
@@ -45,6 +46,7 @@ export class AppLoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
+    this.isEnableLoader = true;
     this._authService
       .authenticateUser(this.loginForm.value)
       .subscribe((res) => {
@@ -54,6 +56,7 @@ export class AppLoginComponent {
         } else {
           this._toaster.error(alertResponses.ON_LOGIN_ERROR);
         }
+        this.isEnableLoader = false;
       });
   }
 }

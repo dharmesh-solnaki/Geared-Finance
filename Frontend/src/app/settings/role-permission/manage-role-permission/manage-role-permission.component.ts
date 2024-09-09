@@ -92,7 +92,6 @@ export class ManageRolePermissionComponent implements OnInit {
   }
   rightsFormHandler() {
     this.setRightPermissionList();
-    console.log(this.rolePermissionList);
     this._rolePermissionService
       .upsertRolePermissions(this.rolePermissionList)
       .subscribe(

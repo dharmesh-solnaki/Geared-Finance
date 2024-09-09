@@ -15,6 +15,9 @@ import { AppForgotPasswwordComponent } from './app-forgot-password/app-forgot-pa
 import { AccessDeniedPageComponent } from './Shared/access-denied-page/access-denied-page.component';
 import { AppHeaderComponent } from './app-header/app-header.component';
 import { SharedTemplateService } from './Models/shared-template.service';
+import { SharedModule } from './Shared/shared.module';
+import { Loader } from '@googlemaps/js-api-loader';
+import { environment } from 'src/environments/environment.development';
 
 const appRoutes: Routes = [
   { path: '', component: AppComponent },
@@ -26,7 +29,7 @@ const appRoutes: Routes = [
       import('./settings/settings.module').then((m) => m.SettingsModule),
   },
   {
-    path: 'funders',
+    path: 'funder',
     loadChildren: () =>
       import('./funders/funders.module').then((m) => m.FundersModule),
   },
@@ -46,6 +49,13 @@ const appRoutes: Routes = [
     AuthService,
     TokenService,
     SharedTemplateService,
+    {
+      provide: Loader,
+      useValue: new Loader({
+        apiKey: environment.GOOGLE_API_KEY,
+        libraries: ['places'],
+      }),
+    },
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -61,6 +71,7 @@ const appRoutes: Routes = [
       progressBar: true,
       preventDuplicates: true,
     }),
+    SharedModule,
   ],
 })
 export class AppModule {}

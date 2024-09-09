@@ -63,7 +63,7 @@ export class GeneralInterceptor implements HttpInterceptor {
               break;
           }
         }
-        alert(errorMessage);
+
         return throwError(() => new Error(errorMessage));
       })
     );

@@ -1,6 +1,6 @@
 <ng-template #funderHeaderTabs>
   <div class="d-lg-flex justify-content-between">
-    <div class="d-flex justify-content-between">
+    <div class="d-lg-flex justify-content-between my-2">
       <a
         class="header-tab text-center"
         [ngClass]="{ 'header-active-tab': activeTab === 'overview' }"
@@ -12,35 +12,42 @@
         class="header-tab text-center"
         [ngClass]="{ 'header-active-tab': activeTab === 'funderProductGuide' }"
         (click)="setActiveTab('funderProductGuide', funderProductTypeGuide)"
+        *ngIf="isEdit"
       >
         Funder Product Guide
       </a>
     </div>
-    <div class="d-flex gap-1 m-1">
-      <button class="btn btn-primary">
-        <img width="15px" src="../../../assets/Images/ic-trash-dark.svg" />
-      </button>
-      <button class="btn btn-primary">Set entity name</button>
+    <div class="d-flex gap-1 m-1 mt-2 h-25">
+      <ng-container *ngIf="isEdit">
+        <button class="btn btn-primary">
+          <img width="15px" src="../../../assets/Images/ic-trash-dark.svg" />
+        </button>
+        <button class="btn btn-primary">Set entity name</button>
 
-      <button class="btn btn-primary position-relative">
-        <img
-          src="../../../assets/Images/ic-diarynote.svg"
-          class="position-absolute d-none"
-          style="top: -21px; left: 10%"
-          width="25px"
-          alt=""
-        />
+        <button class="btn btn-primary position-relative">
+          <img
+            src="../../../assets/Images/ic-diarynote.svg"
+            class="position-absolute d-none"
+            style="top: -22px; left: 10%"
+            width="25px"
+            alt=""
+          />
 
-        <img src="../../../assets/Images/ic-white-diarynote.svg" width="19px" />
-      </button>
+          <img
+            src="../../../assets/Images/ic-white-diarynote.svg"
+            width="19px"
+          />
+        </button>
+      </ng-container>
       <button
         class="btn btn-primary position-relative"
-        style="width: 35px; overflow: hidden"
+        style="width: 35px; height: 35px; overflow: hidden"
+        (click)="handleFormsubmit()"
       >
         <img
           src="../../../assets/Images/icon-save.svg"
           class="position-absolute"
-          style="top: -22px; left: 10%"
+          style="top: -24px; left: 10%"
           width="27px"
           alt=""
         />
@@ -67,9 +74,7 @@
           maxlength="50"
         />
         <div
-          *ngIf="
-            funderForm.get('name')?.invalid && funderForm.get('name')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('name')?.invalid"
           class="text-danger"
         >
           Name is required.
@@ -89,10 +94,7 @@
           appRemoveNondigits
         />
         <div
-          *ngIf="
-            funderForm.get('abn')?.hasError('required') &&
-            funderForm.get('abn')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('abn')?.hasError('required')"
           class="text-danger"
         >
           ABN is required.
@@ -115,14 +117,11 @@
         <app-common-selectmenu
           formControlName="status"
           [optionData]="selectMenuStatus"
-          defaultOption="Active"
-          defaultValue="true"
+          defaultOption="Inactive"
+          defaultValue="false"
         ></app-common-selectmenu>
         <div
-          *ngIf="
-            funderForm.get('status')?.invalid &&
-            funderForm.get('status')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('status')?.invalid"
           class="text-danger"
         >
           Status is required.
@@ -186,6 +185,11 @@
           class="form-control"
           formControlName="streetAddress"
           maxlength="150"
+          placeholder="Enter a location"
+          id="SAAddress"
+          ngx-gp-autocomplete
+          [options]="addressOptions"
+          (onAddressChange)="handleAddressChange($event, 'SA')"
         />
       </div>
 
@@ -196,6 +200,7 @@
           class="form-control"
           formControlName="suburb"
           maxlength="50"
+          id="SASuburb"
         />
       </div>
 
@@ -206,6 +211,7 @@
           class="form-control"
           formControlName="state"
           maxlength="50"
+          id="SAState"
         />
       </div>
 
@@ -217,6 +223,7 @@
           formControlName="postcode"
           minlength="4"
           maxlength="6"
+          id="SAPostcode"
           appRemoveNondigits
         />
         <div
@@ -234,6 +241,11 @@
           class="form-control"
           formControlName="postalAddress"
           maxlength="150"
+          placeholder="Enter a location"
+          id="PAAddress"
+          ngx-gp-autocomplete
+          [options]="addressOptions"
+          (onAddressChange)="handleAddressChange($event, 'PA')"
         />
       </div>
 
@@ -244,6 +256,7 @@
           class="form-control"
           formControlName="postalSuburb"
           maxlength="50"
+          id="PASuburb"
         />
       </div>
 
@@ -254,6 +267,7 @@
           class="form-control"
           formControlName="postalState"
           maxlength="50"
+          id="PAState"
         />
       </div>
 
@@ -265,6 +279,7 @@
           formControlName="postalPostcode"
           minlength="4"
           maxlength="6"
+          id="PAPostcode"
           appRemoveNondigits
         />
         <div
@@ -391,10 +406,7 @@
           maxlength="50"
         />
         <div
-          *ngIf="
-            funderForm.get('bdmName')?.invalid &&
-            funderForm.get('bdmName')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('bdmName')?.invalid"
           class="text-danger"
         >
           BDM Name is required.
@@ -412,10 +424,7 @@
           maxlength="50"
         />
         <div
-          *ngIf="
-            funderForm.get('bdmSurname')?.invalid &&
-            funderForm.get('bdmSurname')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('bdmSurname')?.invalid"
           class="text-danger"
         >
           BDM Surname is required.
@@ -433,10 +442,7 @@
           maxlength="50"
         />
         <div
-          *ngIf="
-            funderForm.get('bdmEmail')?.invalid &&
-            funderForm.get('bdmEmail')?.touched
-          "
+          *ngIf="isFormSubmitted && funderForm.get('bdmEmail')?.invalid"
           class="text-danger"
         >
           BDM email is required.
@@ -450,10 +456,334 @@
       </div>
       <div class="col-lg-3 col-md-6 col-sm-12 mt-3 form-group">
         <label class="form-label">BDM phone </label>
-        <input type="tel" appPhoneMasking class="form-control" maxlength="12" />
+        <input
+          type="tel"
+          formControlName="bdmPhone"
+          appPhoneMasking
+          class="form-control"
+          maxlength="12"
+        />
       </div>
     </div>
   </form>
 </ng-template>
 
-<ng-template #funderProductTypeGuide> sdf </ng-template>
+<ng-template #funderProductTypeGuide>
+  <div class="nav-container">
+    <div class="nav-progress-line"></div>
+    <div class="d-lg-flex gap-5">
+      <div class="nav-item active d-md-block">
+        <span
+          class="nav-dot"
+          [ngClass]="{
+            'active-dot': activeFunderTab === 'funderOverview'
+          }"
+        ></span>
+        <a
+          class="nav-tab-link"
+          [ngClass]="{
+            'nav-tab-link-active': activeFunderTab === 'funderOverview'
+          }"
+          (click)="setActiveFunderTab('funderOverview', funderOverview)"
+          >Funder Overview</a
+        >
+      </div>
+      <div class="nav-item active d-md-block">
+        <span
+          class="nav-dot"
+          [ngClass]="{
+            'active-dot': activeFunderTab === 'funderDocuments'
+          }"
+        ></span>
+        <a
+          class="nav-tab-link"
+          [ngClass]="{
+            'nav-tab-link-active': activeFunderTab === 'funderDocuments'
+          }"
+          (click)="setActiveFunderTab('funderDocuments', funderDocuments)"
+          >Funder Documents</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeFunderTemplate" class="p-1">
+    <ng-container *ngTemplateOutlet="activeFunderTemplate"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #funderOverview>
+  <form [formGroup]="funderGuideForm">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label d-inline">
+          Type of finance: <span class="text-danger">*</span>
+        </label>
+        &nbsp; &nbsp;
+        <div class="align-items-center m-2 d-inline-flex">
+          <span class="custom-checkbox-container">
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              value="Chattel mortgage"
+              [checked]="
+                funderGuideForm
+                  .get('financeType')
+                  ?.value.includes('Chattel mortgage')
+              "
+              (change)="handleCheckoxChange(0)"
+            />
+            <span class="custom-checkbox"></span>
+          </span>
+          &nbsp; &nbsp;
+          <span>Chattel mortgage </span>
+        </div>
+        <div class="align-items-center m-2 d-inline-flex">
+          <span class="custom-checkbox-container">
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              value="Rental"
+              [checked]="
+                funderGuideForm.get('financeType')?.value.includes('Rental')
+              "
+              (change)="handleCheckoxChange(1)"
+            />
+            <span class="custom-checkbox"></span>
+          </span>
+          &nbsp; &nbsp;
+          <span>Rental </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"> Rates </label>
+        <textarea
+          name=""
+          class="form-control"
+          id=""
+          cols="40"
+          rows="30"
+          style="height: 4rem !important"
+          formControlName="rates"
+        ></textarea>
+      </div>
+
+      <div class="col-lg-6 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"> Is the brokerage capped? </label>
+        <div class="radio-group">
+          <label>
+            <input
+              type="radio"
+              [value]="true"
+              checked
+              formControlName="isBrokerageCapped"
+            />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              [value]="false"
+              formControlName="isBrokerageCapped"
+            />
+            <span>No</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label"> Apply RITC fee? </label>
+        <div class="radio-group mt-1">
+          <label>
+            <input
+              type="radio"
+              [value]="true"
+              formControlName="isApplyRitcFee"
+            />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              formControlName="isApplyRitcFee"
+              [value]="false"
+              checked
+            />
+            <span>No</span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group"
+        *ngIf="funderGuideForm.get('isApplyRitcFee')?.value"
+      >
+        <label class="form-label">
+          RITC fee % <span class="text-danger">*</span></label
+        >
+        <input
+          type="text"
+          formControlName="ritcFee"
+          class="form-control"
+          (blur)="handleInputChange('ritcFee', 0)"
+        />
+      </div>
+      <div class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Apply account keeping fee? </label>
+        <div class="radio-group mt-1">
+          <label>
+            <input
+              type="radio"
+              formControlName="isApplyAccountKeepingFee"
+              [value]="true"
+            />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              formControlName="isApplyAccountKeepingFee"
+              [value]="false"
+            />
+            <span>No</span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group"
+        *ngIf="funderGuideForm.get('isApplyAccountKeepingFee')?.value"
+      >
+        <label class="form-label">
+          Monthly fee % <span class="text-danger">*</span></label
+        >
+        <div class="input-group">
+          <span class="input-group-sign"></span>
+          <input
+            type="text"
+            formControlName="accountKeepingFee"
+            class="form-control"
+            placeholder="0"
+            (blur)="handleInputChange('accountKeepingFee', 1)"
+          />
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group">
+        <label class="form-label">Apply document fee? </label>
+        <div class="radio-group mt-1">
+          <label>
+            <input
+              type="radio"
+              [value]="true"
+              formControlName="isApplyDocumentFee"
+            />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              formControlName="isApplyDocumentFee"
+              [value]="false"
+            />
+            <span>No</span>
+          </label>
+        </div>
+      </div>
+      <div
+        class="col-lg-2 col-md-6 col-sm-12 mt-3 form-group"
+        *ngIf="funderGuideForm.get('isApplyDocumentFee')?.value"
+      >
+        <label class="form-label">
+          Funder doc fee (inc GST) <span class="text-danger">*</span></label
+        >
+        <div class="input-group">
+          <span class="input-group-sign"></span>
+          <input
+            type="text"
+            formControlName="funderDocFee"
+            placeholder="0"
+            class="form-control"
+            (blur)="handleInputChange('funderDocFee', 1)"
+          />
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-common-transfer
+          #commonShareComponent
+          [listInput]="availableFunding"
+          [existedList]="existedFundings"
+          title1="Available funding"
+          title2="Chosen Funding"
+          (selectedListEmitter)="selectedFundingList($event)"
+        ></app-common-transfer>
+      </div>
+      <div class="col-12 mt-3">
+        <span class="form-label">Matrix</span>
+        <!-- <angular-editor
+          formControlName="matrixNotes"
+          [config]="editorConfig"
+        ></angular-editor> -->
+        <ckeditor
+          formControlName="matrixNotes"
+          [config]="editorConfig"
+          debounce="500">
+        </ckeditor>
+      </div>
+      <div class="col-12 mt-3">
+        <span class="form-label">General</span>
+        <!-- <angular-editor
+          formControlName="generalNotes"
+          [config]="editorConfig"
+        ></angular-editor> -->
+        <ckeditor
+          formControlName="generalNotes"
+          [config]="editorConfig"
+          debounce="500"
+        >
+        </ckeditor>
+      </div>
+      <div class="col-lg-6 col-md-12 mt-4">
+        <label class="form-label">Cut-off </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cutoff"
+          maxlength="150"
+        />
+      </div>
+      <div class="col-lg-6 col-md-12 mt-4">
+        <label class="form-label">CRAA's </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="craa"
+          maxlength="150"
+        />
+      </div>
+      <div class="col-12 mt-4">
+        <span class="form-label">End of Term</span>
+        <!-- <angular-editor
+          formControlName="eotNotes"
+          [config]="editorConfig"
+        ></angular-editor> -->
+        <ckeditor
+          formControlName="eotNotes"
+          [config]="editorConfig"
+          debounce="500">
+        </ckeditor>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #funderDocuments>
+  <div class="my-5">
+    <label for="fileInput" class="btn btn-primary d-inline-block"
+      >Upload document</label
+    >
+    <input type="file" id="fileInput" class="d-none" />
+  </div>
+</ng-template>

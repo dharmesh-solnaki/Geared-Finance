@@ -51,7 +51,7 @@ export class FundingCategoriesComponent {
     pageNumber: 1,
     pageSize: 10,
   };
-
+  isEnableLoader: boolean = false;
   constructor(
     private _fb: FormBuilder,
     private _equipmentService: EquipmentService,
@@ -74,6 +74,13 @@ export class FundingCategoriesComponent {
     }
     if (this.equipmentTypeForm.invalid) {
       this.equipmentTypeForm.markAllAsTouched();
+      let errorMsg = alertResponses.ON_FORM_INVALID;
+      const invalidFields = Object.keys(this.equipmentTypeForm.controls)
+        .filter((field) => this.equipmentTypeForm.get(field)?.invalid)
+        .map((field) => `<br> - ${field}`);
+      this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
+        enableHtml: true,
+      });
       return;
     }
 
@@ -87,23 +94,26 @@ export class FundingCategoriesComponent {
         this._toaster.success(alertResponses.ADD_RECORD);
         this.equipmentDataSetter();
       },
-      (err) => this._toaster.error(alertResponses.ERROR)
+      () => this._toaster.error(alertResponses.ERROR)
     );
     document.getElementById('closeBtnModal')?.click();
   }
 
   equipmentDataSetter() {
     this.equipmentData = [];
-    this._equipmentService
-      .getEquipmentTypes(this.searchModel)
-      .subscribe((res) => {
+    this.isEnableLoader = true;
+    this._equipmentService.getEquipmentTypes(this.searchModel).subscribe(
+      (res) => {
         if (res && res.responseData) {
           this.totalRecords = res.totalRecords;
           this.equipmentData = res.responseData;
           this.equipmentData.map((e) => (e.categoryName = e.category.name));
         }
         this.paginationSetter();
-      });
+        this.isEnableLoader = false;
+      },
+      () => (this.isEnableLoader = false)
+    );
   }
   onEmptyInputField(search: string) {
     if (!search) {
@@ -124,6 +134,8 @@ export class FundingCategoriesComponent {
   }
 
   searchHandler() {
+    const name = this.fundingSearchInput.nativeElement?.value;
+    if (!name) return;
     this.searchModel = {
       name: this.fundingSearchInput.nativeElement?.value,
       pageNumber: 1,
@@ -183,7 +195,7 @@ export class FundingCategoriesComponent {
         this._toaster.success(alertResponses.UPDATE_RECORD);
         this.equipmentDataSetter();
       },
-      (err) => this._toaster.error(alertResponses.ERROR)
+      () => this._toaster.error(alertResponses.ERROR)
     );
     this.isEquipmentTypeEditable = false;
     (this.equipmentId = 0),
@@ -203,7 +215,7 @@ export class FundingCategoriesComponent {
           this._toaster.success(alertResponses.DELETE_RECORD);
           this.equipmentDataSetter();
         },
-        (err) => {
+        () => {
           this._toaster.error(alertResponses.ERROR);
         }
       );

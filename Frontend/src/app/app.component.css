@@ -1,5 +1,5 @@
 .wrapper {
-   height: 100%;
+   height: calc(100% - 24px);
   padding: 6.25rem 1.25rem 1.25rem 14rem;
 }
 .card { 
@@ -10,7 +10,7 @@
 
 }
 .wrapper-shriked {
-  height: 100%;
+  height: calc(100% - 24px);
   padding: 6.25rem 1.25rem 1.25rem 5rem;
 }
 

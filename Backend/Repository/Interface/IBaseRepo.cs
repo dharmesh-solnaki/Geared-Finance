@@ -18,6 +18,6 @@ namespace Repository.Interface
         Task Delete(T item);
 
         Task SaveChangesAsync();
-
+        Task<T> GetOneAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>[]? includes);
     }
 }

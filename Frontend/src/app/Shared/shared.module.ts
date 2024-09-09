@@ -7,6 +7,9 @@ import { PhoneMaskingDirective } from '../Directives/phone-masking.directive';
 import { PhonePipe } from '../Pipes/phone.pipe';
 import { CommonSelectmenuComponent } from './common-selectmenu/common-selectmenu.component';
 import { RemoveNondigitsDirective } from '../Directives/remove-nondigits.directive';
+import { CommonTransferComponent } from './common-transfer/common-transfer.component';
+import { NumberWithPrecisionPipe } from '../Pipes/number-with-precision.pipe';
+import { LoaderComponent } from './loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +19,9 @@ import { RemoveNondigitsDirective } from '../Directives/remove-nondigits.directi
     PhonePipe,
     CommonSelectmenuComponent,
     RemoveNondigitsDirective,
+    CommonTransferComponent,
+    NumberWithPrecisionPipe,
+    LoaderComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   exports: [
@@ -25,6 +31,9 @@ import { RemoveNondigitsDirective } from '../Directives/remove-nondigits.directi
     PhonePipe,
     CommonSelectmenuComponent,
     RemoveNondigitsDirective,
+    CommonTransferComponent,
+    NumberWithPrecisionPipe,
+    LoaderComponent,
   ],
 })
 export class SharedModule {}

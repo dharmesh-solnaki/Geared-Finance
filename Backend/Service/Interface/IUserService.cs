@@ -11,7 +11,5 @@ namespace Service.Interface
         Task<IEnumerable<RelationshipManagerDTO>> GetAllRelationshipManagers();
         Task<bool> DeleteUser(int id);
         Task<IEnumerable<RelationshipManagerDTO>> GetReportingToListAsync(int vendorId, int managerLevelId);
-        Task<IsExistData> CheckValidityAsync(string email, string mobile);
-
     }
 }

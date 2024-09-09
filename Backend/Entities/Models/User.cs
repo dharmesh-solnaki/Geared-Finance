@@ -1,8 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
+[Index("Email", Name = "UNIQUE_EMAIL", IsUnique = true)]
+[Index("Mobile", Name = "UNIQUE_MOBILE", IsUnique = true)]
 public partial class User
 {
     [Key]
