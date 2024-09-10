@@ -11,7 +11,7 @@ import {
 import { EquipmentService } from 'src/app/Service/equipment.service';
 import { FunderService } from 'src/app/Service/funder.service';
 import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
-import { ckEditorConfig } from 'src/app/Shared/constants';
+import { alertResponses, ckEditorConfig } from 'src/app/Shared/constants';
 
 @Component({
   selector: 'app-funder-product-guide',
@@ -89,9 +89,37 @@ export class FunderProductGuideComponent {
     this.activeFunderTab = tab;
     this.activeFunderTemplate = template;
   }
+  funderGuideFormSubmit() {
+    this.checkValidityFunderGuide();
+    console.log(this.funderGuideForm);
+    if (this.funderGuideForm.invalid) {
+      this.funderGuideForm.markAllAsTouched();
+      let errorMsg = alertResponses.ON_FORM_INVALID;
+      const invalidFields = Object.keys(this.funderGuideForm.controls)
+        .filter((field) => this.funderGuideForm.get(field)?.invalid)
+        .map((field) => `<br> - ${field}`);
+      this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
+        enableHtml: true,
+      });
+      return;
+    }
+    const funderFormType = this.funderGuideForm.value;
+    const id = this.funderGuideForm.get('id')?.value;
+    this._funderService.upsertFunderGuide(funderFormType).subscribe(
+      (res) => {
+        this._toaster.success(
+          id ? alertResponses.UPDATE_RECORD : alertResponses.ADD_RECORD
+        );
+        this.funderGuideForm.get('id')?.setValue(res);
+      },
+      () => this._toaster.error(alertResponses.ERROR)
+    );
+  }
   checkValidityFunderGuide() {
     const funderGuideForm = this.funderGuideForm;
-    if (!funderGuideForm.get('selectedFundings')?.value) {
+    const selctedFundings = funderGuideForm.get('selectedFundings')?.value;
+
+    if (selctedFundings.length <= 0) {
       funderGuideForm
         .get('selectedFundings')
         ?.setValidators(Validators.required);
@@ -214,24 +242,71 @@ export class FunderProductGuideComponent {
     financeType?.setValue(updatedValue);
     console.log(financeType?.value);
   }
-
   addToSelectedList() {
     if (!this.LtoRTransfer.isTempListEmpty()) {
       this.LtoRTransfer.addToSelectedList();
-      this.availableFunding = [...this.LtoRTransfer.availableDivDisplayList];
-      this.existedFundings = [
-        ...this.existedFundings,
-        ...this.LtoRTransfer.tempList,
-      ];
-      this.LtoRTransfer.clearTheTempList();
+
+      // Update 'existedFundings' with new subcategories
+      this.LtoRTransfer.tempList.forEach((selectedItem) => {
+        // Check if the category already exists in 'existedFundings'
+        const existingCategory = this.existedFundings.find(
+          (category) => category.id === selectedItem.id
+        );
+
+        if (existingCategory) {
+          // Add missing subcategories only
+          selectedItem.subCategory.forEach((newSubCat) => {
+            const subCatExists = existingCategory.subCategory.some(
+              (existingSubCat) => existingSubCat.id === newSubCat.id
+            );
+            if (!subCatExists) {
+              existingCategory.subCategory.push(newSubCat);
+            }
+          });
+        } else {
+          // If the category doesn't exist, add it completely
+          this.existedFundings.push(selectedItem);
+        }
+      });
+
+      // Update 'availableFunding' to remove transferred subcategories
+      this.LtoRTransfer.tempList.forEach((selectedItem) => {
+        const availableCategory = this.availableFunding.find(
+          (category) => category.id === selectedItem.id
+        );
+
+        if (availableCategory) {
+          // Remove selected subcategories from the available list
+          availableCategory.subCategory = availableCategory.subCategory.filter(
+            (subCat) =>
+              !selectedItem.subCategory.some(
+                (selectedSubCat) => selectedSubCat.id === subCat.id
+              )
+          );
+
+          // If all subcategories are removed, remove the category
+          if (availableCategory.subCategory.length === 0) {
+            this.availableFunding = this.availableFunding.filter(
+              (category) => category.id !== availableCategory.id
+            );
+          }
+        }
+      });
+
+      // Update the form field with the selected fundings
       this.funderGuideForm
         .get('selectedFundings')
         ?.setValue(this.existedFundings);
+
+      // Clear the temporary list
+      this.LtoRTransfer.clearTheTempList();
     }
   }
+
   removeFromSelectedList() {
     if (!this.RtoLTransfer.isTempListEmpty()) {
       this.RtoLTransfer.addToSelectedList();
+      // Add the removed items back to the available list
       this.availableFunding = [
         ...this.availableFunding,
         ...this.RtoLTransfer.tempList.filter(
@@ -239,10 +314,34 @@ export class FunderProductGuideComponent {
             !this.availableFunding.some((existing) => existing.id === item.id)
         ),
       ];
+
+      // Ensure that subcategories are correctly merged and avoid duplications
+      this.RtoLTransfer.tempList.forEach((itemToAdd) => {
+        const existingItem = this.availableFunding.find(
+          (item) => item.id === itemToAdd.id
+        );
+        if (existingItem) {
+          itemToAdd.subCategory.forEach((subCat) => {
+            const subCatExists = existingItem.subCategory.some(
+              (existingSubCat) => existingSubCat.id === subCat.id
+            );
+            if (!subCatExists) {
+              existingItem.subCategory.push(subCat);
+            }
+          });
+        } else {
+          this.availableFunding.push(itemToAdd);
+        }
+      });
+
+      // Update the selected funding list
       this.existedFundings = [...this.RtoLTransfer.availableDivDisplayList];
       this.funderGuideForm
         .get('selectedFundings')
         ?.setValue(this.existedFundings);
+
+      // Clear the temporary list after processing
+      this.RtoLTransfer.clearTheTempList();
     }
   }
   filterAvailableFunding() {

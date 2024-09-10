@@ -12,12 +12,12 @@ namespace Geared_Finance_API.Auth
     public class AuthorizePermission : Attribute, IAuthorizationFilter
     {
         private readonly string _module;
-        private readonly string _permissoin;
+        private readonly string _permission;
         private readonly string _property;
 
         public AuthorizePermission(string module, string permission, string property = "")
         {
-            _permissoin = permission;
+            _permission = permission;
             _module = module;
             _property = property;
         }
@@ -50,7 +50,7 @@ namespace Geared_Finance_API.Auth
                 context.Result = new UnauthorizedResult();
                 return;
             }
-            var permissionService = context.HttpContext.RequestServices.GetService<IRolePermisionService>();
+            IRolePermisionService? permissionService = context.HttpContext.RequestServices.GetService<IRolePermisionService>();
             if (ExtensionMethods.IsNullObject(permissionService))
             {
                 context.Result = new UnauthorizedResult();
@@ -119,20 +119,20 @@ namespace Geared_Finance_API.Auth
                 }
             }
             bool hasPermission = false;
-            switch (_permissoin)
+            switch (_permission)
             {
-                case Constants.CAN_VIEW: hasPermission = (bool)permissionRight.CanView; break;
-                case Constants.CAN_ADD: hasPermission = (bool)permissionRight.CanAdd; ; break;
-                case Constants.CAN_EDIT: hasPermission = (bool)permissionRight.CanEdit; ; break;
-                case Constants.CAN_DELETE: hasPermission = (bool)permissionRight.CanDelete; ; break;
+                case Constants.CAN_VIEW: hasPermission = permissionRight.CanView??false; break;
+                case Constants.CAN_ADD: hasPermission = permissionRight.CanAdd??false; ; break;
+                case Constants.CAN_EDIT: hasPermission = permissionRight.CanEdit??false; ; break;
+                case Constants.CAN_DELETE: hasPermission = permissionRight.CanDelete??false ; break;
                 case Constants.CAN_UPSERT:
                     if (isEdit)
                     {
-                        hasPermission = (bool)permissionRight.CanEdit;
+                        hasPermission = permissionRight.CanEdit??false;
                     }
                     else
                     {
-                        hasPermission = (bool)permissionRight.CanAdd;
+                        hasPermission = permissionRight.CanAdd??false;
                     }
                     break;
             }

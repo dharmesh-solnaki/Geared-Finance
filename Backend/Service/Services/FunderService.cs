@@ -1,7 +1,6 @@
 ﻿using Entities.DTOs;
 using Entities.Models;
 using Entities.UtilityModels;
-using Geared_Finance_API;
 using Repository.Interface;
 using Service.Extensions;
 using Service.Implementation;
@@ -18,16 +17,16 @@ namespace Service.Services
         private readonly IAuthService _authService;
 
 
-        public FunderService(IFunderRepo repo, IAuthService authService ) : base(repo)
+        public FunderService(IFunderRepo repo, IAuthService authService) : base(repo)
         {
             _funderRepo = repo;
             _authService = authService;
-     
+
         }
 
         public async Task<BaseRepsonseDTO<DisplayFunderDTO>> GetAllFunders(BaseModelSearchEntity searchModel)
         {
-                        
+
             PredicateModel model = new()
             {
                 Id = searchModel.id,
@@ -50,7 +49,7 @@ namespace Service.Services
             baseSearchEntity.SetSortingExpression();
             IQueryable<Funder> funders = await GetAllAsync(baseSearchEntity);
             BaseRepsonseDTO<DisplayFunderDTO> fudnerResponse = new() { TotalRecords = funders.Count() };
-            List<Funder> userPageList =  GetPaginatedList(searchModel.pageNumber, searchModel.pageSize, funders).ToList();
+            List<Funder> userPageList = GetPaginatedList(searchModel.pageNumber, searchModel.pageSize, funders).ToList();
             fudnerResponse.responseData = userPageList.Select(funder => funder.ToDisplayFunderDTO()).ToList();
 
             return fudnerResponse;
@@ -58,13 +57,13 @@ namespace Service.Services
 
         public async Task<FunderDTO> GetFunder(int id)
         {
-           return (await _funderRepo.GetByIdAsync(id)).ToDto();      
+            return (await _funderRepo.GetByIdAsync(id)).ToDto();
         }
 
         public async Task<FunderGuideTypeDTO> GetFunderType(int id)
         {
             //Expression<Func<FunderProductGuide, bool>> predicate = ; 
-            
+
             //Expression<Func<FunderProductGuide, object>>[] includes = new Expression<Func<FunderProductGuide, object>>[] { x => x.FunderProductFundings , x=>x.FunderProductFundings.Select(f=>f.Equipment) , x=>x.FunderProductFundings.Select(f=>f.EquipmentCategory)};
             FunderProductGuide funderGuide = await _funderRepo.GetByOtherAsync<FunderProductGuide>(x => x.FunderId == id, null);
 
@@ -86,15 +85,15 @@ namespace Service.Services
         public async Task<int> UpsertFunder(FunderDTO funderDTO)
         {
             Funder funder = funderDTO.FromDto();
-            if (!funderDTO.id.HasValue || funderDTO.id==0)
+            if (!funderDTO.id.HasValue || funderDTO.id == 0)
             {
                 funder.CreatedBy = _authService.GetUserId();
                 await _funderRepo.AddAsync(funder);
             }
             else
-            {               
+            {
                 funder.ModifiedDate = DateTime.Now;
-                funder.ModifiedBy= _authService.GetUserId();
+                funder.ModifiedBy = _authService.GetUserId();
                 await _funderRepo.UpdateAsync(funder);
             }
             return funder.Id;
@@ -114,7 +113,7 @@ namespace Service.Services
 
 
             IQueryable<FunderProductFunding> existingFundingList = await _funderRepo.GetFundingsAsync(funderProductGuide.Id);
-            List<FunderProductFunding> selectedFundings = funderGuideTypeDTO.SelectedFundings.FromDto(funderProductGuide.Id);          
+            List<FunderProductFunding> selectedFundings = funderGuideTypeDTO.SelectedFundings.FromDto(funderProductGuide.Id);
 
             if (!existingFundingList.Any())
             {
@@ -130,13 +129,22 @@ namespace Service.Services
                                    existing.FundingProductGuideId == selected.FundingProductGuideId))
                            .ToList();
 
+                //var fundingsToRemove = existingFundingList
+                //    .Where(existing => !selectedFundings
+                //        .Any(selected =>
+                //            selected.EquipmentId == existing.EquipmentId &&
+                //            selected.EquipmentCategoryId == existing.EquipmentCategoryId &&
+                //            selected.FundingProductGuideId == existing.FundKSingProductGuideId))
+                //    .ToList();
                 var fundingsToRemove = existingFundingList
-                    .Where(existing => !selectedFundings
-                        .Any(selected =>
-                            selected.EquipmentId == existing.EquipmentId &&
-                            selected.EquipmentCategoryId == existing.EquipmentCategoryId &&
-                            selected.FundingProductGuideId == existing.FundingProductGuideId))
-                    .ToList();
+                        .AsEnumerable() // Switches to in-memory evaluation
+                        .Where(existing => !selectedFundings
+                            .Any(selected =>
+                                selected.EquipmentId == existing.EquipmentId &&
+                                selected.EquipmentCategoryId == existing.EquipmentCategoryId &&
+                                selected.FundingProductGuideId == existing.FundingProductGuideId))
+                        .ToList();
+
 
 
                 await _funderRepo.AddRangeFunderGuideFundingAsync(fundingsToAdd);

@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,7 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonTransfer } from 'src/app/Models/common-transfer.model';
 import { SharedTemplateService } from 'src/app/Models/shared-template.service';
 import { PhonePipe } from 'src/app/Pipes/phone.pipe';
-import { EquipmentService } from 'src/app/Service/equipment.service';
 import { FunderService } from 'src/app/Service/funder.service';
 import { getAddressFromApi } from 'src/app/Shared/common-functions';
 import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
@@ -18,6 +16,7 @@ import {
   statusSelectMenu,
   validationRegexes,
 } from 'src/app/Shared/constants';
+import { FunderProductGuideComponent } from '../funder-product-guide/funder-product-guide.component';
 
 @Component({
   selector: 'app-add-edit-funder',
@@ -27,8 +26,6 @@ import {
 export class AddEditFunderComponent {
   activeTemplate: TemplateRef<any> | null = null;
   activeTab: string = 'overview';
-  activeFunderTemplate: TemplateRef<any> | null = null;
-  activeFunderTab: string = 'funderOverview';
   selectMenuStatus: selectMenu[] = [];
   funderForm: FormGroup = new FormGroup({});
   funderGuideForm: FormGroup = new FormGroup({});
@@ -51,12 +48,12 @@ export class AddEditFunderComponent {
   funderDocuments!: TemplateRef<any>;
   @ViewChild('commonShareComponent', { static: false })
   commonShareComponent!: CommonTransferComponent;
+  @ViewChild('funderProductGuide')
+  funderProductGuide!: FunderProductGuideComponent;
 
   constructor(
     private _templateService: SharedTemplateService,
     private _fb: FormBuilder,
-    private _equipmentService: EquipmentService,
-    private _decimalPipe: DecimalPipe,
     private _toaster: ToastrService,
     private _funderService: FunderService,
     private _route: ActivatedRoute,
@@ -78,7 +75,7 @@ export class AddEditFunderComponent {
 
   ngOnInit() {
     this.setActiveTab(this.activeTab, this.overViewTemplate);
-    this.setActiveFunderTab(this.activeFunderTab, this.funderOverview);
+    // this.setActiveFunderTab(this.activeFunderTab, this.funderOverview);
     this._templateService.setTemplate(this.funderHeaderTabs);
     this.selectMenuStatus = statusSelectMenu;
     this.initializeFunderForm();
@@ -169,10 +166,10 @@ export class AddEditFunderComponent {
     // }
   }
 
-  setActiveFunderTab(tab: string, template: TemplateRef<any>) {
-    this.activeFunderTab = tab;
-    this.activeFunderTemplate = template;
-  }
+  // setActiveFunderTab(tab: string, template: TemplateRef<any>) {
+  //   this.activeFunderTab = tab;
+  //   this.activeFunderTemplate = template;
+  // }
 
   handleAddressChange(
     place: google.maps.places.PlaceResult,
@@ -196,31 +193,29 @@ export class AddEditFunderComponent {
     this.isFormSubmitted = true;
     if (this.isEdit && this.activeTab === 'funderProductGuide') {
       // this.checkValidityFunderGuide();
-      if (this.funderGuideForm.invalid) {
-        this.funderGuideForm.markAllAsTouched();
-        let errorMsg = alertResponses.ON_FORM_INVALID;
-        const invalidFields = Object.keys(this.funderGuideForm.controls)
-          .filter((field) => this.funderGuideForm.get(field)?.invalid)
-          .map((field) => `<br> - ${field}`);
-
-        this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
-          enableHtml: true,
-        });
-        return;
-      }
-
-      const funderFormType = this.funderGuideForm.value;
-      const id = this.funderGuideForm.get('id')?.value;
-
-      this._funderService.upsertFunderGuide(funderFormType).subscribe(
-        (res) => {
-          this._toaster.success(
-            id ? alertResponses.UPDATE_RECORD : alertResponses.ADD_RECORD
-          );
-          this.funderGuideForm.get('id')?.setValue(res);
-        },
-        () => this._toaster.error(alertResponses.ERROR)
-      );
+      // if (this.funderGuideForm.invalid) {
+      //   this.funderGuideForm.markAllAsTouched();
+      //   let errorMsg = alertResponses.ON_FORM_INVALID;
+      //   const invalidFields = Object.keys(this.funderGuideForm.controls)
+      //     .filter((field) => this.funderGuideForm.get(field)?.invalid)
+      //     .map((field) => `<br> - ${field}`);
+      //   this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
+      //     enableHtml: true,
+      //   });
+      //   return;
+      // }
+      // const funderFormType = this.funderGuideForm.value;
+      // const id = this.funderGuideForm.get('id')?.value;
+      // this._funderService.upsertFunderGuide(funderFormType).subscribe(
+      //   (res) => {
+      //     this._toaster.success(
+      //       id ? alertResponses.UPDATE_RECORD : alertResponses.ADD_RECORD
+      //     );
+      //     this.funderGuideForm.get('id')?.setValue(res);
+      //   },
+      //   () => this._toaster.error(alertResponses.ERROR)
+      // );
+      this.funderProductGuide.funderGuideFormSubmit();
     }
 
     if (this.activeTab === 'overview') {

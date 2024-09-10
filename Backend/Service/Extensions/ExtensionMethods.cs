@@ -6,7 +6,7 @@ namespace Geared_Finance_API;
 
 public static class ExtensionMethods
 {
-    public static bool IsNullObject(object obj)
+    public static bool IsNullObject(object? obj)
     {
         return obj == null;
     }
