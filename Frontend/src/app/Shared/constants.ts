@@ -291,6 +291,7 @@ export const AddressOptions = {
 };
 export const ckEditorConfig: CKEDITOR.config = {
   forcePasteAsPlainText: true,
+
   toolbar: [
     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList'] },
@@ -307,6 +308,7 @@ declare global {
     INT_MAX_VALUE: number;
   }
 }
+
 Number.INT_MAX_VALUE = 2147483647;
 Array.prototype.isNotEmpty = function (): boolean {
   return this && this.length > 0;

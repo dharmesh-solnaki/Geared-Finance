@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 import {
@@ -9,12 +10,13 @@ import {
 } from 'src/app/Models/common-transfer.model';
 import { EquipmentService } from 'src/app/Service/equipment.service';
 import { FunderService } from 'src/app/Service/funder.service';
+import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
 import { ckEditorConfig } from 'src/app/Shared/constants';
 
 @Component({
   selector: 'app-funder-product-guide',
   templateUrl: './funder-product-guide.component.html',
-  styles: [],
+  styleUrls: ['../../../assets/Styles/appStyle.css'],
 })
 export class FunderProductGuideComponent {
   funderGuideForm: FormGroup = new FormGroup({});
@@ -27,6 +29,10 @@ export class FunderProductGuideComponent {
   funderOverview!: TemplateRef<any>;
   @ViewChild('funderDocuments', { static: true })
   funderDocuments!: TemplateRef<any>;
+  @ViewChild('LtoRTransfer', { static: false })
+  LtoRTransfer!: CommonTransferComponent;
+  @ViewChild('RtoLTransfer', { static: false })
+  RtoLTransfer!: CommonTransferComponent;
   funderId: number = 0;
 
   constructor(
@@ -34,12 +40,30 @@ export class FunderProductGuideComponent {
     private _equipmentService: EquipmentService,
     private _decimalPipe: DecimalPipe,
     private _toaster: ToastrService,
-    private _funderService: FunderService
-  ) {}
+    private _funderService: FunderService,
+    private _route: ActivatedRoute
+  ) {
+    const id = this._route.snapshot.params['id'];
+
+    if (id) {
+      this.funderId = id;
+      this._funderService.getFunderGuide(id).subscribe((res) => {
+        res && this.funderGuideForm.patchValue(res);
+        let tempData = this.funderGuideForm.get('selectedFundings')?.value;
+        if (tempData) {
+          this.exsitingListSetter(tempData);
+        }
+      });
+    }
+  }
 
   ngOnInit(): void {
     this.setActiveFunderTab(this.activeFunderTab, this.funderOverview);
+    this.intializeFunderOverviewForm();
+    this.equipmentDataSetter();
+    // this.filterAvailableFunding();
   }
+
   intializeFunderOverviewForm() {
     this.funderGuideForm = this._fb.group({
       financeType: ['', [Validators.required]],
@@ -129,11 +153,11 @@ export class FunderProductGuideComponent {
           );
         });
         this.availableFunding = Object.values(groupedData);
+        this.filterAvailableFunding();
       }
     });
   }
   exsitingListSetter(list: any) {
-    console.log(list);
     const groupedData: { [key: number]: CommonTransfer } = {};
 
     list.forEach((item: any) => {
@@ -190,11 +214,65 @@ export class FunderProductGuideComponent {
     financeType?.setValue(updatedValue);
     console.log(financeType?.value);
   }
-  selectedFundingList(ev: CommonTransfer[]) {
-    if (ev.length > 0) {
-      this.funderGuideForm.get('selectedFundings')?.setValue(ev);
-    } else {
-      this.funderGuideForm.get('selectedFundings')?.reset();
+
+  addToSelectedList() {
+    if (!this.LtoRTransfer.isTempListEmpty()) {
+      this.LtoRTransfer.addToSelectedList();
+      this.availableFunding = [...this.LtoRTransfer.availableDivDisplayList];
+      this.existedFundings = [
+        ...this.existedFundings,
+        ...this.LtoRTransfer.tempList,
+      ];
+      this.LtoRTransfer.clearTheTempList();
+      this.funderGuideForm
+        .get('selectedFundings')
+        ?.setValue(this.existedFundings);
     }
+  }
+  removeFromSelectedList() {
+    if (!this.RtoLTransfer.isTempListEmpty()) {
+      this.RtoLTransfer.addToSelectedList();
+      this.availableFunding = [
+        ...this.availableFunding,
+        ...this.RtoLTransfer.tempList.filter(
+          (item) =>
+            !this.availableFunding.some((existing) => existing.id === item.id)
+        ),
+      ];
+      this.existedFundings = [...this.RtoLTransfer.availableDivDisplayList];
+      this.funderGuideForm
+        .get('selectedFundings')
+        ?.setValue(this.existedFundings);
+    }
+  }
+  filterAvailableFunding() {
+    this.availableFunding = this.availableFunding
+      .map((funding) => {
+        // Find the corresponding funding item in existedFundings
+        const existingFunding = this.existedFundings.find(
+          (ef) => ef.id === funding.id
+        );
+
+        if (existingFunding) {
+          // Filter out the subCategories present in existedFunding
+          const filteredSubCategories = funding.subCategory.filter(
+            (subCat) =>
+              !existingFunding.subCategory.some(
+                (existingSubCat) => existingSubCat.id === subCat.id
+              )
+          );
+
+          // Return a new CommonTransfer object with the filtered subCategories
+          return new CommonTransfer(
+            funding.id,
+            funding.name,
+            filteredSubCategories
+          );
+        }
+
+        // If no matching existingFunding found, return the funding item as is
+        return funding;
+      })
+      .filter((funding) => funding.subCategory.length > 0);
   }
 }

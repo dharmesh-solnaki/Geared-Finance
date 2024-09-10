@@ -798,6 +798,12 @@ color: #acb6c0;
 .nav-tab-link-active:hover{
   color: #34495e !important; 
 }
+.cke_notification {
+  display: none !important;
+}
+.cke_path_item{
+  display: none !important;
+}
 @media (max-width: 768px)  {
   .nav-progress-line {
     height: 100%;

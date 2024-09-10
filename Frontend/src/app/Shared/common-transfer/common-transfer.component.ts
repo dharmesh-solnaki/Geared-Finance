@@ -8,64 +8,26 @@ import { CommonTransfer } from 'src/app/Models/common-transfer.model';
 })
 export class CommonTransferComponent {
   isSearchingRequired: boolean = true;
-  @Input() title1: string = '';
-  @Input() title2: string = '';
+  @Input() title: string = '';
   @Input() listInput: CommonTransfer[] = [];
-  @Input() existedList: CommonTransfer[] = [];
   availableDivDisplayList: CommonTransfer[] = [];
-  selectedDivDisplayList: CommonTransfer[] = [];
-  originalSelectedDivDisplayList: CommonTransfer[] = [];
+  tempList: CommonTransfer[] = [];
+
+  // selectedDivDisplayList: CommonTransfer[] = [];
+  // originalSelectedDivDisplayList: CommonTransfer[] = [];
 
   tempAvailableList = new Map();
-  tempSelectedList = new Map();
-  @Output() selectedListEmitter = new EventEmitter<CommonTransfer[]>();
+  // tempSelectedList = new Map();
+  // @Output() selectedListEmitter = new EventEmitter<CommonTransfer[]>();
+  // @Output() remainingListEmitter = new EventEmitter<CommonTransfer[]>();
 
   ngOnInit(): void {
     this.availableDivDisplayList = this.listInput;
     this.sortDisplayList(this.availableDivDisplayList);
   }
-  filterExistedList(): void {
-    if (this.existedList) {
-      this.availableDivDisplayList = this.listInput
-        .map((category) => {
-          const existedCategory = this.existedList.find(
-            (existedCat) => existedCat.id === category.id
-          );
-
-          if (
-            existedCategory &&
-            category.subCategory &&
-            category.subCategory.length > 0
-          ) {
-            // Filter out subcategories that exist in existedList
-            const filteredSubCategories = category.subCategory.filter(
-              (subCat) =>
-                !existedCategory.subCategory.some(
-                  (existedSub) => existedSub.id === subCat.id
-                )
-            );
-            return new CommonTransfer(
-              category.id,
-              category.name,
-              filteredSubCategories
-            );
-          }
-          return category;
-        })
-        .filter(
-          (category) => category.subCategory && category.subCategory.length > 0
-        );
-
-      // Update availableDivDisplayList after filtering
-
-      // this.availableDivDisplayList = [...this.listInput];
-      this.sortDisplayList(this.availableDivDisplayList);
-
-      // Assign existedList to originalSelectedDivDisplayList
-      this.originalSelectedDivDisplayList = [...this.existedList];
-      this.selectedDivDisplayList = [...this.existedList];
-      this.sortDisplayList(this.selectedDivDisplayList);
-    }
+  ngOnChanges(): void {
+    this.availableDivDisplayList = this.listInput;
+    this.sortDisplayList(this.availableDivDisplayList);
   }
 
   sortDisplayList(list: CommonTransfer[]): void {
@@ -75,18 +37,11 @@ export class CommonTransferComponent {
     });
   }
 
-  availableDivDisplayListSearch(event: Event): void {
+  listSearchHandler(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
     this.availableDivDisplayList = this.searchList(searchValue, this.listInput);
   }
 
-  selectedDivDisplayListSearch(event: Event): void {
-    const searchValue = (event.target as HTMLInputElement).value;
-    this.selectedDivDisplayList = this.searchList(
-      searchValue,
-      this.originalSelectedDivDisplayList
-    );
-  }
   searchList(
     searchValue: string,
     originalList: CommonTransfer[]
@@ -108,10 +63,9 @@ export class CommonTransferComponent {
     this.sortDisplayList(filteredList);
     return filteredList;
   }
-  handleListClick(item: CommonTransfer, type: number): void {
+  handleListClick(item: CommonTransfer): void {
     const subCategoryIds = item.subCategory.map((subItem) => subItem.id);
-    const targetMap =
-      type === 0 ? this.tempAvailableList : this.tempSelectedList;
+    const targetMap = this.tempAvailableList;
     if (targetMap.has(item.id)) {
       targetMap.delete(item.id);
     } else {
@@ -119,9 +73,8 @@ export class CommonTransferComponent {
     }
   }
 
-  handleSublistClick(subCatId: number, catId: number, type: number): void {
-    const targetMap =
-      type === 0 ? this.tempAvailableList : this.tempSelectedList;
+  handleSublistClick(subCatId: number, catId: number): void {
+    const targetMap = this.tempAvailableList;
     const subCategoryIds = targetMap.get(catId) || [];
     const index = subCategoryIds.indexOf(subCatId);
     index > -1
@@ -132,16 +85,11 @@ export class CommonTransferComponent {
       ? targetMap.set(catId, subCategoryIds)
       : targetMap.delete(catId);
   }
-  getHighlights(catId: number, subCatId: number, type: number): boolean {
-    const targetMap =
-      type === 0 ? this.tempAvailableList : this.tempSelectedList;
-    return targetMap.get(catId)?.includes(subCatId) || false;
+  getHighlights(catId: number, subCatId: number): boolean {
+    return this.tempAvailableList.get(catId)?.includes(subCatId) || false;
   }
-  updateList(
-    sourceList: CommonTransfer[],
-    targetList: CommonTransfer[],
-    tempList: Map<number, number[]>
-  ): void {
+  updateList(sourceList: CommonTransfer[], targetList: CommonTransfer[]): void {
+    const tempList = this.tempAvailableList;
     const itemsToRemove: CommonTransfer[] = [];
 
     tempList.forEach((subCatIds, catId) => {
@@ -184,23 +132,16 @@ export class CommonTransferComponent {
     this.sortDisplayList(targetList);
     this.sortDisplayList(sourceList);
     tempList.clear();
-    this.originalSelectedDivDisplayList = [...this.selectedDivDisplayList];
-    this.selectedListEmitter.emit(this.selectedDivDisplayList);
   }
 
   addToSelectedList(): void {
-    this.updateList(
-      this.availableDivDisplayList,
-      this.selectedDivDisplayList,
-      this.tempAvailableList
-    );
+    this.updateList(this.availableDivDisplayList, this.tempList);
   }
 
-  removeFromSelectedList(): void {
-    this.updateList(
-      this.selectedDivDisplayList,
-      this.availableDivDisplayList,
-      this.tempSelectedList
-    );
+  isTempListEmpty() {
+    return this.tempAvailableList.size == 0;
+  }
+  clearTheTempList() {
+    this.tempList = [];
   }
 }
