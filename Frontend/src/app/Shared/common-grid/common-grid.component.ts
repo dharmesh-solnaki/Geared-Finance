@@ -74,6 +74,10 @@ export class CommonGridComponent {
   @Output() onEquipmentEdit = new EventEmitter();
   @Output() onEquipmentSave = new EventEmitter<string>();
   @Output() onEquipmentDelete = new EventEmitter<number>();
+  @Output() onDocumentEvent = new EventEmitter<{
+    fileName: string;
+    type: number;
+  }>();
   ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
@@ -181,7 +185,10 @@ export class CommonGridComponent {
       this._gridSettings.showEquipmentTypeDelete ||
       this._gridSettings.showEquipmentTypeEdit ||
       this._gridSettings.showEquipmentTypeSave ||
-      this._gridSettings.showRolePermissionEdit
+      this._gridSettings.showRolePermissionEdit ||
+      this._gridSettings?.showDocument ||
+      this.gridSettings?.showDownload ||
+      this.gridSettings?.showDelete
     );
   }
 }

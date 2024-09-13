@@ -33,11 +33,6 @@ public class AuthService : BaseService<User>, IAuthService
     public async Task<string> GenerateToken(LoginDTO model)
     {
         model.Password = SecretHasher.EnryptString(model.Password.Trim());
-
-        //Expression<Func<User, bool>> predicate = x => (x.Email == model.Email && x.Password == model.Password);
-        //Expression<Func<User, object>>[] includes = new Expression<Func<User, object>>[] { x => x.Role };
-
-        //IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         BaseSearchEntity<User> baseSearchEntity = new()
         {
             predicate = x => (x.Email == model.Email && x.Password == model.Password),
@@ -45,9 +40,6 @@ public class AuthService : BaseService<User>, IAuthService
         };
         IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         User user = await userData.FirstOrDefaultAsync() ?? throw new KeyNotFoundException(Constants.RECORD_NOT_FOUND);
-        //User user = await _userRepo.GetByOtherAsync(predicate, includes) ?? throw new KeyNotFoundException(Constants.RECORD_NOT_FOUND);
-
-        //var jwtSettings = _configuration.GetSection("ApiSettings");
         var tokenHandler = new JwtSecurityTokenHandler();
         byte[] key = Encoding.ASCII.GetBytes(_apiSettings.Secret);
         DateTime refreshTokenExpTime = DateTime.UtcNow.AddDays(_apiSettings.RefreshTokenExpTime);
@@ -104,7 +96,7 @@ public class AuthService : BaseService<User>, IAuthService
         {
             throw new KeyNotFoundException(Constants.INVALID_TOKEN);
         }
-        var key = Encoding.ASCII.GetBytes(_apiSettings.Secret);       
+        var key = Encoding.ASCII.GetBytes(_apiSettings.Secret);
         DateTime newExpTime = DateTime.UtcNow.AddHours(_apiSettings.AccessTokenExpTime);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -119,11 +111,6 @@ public class AuthService : BaseService<User>, IAuthService
 
     public async Task<bool> IsValidMailAsync(string email)
     {
-        //User user = await _userRepo.GetOneAsync(x => x.Email == email, null);
-        //if (ExtensionMethods.IsNullObject(user))
-        //{
-        //    return false;
-        //}
         BaseSearchEntity<User> baseSearchEntity = new()
         {
             predicate = x => x.Email == email
@@ -160,18 +147,13 @@ public class AuthService : BaseService<User>, IAuthService
         {
             return false;
         }
-        User user = await userData.FirstOrDefaultAsync();
-        //User user = await _userRepo.GetOneAsync(x => x.Email == model.Email, null);
+        User? user = await userData.FirstOrDefaultAsync();
         return user != null && user.Otp == model.Otp;
     }
 
     public async Task<bool> UpdatePasswordAsync(PasswordUpdateReq model)
     {
-        //User user = await _userRepo.GetOneAsync(x => x.Email == model.Email, null);
-        //if (ExtensionMethods.IsNullObject(user))
-        //{
-        //    return false;
-        //}
+      
         BaseSearchEntity<User> baseSearchEntity = new()
         {
             predicate = x => x.Email == model.Email
@@ -191,11 +173,12 @@ public class AuthService : BaseService<User>, IAuthService
     {
         try
         {
-            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last();              
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last();
             var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);   
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == Constants.USER_ID);      
-            return int.Parse(userIdClaim.Value);}
+            var jwtToken = handler.ReadJwtToken(token);
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == Constants.USER_ID);
+            return int.Parse(userIdClaim.Value);
+        }
         catch
         {
             throw;

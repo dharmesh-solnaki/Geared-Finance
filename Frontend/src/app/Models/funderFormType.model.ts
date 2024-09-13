@@ -26,7 +26,10 @@ export class FunderFormType {
     public bdmSurname: string,
     public bdmEmail: string,
     public bdmPhone: string,
-    public id: number = 0
+    public id: number = 0,
+    public logoImg: string,
+    public imgType: string,
+    public entityName: string
   ) {}
 }
 

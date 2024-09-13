@@ -57,7 +57,7 @@ namespace Geared_Finance_API
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IVendorRepo, VendorRepo>();
             services.AddScoped<IEquipmentRepo, EquipmentRepo>();
-            services.AddScoped<IRolePermisionRepo, RolePermisionRepo>();
+            services.AddScoped<IRolePermissionRepo, RolePermissionRepo>();
             services.AddScoped<IFunderRepo, FunderRepo>();
 
         }
@@ -69,7 +69,7 @@ namespace Geared_Finance_API
             services.AddTransient<IVendorService, VendorService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IRolePermisionService, RolePermisionService>();
+            services.AddTransient<IRolePermissionService, RolePermissionService>();
             services.AddTransient<IFunderService, FunderService>();
         }
 

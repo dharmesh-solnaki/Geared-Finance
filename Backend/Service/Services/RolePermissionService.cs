@@ -10,10 +10,10 @@ using Utilities;
 
 namespace Service.Services;
 
-public class RolePermisionService : BaseService<Right>, IRolePermisionService
+public class RolePermissionService : BaseService<Right>, IRolePermissionService
 {
-    private readonly IRolePermisionRepo _repo;
-    public RolePermisionService(IRolePermisionRepo repo) : base(repo)
+    private readonly IRolePermissionRepo _repo;
+    public RolePermissionService(IRolePermissionRepo repo) : base(repo)
     {
         _repo = repo;
     }

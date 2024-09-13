@@ -199,6 +199,12 @@ export const alertResponses = {
   ON_EMAIL_NOT_EXIST: 'Given username not exists',
   ON_PASSWORD_CHANGE_SUCCESS: 'Password updated successfully',
   ON_FORM_INVALID: 'Please enter all mandatory details: \n',
+  INVALID_DOC_TYPE_IMG: 'Please upload valid image doc',
+  INVALID_DOC_TYPE_PDF: 'Please upload valid pdf file',
+  UNSAVE_CONFIRMATION:
+    'You have unsaved changes. Do you want to leave without saving?',
+  DOC_UPLOAD_SUCCESS: 'Document uploaded successfully',
+  DOC_DELETE_SUCCESS: 'Document deleted successfully',
 };
 
 export const errorResponses = {
@@ -291,12 +297,17 @@ export const AddressOptions = {
 };
 export const ckEditorConfig: CKEDITOR.config = {
   forcePasteAsPlainText: true,
-
   toolbar: [
     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
     { name: 'lists', items: ['NumberedList', 'BulletedList'] },
     { name: 'insert', items: ['HorizontalRule'] },
   ],
+};
+export const FunderModuleConstants = {
+  ACTIVE_OVERVIEW_TAB: 'overview',
+  ACTIVE_FUNDER_PRODUCT_GUIDE_TAB: 'funderProductGuide',
+  CHOSEN_FUNDING_TITLE: 'Chosen Funding <span class="text-danger">*</span>',
+  FUNDER_OVERVIEW: 'funderOverview',
 };
 // extensions methods..
 

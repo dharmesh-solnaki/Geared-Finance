@@ -1,5 +1,5 @@
 <div class="m-1 w-100">
-  <span class="fw-semibold">{{ title }}</span>
+  <span class="fw-semibold" [innerHTML]="title"></span>
 
   <div class="transfer-container mt-2 pt-0">
     <ng-container *ngIf="isSearchingRequired">

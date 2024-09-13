@@ -9,19 +9,19 @@ namespace Geared_Finance_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolePermisionController : ControllerBase
+    public class RolePermissionController : ControllerBase
     {
-        private readonly IRolePermisionService _rolePermisionService;
-        public RolePermisionController(IRolePermisionService rolePermisionService)
+        private readonly IRolePermissionService _rolePermissionService;
+        public RolePermissionController(IRolePermissionService rolePermissionService)
         {
-            _rolePermisionService = rolePermisionService;
+            _rolePermissionService = rolePermissionService;
         }
 
         [HttpGet]
         [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
         public async Task<IActionResult> GetModules()
         {
-            IEnumerable<ModulesDTO> modules = await _rolePermisionService.GetModulesAsync();
+            IEnumerable<ModulesDTO> modules = await _rolePermissionService.GetModulesAsync();
             if (!modules.Any()) return NoContent();
             return Ok(modules);
         }
@@ -30,7 +30,7 @@ namespace Geared_Finance_API.Controllers
         [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
         public async Task<IActionResult> GetRolePermissions([FromQuery] int roleId)
         {
-            IEnumerable<RightsDTO> rights = await _rolePermisionService.GetRolePermissionAsync(roleId);
+            IEnumerable<RightsDTO> rights = await _rolePermissionService.GetRolePermissionAsync(roleId);
             if (!rights.Any()) return NoContent();
             return Ok(rights);
         }
@@ -40,14 +40,14 @@ namespace Geared_Finance_API.Controllers
         public async Task<IActionResult> UpsertRights(IEnumerable<RightsDTO> rightsDTOs)
         {
             if (!rightsDTOs.Any()) return BadRequest();
-            await _rolePermisionService.UpsertRightsAsync(rightsDTOs);
+            await _rolePermissionService.UpsertRightsAsync(rightsDTOs);
             return Ok();
         }
 
         [HttpPost("Roles")]
         public async Task<IActionResult> GetAllRoles(BaseModelSearchEntity model)
         {
-            IEnumerable<RoleDTO> roles = await _rolePermisionService.GetAllRolesAsync(model);
+            IEnumerable<RoleDTO> roles = await _rolePermissionService.GetAllRolesAsync(model);
             if (!roles.Any()) return NoContent();
             return Ok(roles);
         }

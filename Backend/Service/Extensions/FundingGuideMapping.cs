@@ -1,10 +1,5 @@
 ﻿using Entities.DTOs;
 using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Extensions
 {
@@ -39,7 +34,7 @@ namespace Service.Extensions
         {
             return new FunderProductGuide
             {
-                Id = funderGuideTypeDTO.id==null?0: (int)funderGuideTypeDTO.id,
+                Id = funderGuideTypeDTO.id == null ? 0 : (int)funderGuideTypeDTO.id,
                 TypeOfFinance = funderGuideTypeDTO.FinanceType,
                 Rates = funderGuideTypeDTO.Rates,
                 IsBrokerageCapped = funderGuideTypeDTO.IsBrokerageCapped,
@@ -55,10 +50,11 @@ namespace Service.Extensions
                 Craa = funderGuideTypeDTO.Craa,
                 Eotnotes = funderGuideTypeDTO.EotNotes,
                 FunderId = (int)funderGuideTypeDTO.FunderId,
+                IsDeleted=false
                 //SelectedFundings = funderGuideTypeDTO.selectedFundings
                 //                    .Select(f => f.FromDto()) // Assuming SelectedFundingDTO has a FromDto method
                 //                    .ToList()
             };
-        }   
+        }
     }
 }

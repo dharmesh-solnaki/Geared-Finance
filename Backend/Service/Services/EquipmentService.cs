@@ -20,10 +20,10 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
         _equipmentRepo = repo;
     }
 
-    public async Task<BaseRepsonseDTO<EquipmentRepsonseDTO>> GetAllEquipmentType(BaseModelSearchEntity searchModal)
+    public async Task<BaseResponseDTO<EquipmentRepsonseDTO>> GetAllEquipmentType(BaseModelSearchEntity searchModal)
     {
 
-      
+
         if (string.IsNullOrEmpty(searchModal.sortBy))
         {
             searchModal.sortBy = Constants.NAME;
@@ -58,11 +58,11 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
         baseSearchEntity.SetSortingExpression();
 
         IQueryable<FundingEquipmentType> fundingEquipmentTypes = await GetAllAsync(baseSearchEntity);
-        BaseRepsonseDTO<EquipmentRepsonseDTO> baseRepsonse = new() { TotalRecords = fundingEquipmentTypes.Count() };
+        BaseResponseDTO<EquipmentRepsonseDTO> baseRepsonse = new() { TotalRecords = fundingEquipmentTypes.Count() };
 
         List<FundingEquipmentType> paginatedFundingEquipmentTypes = await GetPaginatedList(searchModal.pageNumber, searchModal.pageSize, fundingEquipmentTypes).ToListAsync();
 
-        baseRepsonse.responseData = MapperHelper.MapTo<List<FundingEquipmentType>, List<EquipmentRepsonseDTO>>(paginatedFundingEquipmentTypes);
+        baseRepsonse.ResponseData = MapperHelper.MapTo<List<FundingEquipmentType>, List<EquipmentRepsonseDTO>>(paginatedFundingEquipmentTypes);
         return baseRepsonse;
     }
 

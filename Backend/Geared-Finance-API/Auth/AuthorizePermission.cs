@@ -50,7 +50,7 @@ namespace Geared_Finance_API.Auth
                 context.Result = new UnauthorizedResult();
                 return;
             }
-            IRolePermisionService? permissionService = context.HttpContext.RequestServices.GetService<IRolePermisionService>();
+            IRolePermissionService? permissionService = context.HttpContext.RequestServices.GetService<IRolePermissionService>();
             if (ExtensionMethods.IsNullObject(permissionService))
             {
                 context.Result = new UnauthorizedResult();
@@ -121,18 +121,18 @@ namespace Geared_Finance_API.Auth
             bool hasPermission = false;
             switch (_permission)
             {
-                case Constants.CAN_VIEW: hasPermission = permissionRight.CanView??false; break;
-                case Constants.CAN_ADD: hasPermission = permissionRight.CanAdd??false; ; break;
-                case Constants.CAN_EDIT: hasPermission = permissionRight.CanEdit??false; ; break;
-                case Constants.CAN_DELETE: hasPermission = permissionRight.CanDelete??false ; break;
+                case Constants.CAN_VIEW: hasPermission = permissionRight.CanView ?? false; break;
+                case Constants.CAN_ADD: hasPermission = permissionRight.CanAdd ?? false; ; break;
+                case Constants.CAN_EDIT: hasPermission = permissionRight.CanEdit ?? false; ; break;
+                case Constants.CAN_DELETE: hasPermission = permissionRight.CanDelete ?? false; break;
                 case Constants.CAN_UPSERT:
                     if (isEdit)
                     {
-                        hasPermission = permissionRight.CanEdit??false;
+                        hasPermission = permissionRight.CanEdit ?? false;
                     }
                     else
                     {
-                        hasPermission = permissionRight.CanAdd??false;
+                        hasPermission = permissionRight.CanAdd ?? false;
                     }
                     break;
             }

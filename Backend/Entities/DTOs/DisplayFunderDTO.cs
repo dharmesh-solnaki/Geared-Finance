@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.DTOs;
-public class DisplayFunderDTO:BaseDTO
+﻿namespace Entities.DTOs;
+public class DisplayFunderDTO : BaseDTO
 {
     public string Funder { get; set; } = null!;
     public string LegalName { get; set; } = null!;

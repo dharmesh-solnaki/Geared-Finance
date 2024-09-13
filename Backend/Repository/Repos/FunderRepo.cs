@@ -3,12 +3,6 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Repository.Implementation;
 using Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Repository.Repos
 {
@@ -22,8 +16,8 @@ namespace Repository.Repos
 
         public async Task AddFunderGuideAsync(FunderProductGuide funderProductGuide)
         {
-             await _dbContext.FunderProductGuides.AddAsync(funderProductGuide);
-           await _dbContext.SaveChangesAsync();
+            await _dbContext.FunderProductGuides.AddAsync(funderProductGuide);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task AddRangeFunderGuideFundingAsync(List<FunderProductFunding> selectedFundings)
@@ -34,7 +28,7 @@ namespace Repository.Repos
 
         public async Task<IQueryable<FunderProductFunding>> GetFundingsAsync(int id)
         {
-            return  _dbContext.FunderProductFundings.Where(f => f.FundingProductGuideId== id).Include(x=>x.Equipment).Include(x=>x.EquipmentCategory).AsQueryable();
+            return _dbContext.FunderProductFundings.Where(f => f.FundingProductGuideId == id).Include(x => x.Equipment).Include(x => x.EquipmentCategory).AsQueryable();
         }
 
         public async Task RemoveRangeSelectedFundingAsync(List<FunderProductFunding> fundingsToRemove)

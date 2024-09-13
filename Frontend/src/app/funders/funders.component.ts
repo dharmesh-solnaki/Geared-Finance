@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { SharedTemplateService } from '../Models/shared-template.service';
+import { SharedTemplateService } from '../Service/shared-template.service';
 import { CommonSearch } from '../Models/common-search.model';
 import { FunderGridSettings, Funder } from '../Models/funder.model';
 import { FunderService } from '../Service/funder.service';

@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   OnInit,
@@ -9,7 +8,7 @@ import {
 import { menuBarItems } from '../Shared/constants';
 import { TokenService } from '../Service/token.service';
 import { RolePermissionService } from '../Service/role-permission.service';
-import { SharedTemplateService } from '../Models/shared-template.service';
+import { SharedTemplateService } from '../Service/shared-template.service';
 import { getRoleIdByRoleName } from '../Shared/common-functions';
 
 @Component({
@@ -24,13 +23,14 @@ export class AppHeaderComponent implements OnInit {
   userName: string = 'User';
   isShowsettingHeader: boolean = false;
   visibleModulesList: string[] = [];
+  isShowSearchBar: boolean = false;
+
   @Output() isNavOpned = new EventEmitter<boolean>();
 
   constructor(
     private _tokenService: TokenService,
     private _rolePermissionService: RolePermissionService,
-    private _templateService: SharedTemplateService,
-    private _cdRef: ChangeDetectorRef
+    private _templateService: SharedTemplateService
   ) {}
   ngOnInit(): void {
     this.menuData = menuBarItems;
@@ -40,6 +40,11 @@ export class AppHeaderComponent implements OnInit {
   get getTemplateRef(): TemplateRef<any> | null {
     return this._templateService.getTemplate();
   }
+
+  get getHeaderTemplateRef(): TemplateRef<any> | null {
+    return this._templateService.getHeaderTemplate();
+  }
+
   get getUsername(): string {
     return this._tokenService.getUserNameFromToken();
   }

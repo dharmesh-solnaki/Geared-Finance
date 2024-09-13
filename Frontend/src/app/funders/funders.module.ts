@@ -8,6 +8,8 @@ import { SharedModule } from '../Shared/shared.module';
 import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { CKEditorModule } from 'ng2-ckeditor';
 import { FunderProductGuideComponent } from './funder-product-guide/funder-product-guide.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 const routes: Routes = [
   { path: '', component: FundersComponent },
   { path: 'add-funder', component: AddEditFunderComponent },
@@ -15,7 +17,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [FundersComponent, AddEditFunderComponent, FunderProductGuideComponent],
+  declarations: [
+    FundersComponent,
+    AddEditFunderComponent,
+    FunderProductGuideComponent,
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -24,6 +30,7 @@ const routes: Routes = [
     SharedModule,
     NgxGpAutocompleteModule,
     CKEditorModule,
+    PdfViewerModule,
   ],
   providers: [DecimalPipe],
 })

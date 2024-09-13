@@ -19,10 +19,21 @@
     </div>
     <div class="d-flex gap-1 m-1 mt-2 h-25">
       <ng-container *ngIf="isEdit">
-        <button class="btn btn-primary">
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteFunderConfirm"
+        >
           <img width="15px" src="../../../assets/Images/ic-trash-dark.svg" />
         </button>
-        <button class="btn btn-primary">Set entity name</button>
+
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#enityNameSetter"
+        >
+          <span>{{ isEdit ? "Edit" : "Set" }} entity name</span>
+        </button>
 
         <button class="btn btn-primary position-relative">
           <img
@@ -56,9 +67,80 @@
   </div>
 </ng-template>
 
+<ng-template #addEditFunderHeader>
+  <div class="d-flex align-items-center justify-content-between mt-3">
+    <div class="d-flex align-items-center">
+      <label
+        class="btn header-btn"
+        for="imgInput"
+        (change)="handleImgUpload($event)"
+      >
+        <input type="file" id="imgInput" class="d-none" />
+        <div
+          *ngIf="!isEdit"
+          class="position-relative"
+          style="width: 30px; height: 30px; background-color: #ffa737"
+        >
+          <img
+            class="position-absolute"
+            style="top: -18px; left: 0"
+            src="../../../assets/Images/icon-funder.svg"
+          />
+        </div>
+        <img
+          src="../../../assets/Images/ic-pencil.svg"
+          width="30px"
+          height="30px"
+          class="d-none ic-pencil-onhover z-1"
+        />
+        <img
+          [src]="funderLogoUrl"
+          *ngIf="isEdit || funderLogoUrl"
+          class="position-absolute"
+          (error)="handleLogoErr()"
+          width="30px"
+          height="30px"
+        />
+      </label>
+
+      <div class="h5 m-1">
+        <span class="isEdit"> - {{ entityName | uppercase }}</span>
+      </div>
+    </div>
+
+    <div class="ms-auto me-0">
+      <a
+        href="javascript: history.go(-1)"
+        class="text-decoration-none h4 text-dark"
+      >
+        <img
+          src="../../../assets/Images/caret-left-fill.svg"
+          width="20px"
+          class="pb-1"
+        />
+        FUNDERS
+      </a>
+    </div>
+  </div>
+</ng-template>
+
 <div *ngIf="activeTemplate" class="px-4 py-3">
   <ng-container *ngTemplateOutlet="activeTemplate"></ng-container>
 </div>
+
+<app-common-dialog
+  modalTitle="Delete Funder"
+  [bodyData]="DeleteFunderModal"
+  modalClass="modal-dialog-centered"
+  modalId="deleteFunderConfirm"
+></app-common-dialog>
+
+<app-common-dialog
+  modalTitle="Delete Funder"
+  [bodyData]="EntityNameSetter"
+  modalClass="modal-dialog-centered"
+  modalId="enityNameSetter"
+></app-common-dialog>
 
 <ng-template #overViewTemplate>
   <form [formGroup]="funderForm">
@@ -469,5 +551,54 @@
 </ng-template>
 
 <ng-template #funderProductTypeGuide>
-  <app-funder-product-guide #funderProductGuide> </app-funder-product-guide>
+  <app-funder-product-guide
+    #funderProductGuide
+    (isFunderGuideDirty)="funderGuideFormchange($event)"
+  >
+  </app-funder-product-guide>
+</ng-template>
+
+<ng-template #EntityNameSetter>
+  <label class="form-label">Entity Name </label>
+  <input
+    type="text"
+    class="form-control"
+    [placeholder]="entityName"
+    maxlength="150"
+    #entityField
+  />
+  <div class="d-flex mt-2">
+    <button
+      class="btn btn-primary mx-1"
+      type="button"
+      (click)="SaveEntityName(entityField)"
+    >
+      Save
+    </button>
+    <button
+      class="btn btn-secondary mx-1"
+      type="button"
+      data-bs-dismiss="modal"
+      id="cancelEntityModal"
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #DeleteFunderModal>
+  <p class="text-muted">Are you sure you want to delete?</p>
+  <div class="d-flex">
+    <button class="btn btn-primary mx-1" type="button" (click)="deleteFunder()">
+      Ok
+    </button>
+    <button
+      class="btn btn-secondary mx-1"
+      id="cancelFunderDelModal"
+      type="button"
+      data-bs-dismiss="modal"
+    >
+      Cancel
+    </button>
+  </div>
 </ng-template>

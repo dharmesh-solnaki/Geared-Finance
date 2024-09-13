@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -69,6 +67,9 @@ public partial class User
 
     [StringLength(6)]
     public string? Otp { get; set; }
+
+    [Column(TypeName = "character varying")]
+    public string? FullName { get; set; }
 
     [InverseProperty("RelationshipManagerNavigation")]
     public virtual ICollection<User> InverseRelationshipManagerNavigation { get; set; } = new List<User>();

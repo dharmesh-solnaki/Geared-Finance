@@ -1,22 +1,34 @@
-  
-
-  <div class="modal fade" id="{{modalId}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div [ngClass]="['modal-dialog', modalClass]">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">{{modalTitle}}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-             (click)="onModalCloseEventEmitter.emit()"   >
-          </button>
-        </div>
-        <div class="modal-body">
-            <ng-container *ngIf="isTemplate; else otherContent" >
-            <ng-container *ngTemplateOutlet="bodyData"></ng-container>
-            </ng-container>
-            <ng-template #otherContent>
-                <p>{{bodyData}} </p>
-            </ng-template>
-        </div>
+<div
+  class="modal fade"
+  id="{{ modalId }}"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div [ngClass]="['modal-dialog', modalClass]">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          {{ modalTitle }}
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="onModalCloseEventEmitter.emit()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="isTemplate; else otherContent">
+          <ng-container *ngTemplateOutlet="bodyData"></ng-container>
+        </ng-container>
+        <ng-template #otherContent>
+          <p>{{ bodyData }}</p>
+        </ng-template>
       </div>
     </div>
   </div>
+</div>

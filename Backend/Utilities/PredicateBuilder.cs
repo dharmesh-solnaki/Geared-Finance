@@ -67,7 +67,7 @@ public static class PredicateBuilder
             var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
             var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
             var propertyValue1Lower = Expression.Call(propertyValue1, toLowerMethod);
-            var keywordConstant = Expression.Constant(searchModel.Keyword.Trim().Replace(" ", string.Empty).ToLower());
+            var keywordConstant = Expression.Constant(searchModel.Keyword.Trim().ToLower());
             if (!string.IsNullOrWhiteSpace(searchModel.Property2))
             {
                 var propertyValue2 = Expression.Property(parameter, searchModel.Property2);

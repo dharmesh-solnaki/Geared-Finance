@@ -4,7 +4,7 @@ using Entities.UtilityModels;
 
 namespace Service.Interface
 {
-    public interface IRolePermisionService : IBaseService<Right>
+    public interface IRolePermissionService : IBaseService<Right>
     {
         Task<IEnumerable<ModulesDTO>> GetModulesAsync();
         Task<RightsDTO> GetRightByModule(string module, int roleId);

@@ -18,9 +18,8 @@ public class UserService : BaseService<User>, IUserService
     {
         _userRepo = userRepo;
     }
-    public async Task<BaseRepsonseDTO<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
+    public async Task<BaseResponseDTO<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
     {
-
 
         if (string.IsNullOrEmpty(searchEntity.sortBy))
         {
@@ -37,8 +36,7 @@ public class UserService : BaseService<User>, IUserService
             {
                 {Constants.ROLENAME,searchEntity.roleName }
             },
-            Property1 = Constants.NAME,
-            Property2 = Constants.SURNAME,
+            Property1 = Constants.FULLNAME,
             Keyword = searchEntity.name,
         };
 
@@ -54,9 +52,9 @@ public class UserService : BaseService<User>, IUserService
         };
         baseSearchEntity.SetSortingExpression();
         IQueryable<User> users = await GetAllAsync(baseSearchEntity);
-        BaseRepsonseDTO<UserDTO> userDataResponse = new() { TotalRecords = users.Count() };
+        BaseResponseDTO<UserDTO> userDataResponse = new() { TotalRecords = users.Count() };
         List<User> userPageList = await GetPaginatedList(searchEntity.pageNumber, searchEntity.pageSize, users).ToListAsync();
-        userDataResponse.responseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
+        userDataResponse.ResponseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
 
         return userDataResponse;
     }

@@ -47,6 +47,16 @@
   </div>
 
   <div
+    class="headerTopTitle p-0"
+    [ngClass]="
+      shuoldVisible ? 'headerDivSectionShrinked' : 'headerDivSectionNotShrinked'
+    "
+    *ngIf="getHeaderTemplateRef"
+  >
+    <ng-container *ngTemplateOutlet="getHeaderTemplateRef"></ng-container>
+  </div>
+
+  <div
     class="headerDivSection p-0"
     [ngClass]="
       shuoldVisible ? 'headerDivSectionShrinked' : 'headerDivSectionNotShrinked'
@@ -55,7 +65,7 @@
   >
     <ng-container *ngTemplateOutlet="getTemplateRef"></ng-container>
   </div>
-  s
+  <br />
   <div
     class=""
     [ngClass]="shouldVisibleCanvas ? 'offcanvas offcanvas-start' : ''"

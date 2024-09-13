@@ -499,7 +499,18 @@ background-image: url('../Images/ic-save.svg') !important;
 .action-save-icon:hover{
 background-image: url('../Images/ic-save-orange.svg') !important;
 }
-
+.action-download-icon{
+  background-image: url('../Images/download-icon.svg') !important;
+}
+.action-download-icon:hover{
+  background-image: url('../Images/download-orange-icon.svg') !important;
+}
+.action-view-icon{
+  background-image: url("../Images/ic-view-detail.svg");
+}
+.action-view-icon:hover{
+  background-image: url("../Images/ic-view-detail-orange.svg");
+}
 /* ----------App-Login---------- */
 .login-wrapper{
   background-image: url('../Images/bg-dots.svg');
@@ -575,8 +586,8 @@ background-image: url('../Images/ic-save-orange.svg') !important;
 }
 
 .headerDivSection{
-  position:fixed ;
-  margin-top: 2rem !important;
+  position:absolute ;
+  margin-top: 4rem !important;
   width: calc(100% - 15rem);
 }
 .headerDivSectionShrinked{
@@ -586,6 +597,11 @@ background-image: url('../Images/ic-save-orange.svg') !important;
 .headerDivSectionNotShrinked{
   margin-left: 14rem !important;
   width: calc(100% - 15rem) !important;
+}
+.headerTopTitle{
+  position:absolute ;
+  /* margin-top: 0.3rem !important; */
+  width: calc(100% - 15rem);
 }
 .header-tab {
   padding: 7px;
@@ -804,6 +820,25 @@ color: #acb6c0;
 .cke_path_item{
   display: none !important;
 }
+.header-btn{
+  height: 1.8rem;
+  width: 2rem;
+  padding: 0.3rem;
+  cursor: pointer;
+}
+.ic-pencil-onhover{
+  background-color: #ffa737 !important;
+opacity: 0.9;
+ padding: 6px;
+}
+.header-btn:focus{
+  box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5);
+}
+.header-btn:hover .ic-pencil-onhover {
+  display: block !important;
+border: none !important;
+}
+
 @media (max-width: 768px)  {
   .nav-progress-line {
     height: 100%;

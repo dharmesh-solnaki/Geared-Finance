@@ -3,13 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CommonTransfer } from 'src/app/Models/common-transfer.model';
-import { SharedTemplateService } from 'src/app/Models/shared-template.service';
+import { SharedTemplateService } from 'src/app/Service/shared-template.service';
 import { PhonePipe } from 'src/app/Pipes/phone.pipe';
 import { FunderService } from 'src/app/Service/funder.service';
-import { getAddressFromApi } from 'src/app/Shared/common-functions';
+import {
+  getAddressFromApi,
+  validateDocType,
+} from 'src/app/Shared/common-functions';
 import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
 import {
   AddressOptions,
+  FunderModuleConstants,
   alertResponses,
   ckEditorConfig,
   selectMenu,
@@ -25,10 +29,10 @@ import { FunderProductGuideComponent } from '../funder-product-guide/funder-prod
 })
 export class AddEditFunderComponent {
   activeTemplate: TemplateRef<any> | null = null;
-  activeTab: string = 'overview';
+  activeTab: string = FunderModuleConstants.ACTIVE_OVERVIEW_TAB;
   selectMenuStatus: selectMenu[] = [];
   funderForm: FormGroup = new FormGroup({});
-  funderGuideForm: FormGroup = new FormGroup({});
+  // funderGuideForm: FormGroup = new FormGroup({});
   availableFunding: CommonTransfer[] = [];
   existedFundings: CommonTransfer[] = [];
   editorConfig: CKEDITOR.config = ckEditorConfig;
@@ -36,12 +40,18 @@ export class AddEditFunderComponent {
   addressOptions = AddressOptions;
   isFormSubmitted: boolean = false;
   isEdit: boolean = false;
+  entityName = 'Funder';
+  funderLogoUrl: string = '';
+  funderDbLogo: string = '';
+  isFunderGuideFormChanged: boolean = false;
   @ViewChild('overViewTemplate', { static: true })
   overViewTemplate!: TemplateRef<any>;
   @ViewChild('funderProductTypeGuide', { static: true })
   funderProductTypeGuide!: TemplateRef<any>;
   @ViewChild('funderHeaderTabs', { static: true })
   funderHeaderTabs!: TemplateRef<any>;
+  @ViewChild('addEditFunderHeader', { static: true })
+  addEditFunderHeader!: TemplateRef<any>;
   @ViewChild('funderOverview', { static: true })
   funderOverview!: TemplateRef<any>;
   @ViewChild('funderDocuments', { static: true })
@@ -67,7 +77,14 @@ export class AddEditFunderComponent {
         this.funderId = id;
         this._funderService.getFunder(id).subscribe((res) => {
           res.bdmPhone = new PhonePipe().transform(res.bdmPhone);
+          let domainName = res.bdmEmail.split('@')[1];
+          // const externalLogoUrl = `https://img.logo.dev/${domainName}?token=${environment.LOGO_DEV_API}&size=50`;
+          // this.funderLogoUrl = externalLogoUrl;
           this.funderForm.patchValue(res);
+          this.funderDbLogo = `data:${res.imgType || 'image/png'};base64,${
+            res.logoImg || ''
+          }`;
+          this.entityName = res.name;
         });
       }
     }
@@ -75,12 +92,10 @@ export class AddEditFunderComponent {
 
   ngOnInit() {
     this.setActiveTab(this.activeTab, this.overViewTemplate);
-    // this.setActiveFunderTab(this.activeFunderTab, this.funderOverview);
     this._templateService.setTemplate(this.funderHeaderTabs);
+    this._templateService.setHeaderTemplate(this.addEditFunderHeader);
     this.selectMenuStatus = statusSelectMenu;
     this.initializeFunderForm();
-    this.intializeFunderOverviewForm();
-    // this.equipmentDataSetter();
   }
 
   initializeFunderForm() {
@@ -123,53 +138,25 @@ export class AddEditFunderComponent {
       ],
       bdmPhone: [''],
       id: [0],
-    });
-  }
-
-  intializeFunderOverviewForm() {
-    this.funderGuideForm = this._fb.group({
-      financeType: ['', [Validators.required]],
-      rates: [],
-      isBrokerageCapped: [false],
-      isApplyRitcFee: [false],
-      ritcFee: [],
-      isApplyAccountKeepingFee: [false],
-      accountKeepingFee: [],
-      isApplyDocumentFee: [false],
-      funderDocFee: [],
-      matrixNotes: [],
-      generalNotes: [],
-      eotNotes: [],
-      cutoff: [],
-      craa: [],
-      selectedFundings: [],
-      funderId: [this.funderId],
-      id: [0],
+      entityName: [],
     });
   }
   setActiveTab(tab: string, template: TemplateRef<any>) {
+    if (
+      (this.funderForm.dirty &&
+        this.activeTab === FunderModuleConstants.ACTIVE_OVERVIEW_TAB) ||
+      (this.isFunderGuideFormChanged &&
+        this.activeTab ===
+          FunderModuleConstants.ACTIVE_FUNDER_PRODUCT_GUIDE_TAB)
+    ) {
+      const confirmLeave = confirm(alertResponses.UNSAVE_CONFIRMATION);
+      if (!confirmLeave) {
+        return;
+      }
+    }
     this.activeTab = tab;
     this.activeTemplate = template;
-    // if (this.isEdit && tab == 'funderProductGuide') {
-    //   this._funderService.getFunderGuide(this.funderId).subscribe((res) => {
-    //     res && this.funderGuideForm.patchValue(res);
-    //     let tempData = this.funderGuideForm.get('selectedFundings')?.value;
-    //     if (tempData) {
-    //       this.exsitingListSetter(tempData);
-    //     }
-    //   });
-    //   setTimeout(() => {
-    //     if (this.commonShareComponent) {
-    //       this.commonShareComponent.filterExistedList();
-    //     }
-    //   });
-    // }
   }
-
-  // setActiveFunderTab(tab: string, template: TemplateRef<any>) {
-  //   this.activeFunderTab = tab;
-  //   this.activeFunderTemplate = template;
-  // }
 
   handleAddressChange(
     place: google.maps.places.PlaceResult,
@@ -191,34 +178,14 @@ export class AddEditFunderComponent {
 
   handleFormsubmit() {
     this.isFormSubmitted = true;
-    if (this.isEdit && this.activeTab === 'funderProductGuide') {
-      // this.checkValidityFunderGuide();
-      // if (this.funderGuideForm.invalid) {
-      //   this.funderGuideForm.markAllAsTouched();
-      //   let errorMsg = alertResponses.ON_FORM_INVALID;
-      //   const invalidFields = Object.keys(this.funderGuideForm.controls)
-      //     .filter((field) => this.funderGuideForm.get(field)?.invalid)
-      //     .map((field) => `<br> - ${field}`);
-      //   this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
-      //     enableHtml: true,
-      //   });
-      //   return;
-      // }
-      // const funderFormType = this.funderGuideForm.value;
-      // const id = this.funderGuideForm.get('id')?.value;
-      // this._funderService.upsertFunderGuide(funderFormType).subscribe(
-      //   (res) => {
-      //     this._toaster.success(
-      //       id ? alertResponses.UPDATE_RECORD : alertResponses.ADD_RECORD
-      //     );
-      //     this.funderGuideForm.get('id')?.setValue(res);
-      //   },
-      //   () => this._toaster.error(alertResponses.ERROR)
-      // );
+    if (
+      this.isEdit &&
+      this.activeTab === FunderModuleConstants.ACTIVE_FUNDER_PRODUCT_GUIDE_TAB
+    ) {
       this.funderProductGuide.funderGuideFormSubmit();
     }
 
-    if (this.activeTab === 'overview') {
+    if (this.activeTab === FunderModuleConstants.ACTIVE_OVERVIEW_TAB) {
       if (this.funderForm.invalid) {
         return;
       }
@@ -237,148 +204,58 @@ export class AddEditFunderComponent {
           this._toaster.success(message);
           this.funderId = res;
           this.funderForm.get('id')?.setValue(res);
-          this.funderGuideForm.get('funderId')?.setValue(res);
+          // this.funderGuideForm.get('funderId')?.setValue(res);
           this._router.navigate([`funder/${this.funderId}/Edit`]);
-          // this.isEdit = true;
         },
         () => this._toaster.error(alertResponses.ERROR)
       );
     }
   }
+  handleImgUpload(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    if (input.files && input.files.length > 0 && this.isEdit) {
+      const file = input.files[0];
+      const isValidFormat = validateDocType(file.type, 'img');
+      if (isValidFormat) {
+        const formData = new FormData();
+        formData.append('logoImage', file);
+        this._funderService.uploadImg(formData, this.funderId).subscribe(() => {
+          this.funderLogoUrl = URL.createObjectURL(file);
+        });
+      } else {
+        this._toaster.error(alertResponses.INVALID_DOC_TYPE_IMG);
+      }
+    }
+  }
+  handleLogoErr() {
+    if (this.funderDbLogo) {
+      this.funderLogoUrl = this.funderDbLogo;
+    }
+  }
+  funderGuideFormchange(ev: boolean) {
+    this.isFunderGuideFormChanged = ev;
+  }
+  SaveEntityName(field: HTMLInputElement) {
+    const inputValue = field.value.trim();
+    if (inputValue) {
+      this.entityName = inputValue;
+      this.funderForm.get('entityName')?.setValue(this.entityName);
+      document.getElementById('cancelEntityModal')?.click();
+    }
+  }
+  deleteFunder() {
+    this._funderService.deleteFunder(this.funderId).subscribe(
+      () => {
+        this._toaster.success(alertResponses.DELETE_RECORD);
 
-  // equipmentDataSetter() {
-  //   const searchModel: CommonSearch = {
-  //     pageNumber: 1,
-  //     pageSize: Number.INT_MAX_VALUE,
-  //   };
-  //   this._equipmentService.getEquipmentTypes(searchModel).subscribe((res) => {
-  //     if (res && res.responseData) {
-  //       const groupedData: { [key: number]: CommonTransfer } = {};
-
-  //       res.responseData.forEach((item) => {
-  //         const categoryId = item.category.id;
-  //         if (!groupedData[categoryId]) {
-  //           groupedData[categoryId] = new CommonTransfer(
-  //             categoryId,
-  //             item.category.name,
-  //             []
-  //           );
-  //         }
-  //         groupedData[categoryId].subCategory.push(
-  //           new SubCategory(item.id, item.name)
-  //         );
-  //       });
-  //       this.availableFunding = Object.values(groupedData);
-  //     }
-  //   });
-  // }
-
-  // exsitingListSetter(list: any) {
-  //   console.log(list);
-  //   const groupedData: { [key: number]: CommonTransfer } = {};
-
-  //   list.forEach((item: any) => {
-  //     const categoryId = item.id;
-  //     if (!groupedData[categoryId]) {
-  //       groupedData[categoryId] = new CommonTransfer(categoryId, item.name, []);
-  //     }
-  //     item.subCategory.forEach((subCat: any) => {
-  //       groupedData[categoryId].subCategory.push(
-  //         new SubCategory(subCat.id, subCat.name)
-  //       );
-  //     });
-  //   });
-  //   this.existedFundings = Object.values(groupedData);
-  // }
-
-  // selectedFundingList(ev: CommonTransfer[]) {
-  //   if (ev.length > 0) {
-  //     this.funderGuideForm.get('selectedFundings')?.setValue(ev);
-  //   } else {
-  //     this.funderGuideForm.get('selectedFundings')?.reset();
-  //   }
-  // }
-  // handleInputChange(field: string, type: number) {
-  //   const formField = this.funderGuideForm.get(field);
-  //   if (!formField?.value) {
-  //     formField?.setValue('0.00');
-  //   } else {
-  //     let cleanedInput = formField?.value.replace(/[^\d.]/g, '');
-  //     const dotIndex = cleanedInput.indexOf('.');
-  //     if (dotIndex !== -1) {
-  //       cleanedInput =
-  //         cleanedInput.substring(0, dotIndex + 1) +
-  //         cleanedInput.substring(dotIndex + 1).replace(/\./g, '');
-  //     }
-  //     let result2 =
-  //       type == 1
-  //         ? this._decimalPipe.transform(cleanedInput, '1.2-2') || '0.00'
-  //         : this._decimalPipe.transform(cleanedInput, '1.0-2');
-
-  //     formField?.setValue(result2);
-  //   }
-  // }
-  // handleCheckoxChange(type: number) {
-  //   const financeType = this.funderGuideForm.get('financeType');
-  //   const financeTypeValue = financeType?.value || '';
-  //   const selectedType = type === 0 ? 'Chattel mortgage' : 'Rental';
-  //   const hasType = financeTypeValue.includes(selectedType);
-
-  //   let updatedValue: string;
-  //   if (hasType) {
-  //     updatedValue = financeTypeValue
-  //       .replace(selectedType, '')
-  //       .replace(/,\s*,/g, ',')
-  //       .replace(/^\s*,|,\s*$/g, '')
-  //       .trim();
-  //   } else {
-  //     updatedValue = financeTypeValue
-  //       ? `${financeTypeValue}, ${selectedType}`.trim()
-  //       : selectedType;
-  //   }
-  //   financeType?.setValue(updatedValue);
-  //   console.log(financeType?.value);
-  // }
-
-  // checkValidityFunderGuide() {
-  //   const funderGuideForm = this.funderGuideForm;
-  //   if (!funderGuideForm.get('selectedFundings')?.value) {
-  //     funderGuideForm
-  //       .get('selectedFundings')
-  //       ?.setValidators(Validators.required);
-  //   } else {
-  //     funderGuideForm.get('selectedFundings')?.clearValidators();
-  //   }
-  //   funderGuideForm.get('selectedFundings')?.updateValueAndValidity();
-
-  //   if (funderGuideForm.get('isApplyRitcFee')?.value) {
-  //     if (!funderGuideForm.get('ritcFee')?.value) {
-  //       funderGuideForm.get('ritcFee')?.setValidators(Validators.required);
-  //     }
-  //   } else {
-  //     funderGuideForm.get('ritcFee')?.clearValidators();
-  //   }
-  //   funderGuideForm.get('ritcFee')?.updateValueAndValidity();
-
-  //   if (funderGuideForm.get('isApplyAccountKeepingFee')?.value) {
-  //     const monthlyFee = funderGuideForm.get('accountKeepingFee')?.value;
-  //     if (!monthlyFee) {
-  //       funderGuideForm
-  //         .get('accountKeepingFee')
-  //         ?.setValidators(Validators.required);
-  //     }
-  //   } else {
-  //     funderGuideForm.get('accountKeepingFee')?.clearValidators();
-  //   }
-  //   funderGuideForm.get('accountKeepingFee')?.updateValueAndValidity();
-  //   if (funderGuideForm.get('isApplyDocumentFee')?.value) {
-  //     const monthlyFee = funderGuideForm.get('funderDocFee')?.value;
-  //     if (!monthlyFee) {
-  //       funderGuideForm.get('funderDocFee')?.setValidators(Validators.required);
-  //     }
-  //   } else {
-  //     funderGuideForm.get('funderDocFee')?.clearValidators();
-  //   }
-  //   funderGuideForm.get('funderDocFee')?.updateValueAndValidity();
-  // }
+        this._router.navigate(['/funder']);
+      },
+      () => this._toaster.error(alertResponses.ERROR)
+    );
+    document.getElementById('cancelFunderDelModal')?.click();
+  }
+  ngOnDestroy(): void {
+    this._templateService.setTemplate(null);
+    this._templateService.setHeaderTemplate(null);
+  }
 }

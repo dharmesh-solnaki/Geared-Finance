@@ -19,11 +19,11 @@ public class UserController : BaseController
     }
 
     [HttpPost("Users")]
-    [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
+    [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)] 
     public async Task<IActionResult> GetAll(UserSearchEntity seachParams)
     {
-        BaseRepsonseDTO<UserDTO> userData = await _service.GetUsersAsync(seachParams);
-        if (!userData.responseData.Any())
+        BaseResponseDTO<UserDTO> userData = await _service.GetUsersAsync(seachParams);
+        if (!userData.ResponseData.Any())
         {
             return NoContent();
         }

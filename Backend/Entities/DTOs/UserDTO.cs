@@ -62,4 +62,5 @@ public class UserDTO : BaseDTO
     public VendorDTO? Vendor { get; set; }
     public ManagerLevelDTO? Manager { get; set; }
     public string? RelationshipManagerName { get; set; }
+
 }

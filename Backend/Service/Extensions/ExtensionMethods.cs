@@ -25,6 +25,17 @@ public static class ExtensionMethods
             return -1;
         }
     }
+    public static string GetMimeTypeFromExtension(string extension)
+    {
+        return extension.ToLower() switch
+        {
+            ".jpg" => "image/jpeg",
+            ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".svg" => "image/svg+xml",
+            _ => "application/octet-stream",
+        };
+    }
 }
 public static class MapperHelper
 {

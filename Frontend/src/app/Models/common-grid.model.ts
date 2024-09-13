@@ -6,6 +6,9 @@ export interface IGridSettings {
   showEquipmentTypeEdit?: boolean;
   showRolePermissionEdit?: boolean;
   isShowIndex?: boolean;
+  showDelete?: boolean;
+  showDownload?: boolean;
+  showDocument?: boolean;
   pageSizeValues?: { pageNo: number; text: string }[];
 }
 

@@ -2,10 +2,10 @@
 
 namespace Entities.DTOs
 {
-    public class BaseRepsonseDTO<T> where T : class
+    public class BaseResponseDTO<T> where T : class
     {
         [Required]
-        public List<T> responseData { get; set; } = null!;
+        public List<T> ResponseData { get; set; } = null!;
         [Required]
         public int TotalRecords { get; set; }
     }

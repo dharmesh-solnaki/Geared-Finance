@@ -20,7 +20,7 @@ namespace Geared_Finance_API
             {
                 await _next(context);
             }
-             catch (Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);

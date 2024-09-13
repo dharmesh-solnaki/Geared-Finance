@@ -71,7 +71,7 @@ public static class Constants
     public const string CATEGORYNAME = "Category.Name";
     public const string ISDELETED = "isDeleted";
     public const string ASC = "asc";
-    
+    public const string FULLNAME = "fullName";
 
 
     #endregion

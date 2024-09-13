@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -55,6 +53,7 @@ public partial class FunderProductGuide
     public string? Eotnotes { get; set; }
 
     public int FunderId { get; set; }
+    public bool IsDeleted { get; set; }
 
     [ForeignKey("FunderId")]
     [InverseProperty("FunderProductGuide")]

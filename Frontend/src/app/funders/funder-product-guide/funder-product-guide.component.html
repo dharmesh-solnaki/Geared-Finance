@@ -41,7 +41,7 @@
 </div>
 
 <ng-template #funderOverview>
-  <form [formGroup]="funderGuideForm">
+  <form [formGroup]="funderGuideForm" (change)="formChangeHandler()">
     <div class="row">
       <div class="col-lg-6 col-md-6 col-sm-12 mt-3 form-group">
         <label class="form-label d-inline">
@@ -279,16 +279,12 @@
           <app-common-transfer
             #RtoLTransfer
             [listInput]="existedFundings"
-            title="Chosen Funding"
+            [title]="chosenFundingTitle"
           ></app-common-transfer>
         </div>
       </div>
       <div class="col-12 mt-3">
         <span class="form-label">Matrix</span>
-        <!-- <angular-editor
-            formControlName="matrixNotes"
-            [config]="editorConfig"
-          ></angular-editor> -->
         <ckeditor
           formControlName="matrixNotes"
           [config]="editorConfig"
@@ -298,10 +294,6 @@
       </div>
       <div class="col-12 mt-3">
         <span class="form-label">General</span>
-        <!-- <angular-editor
-            formControlName="generalNotes"
-            [config]="editorConfig"
-          ></angular-editor> -->
         <ckeditor
           formControlName="generalNotes"
           [config]="editorConfig"
@@ -329,10 +321,6 @@
       </div>
       <div class="col-12 mt-4">
         <span class="form-label">End of Term</span>
-        <!-- <angular-editor
-            formControlName="eotNotes"
-            [config]="editorConfig"
-          ></angular-editor> -->
         <ckeditor
           formControlName="eotNotes"
           [config]="editorConfig"
@@ -345,10 +333,86 @@
 </ng-template>
 
 <ng-template #funderDocuments>
+  <div class="m-3">
+    <app-common-grid
+      [data]="documentList"
+      [gridSettings]="docGridSetting"
+      [paginationSettings]="paginationSettings"
+      (onSortEvent)="sortHandler($event)"
+      [isEditable]="true"
+      (onPageChange)="pageChangeEventHandler($event)"
+      (onpageSizeChange)="pageSizeChangeHandler($event)"
+      (onDocumentEvent)="docEventHandler($event)"
+    >
+    </app-common-grid>
+  </div>
+
   <div class="my-5">
     <label for="fileInput" class="btn btn-primary d-inline-block"
       >Upload document</label
     >
-    <input type="file" id="fileInput" class="d-none" />
+    <input
+      type="file"
+      id="fileInput"
+      class="d-none"
+      (change)="handleFileUpload($event)"
+    />
+  </div>
+  <button
+    class="d-none"
+    data-bs-toggle="modal"
+    data-bs-target="#documentViewerModal"
+    id="pdfViewerButton"
+  ></button>
+  <app-common-dialog
+    [modalTitle]="selectedDocName"
+    [bodyData]="PdfViewerModal"
+    modalClass="modal-dialog-centered"
+    modalId="documentViewerModal"
+  ></app-common-dialog>
+
+  <button
+    class="d-none"
+    data-bs-toggle="modal"
+    data-bs-target="#deleteDocConfirmation"
+    id="deleteConfirmationBtn"
+  ></button>
+  <app-common-dialog
+    modalTitle="Delete Document"
+    [bodyData]="DeleteConfirmationModal"
+    modalClass="modal-dialog-centered"
+    modalId="deleteDocConfirmation"
+  ></app-common-dialog>
+</ng-template>
+
+<ng-template #PdfViewerModal>
+  <div class="d-flex justify-content-center m-0">
+    <pdf-viewer
+      [src]="documentUrlSrc"
+      [render-text]="true"
+      [original-size]="true"
+      style="width: 25rem; height: 31.25rem"
+    ></pdf-viewer>
+  </div>
+</ng-template>
+
+<ng-template #DeleteConfirmationModal>
+  <p class="text-muted">Are you sure you want to delete?</p>
+  <div class="d-flex justify-content-end">
+    <button
+      class="btn btn-primary mx-1"
+      type="button"
+      (click)="deleteOkHandler()"
+    >
+      Ok
+    </button>
+    <button
+      class="btn btn-secondary mx-1"
+      id="deleteModalCancelBtn"
+      type="button"
+      data-bs-dismiss="modal"
+    >
+      Cancel
+    </button>
   </div>
 </ng-template>

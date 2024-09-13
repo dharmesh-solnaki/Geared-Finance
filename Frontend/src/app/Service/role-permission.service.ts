@@ -13,7 +13,7 @@ import { CommonSearch } from '../Models/common-search.model';
   providedIn: 'root',
 })
 export class RolePermissionService {
-  private API_URL = `${environment.BASE_URL}/RolePermision`;
+  private API_URL = `${environment.BASE_URL}/RolePermission`;
   constructor(private _http: HttpClient) {}
 
   getModules(): Observable<ModuleType[]> {

@@ -6,10 +6,10 @@ using Repository.Interface;
 
 namespace Repository.Repos
 {
-    public class RolePermisionRepo : BaseRepo<Right>, IRolePermisionRepo
+    public class RolePermissionRepo : BaseRepo<Right>, IRolePermissionRepo
     {
         private readonly ApplicationDBContext _dbContext;
-        public RolePermisionRepo(ApplicationDBContext context) : base(context)
+        public RolePermissionRepo(ApplicationDBContext context) : base(context)
         {
             _dbContext = context;
         }

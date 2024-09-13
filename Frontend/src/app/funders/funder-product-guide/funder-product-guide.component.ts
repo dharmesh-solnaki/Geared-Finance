@@ -1,17 +1,35 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import {
+  IGridSettings,
+  PaginationSetting,
+  SortConfiguration,
+} from 'src/app/Models/common-grid.model';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 import {
   CommonTransfer,
   SubCategory,
 } from 'src/app/Models/common-transfer.model';
+import { documentGridSetting } from 'src/app/Models/document.model';
 import { EquipmentService } from 'src/app/Service/equipment.service';
 import { FunderService } from 'src/app/Service/funder.service';
+import { validateDocType } from 'src/app/Shared/common-functions';
 import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
-import { alertResponses, ckEditorConfig } from 'src/app/Shared/constants';
+import {
+  FunderModuleConstants,
+  alertResponses,
+  ckEditorConfig,
+} from 'src/app/Shared/constants';
+import { Document } from 'src/app/Models/document.model';
 
 @Component({
   selector: 'app-funder-product-guide',
@@ -24,7 +42,9 @@ export class FunderProductGuideComponent {
   activeFunderTemplate: TemplateRef<any> | null = null;
   availableFunding: CommonTransfer[] = [];
   existedFundings: CommonTransfer[] = [];
-  activeFunderTab: string = 'funderOverview';
+  activeFunderTab: string = FunderModuleConstants.FUNDER_OVERVIEW;
+  chosenFundingTitle: string = FunderModuleConstants.CHOSEN_FUNDING_TITLE;
+  documentList: Document[] = [];
   @ViewChild('funderOverview', { static: true })
   funderOverview!: TemplateRef<any>;
   @ViewChild('funderDocuments', { static: true })
@@ -34,6 +54,17 @@ export class FunderProductGuideComponent {
   @ViewChild('RtoLTransfer', { static: false })
   RtoLTransfer!: CommonTransferComponent;
   funderId: number = 0;
+  totalRecords: number = 0;
+  searchingModel: CommonSearch = {
+    pageNumber: 1,
+    pageSize: 10,
+  };
+  docGridSetting!: IGridSettings;
+  paginationSettings!: PaginationSetting;
+
+  @Output() isFunderGuideDirty = new EventEmitter<boolean>();
+  selectedDocName: string = '';
+  documentUrlSrc: string = '';
 
   constructor(
     private _fb: FormBuilder,
@@ -51,7 +82,7 @@ export class FunderProductGuideComponent {
         res && this.funderGuideForm.patchValue(res);
         let tempData = this.funderGuideForm.get('selectedFundings')?.value;
         if (tempData) {
-          this.exsitingListSetter(tempData);
+          this.existingListSetter(tempData);
         }
       });
     }
@@ -59,12 +90,12 @@ export class FunderProductGuideComponent {
 
   ngOnInit(): void {
     this.setActiveFunderTab(this.activeFunderTab, this.funderOverview);
-    this.intializeFunderOverviewForm();
+    this.initializeFunderOverviewForm();
     this.equipmentDataSetter();
-    // this.filterAvailableFunding();
+    this.docGridSetting = documentGridSetting;
   }
 
-  intializeFunderOverviewForm() {
+  initializeFunderOverviewForm() {
     this.funderGuideForm = this._fb.group({
       financeType: ['', [Validators.required]],
       rates: [],
@@ -86,12 +117,14 @@ export class FunderProductGuideComponent {
     });
   }
   setActiveFunderTab(tab: string, template: TemplateRef<any>) {
+    if (tab == 'funderDocuments') {
+      this.getDocuments();
+    }
     this.activeFunderTab = tab;
     this.activeFunderTemplate = template;
   }
   funderGuideFormSubmit() {
     this.checkValidityFunderGuide();
-    console.log(this.funderGuideForm);
     if (this.funderGuideForm.invalid) {
       this.funderGuideForm.markAllAsTouched();
       let errorMsg = alertResponses.ON_FORM_INVALID;
@@ -119,7 +152,7 @@ export class FunderProductGuideComponent {
     const funderGuideForm = this.funderGuideForm;
     const selctedFundings = funderGuideForm.get('selectedFundings')?.value;
 
-    if (selctedFundings.length <= 0) {
+    if (!selctedFundings || selctedFundings?.length <= 0) {
       funderGuideForm
         .get('selectedFundings')
         ?.setValidators(Validators.required);
@@ -185,7 +218,7 @@ export class FunderProductGuideComponent {
       }
     });
   }
-  exsitingListSetter(list: any) {
+  existingListSetter(list: any) {
     const groupedData: { [key: number]: CommonTransfer } = {};
 
     list.forEach((item: any) => {
@@ -240,7 +273,6 @@ export class FunderProductGuideComponent {
         : selectedType;
     }
     financeType?.setValue(updatedValue);
-    console.log(financeType?.value);
   }
   addToSelectedList() {
     if (!this.LtoRTransfer.isTempListEmpty()) {
@@ -373,5 +405,99 @@ export class FunderProductGuideComponent {
         return funding;
       })
       .filter((funding) => funding.subCategory.length > 0);
+  }
+  formChangeHandler() {
+    this.isFunderGuideDirty.emit(this.funderGuideForm.dirty);
+  }
+  handleFileUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const isValidFormat = validateDocType(file.type, 'pdf');
+      if (isValidFormat) {
+        const formData = new FormData();
+        formData.append('document', file);
+        this._funderService.uploadDocument(formData, this.funderId).subscribe(
+          () => {
+            this.getDocuments();
+            this._toaster.success(alertResponses.DOC_UPLOAD_SUCCESS);
+          },
+          () => this._toaster.error(alertResponses.ERROR)
+        );
+      } else {
+        this._toaster.error(alertResponses.INVALID_DOC_TYPE_PDF);
+      }
+    }
+  }
+  getDocuments() {
+    this.documentList = [];
+    this._funderService
+      .getDocList(this.searchingModel, this.funderId)
+      .subscribe((res) => {
+        if (res && res.responseData) {
+          (this.totalRecords = res.totalRecords),
+            (this.documentList = res.responseData);
+        }
+        this.paginationSetter();
+      });
+  }
+  paginationSetter() {
+    this.paginationSettings = {
+      totalRecords: this.totalRecords,
+      currentPage: this.searchingModel.pageNumber,
+      selectedPageSize: [`${this.searchingModel.pageSize} per page`],
+    };
+  }
+  sortHandler(ev: SortConfiguration) {
+    let { sort, sortOrder } = ev;
+    this.searchingModel.sortBy = sort.trim();
+    this.searchingModel.sortOrder = sortOrder;
+    this.searchingModel.pageNumber = 1;
+    this.getDocuments();
+  }
+  pageChangeEventHandler(page: number) {
+    this.searchingModel.pageNumber = page;
+    this.getDocuments();
+  }
+  pageSizeChangeHandler(pageSize: number) {
+    if (this.totalRecords > pageSize) {
+      this.searchingModel.pageNumber = 1;
+      this.searchingModel.pageSize = pageSize;
+      this.getDocuments();
+    }
+  }
+
+  docEventHandler(event: { fileName: string; type: number }) {
+    const { fileName, type } = event;
+    this.selectedDocName = fileName;
+    this._funderService.getDocument(fileName).subscribe((res) => {
+      let url = URL.createObjectURL(res);
+      if (type == 1) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else if (type == 2) {
+        this.selectedDocName = fileName;
+        this.documentUrlSrc = url;
+        document.getElementById('pdfViewerButton')?.click();
+      } else {
+        document.getElementById('deleteConfirmationBtn')?.click();
+      }
+    });
+  }
+  deleteOkHandler() {
+    this._funderService.deleteDocument(+this.selectedDocName).subscribe(
+      () => {
+        document.getElementById('deleteModalCancelBtn')?.click();
+        this._toaster.success(alertResponses.DOC_DELETE_SUCCESS);
+        this.documentList = this.documentList.filter(
+          (x) => x.id != +this.selectedDocName
+        );
+      },
+      () => this._toaster.error(alertResponses.ERROR)
+    );
   }
 }

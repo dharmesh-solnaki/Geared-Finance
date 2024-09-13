@@ -16,6 +16,7 @@ namespace Repository.Interface
         Task UpdateRangeAsync(IEnumerable<T> item);
 
         Task Delete(T item);
+        Task DeleteRange(IEnumerable<T> item);
 
         Task SaveChangesAsync();
         Task<T> GetOneAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>[]? includes);

@@ -102,3 +102,14 @@ export function getAddressFromApi(
   }
   return { address, postcode, state, suburb, streetNumber, route };
 }
+
+export function validateDocType(doctype: string, format: string): boolean {
+  switch (format) {
+    case 'img':
+      return ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'].includes(doctype);
+    case 'pdf':
+      return doctype === 'application/pdf';
+    default:
+      return false;
+  }
+}

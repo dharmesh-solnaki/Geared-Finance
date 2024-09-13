@@ -33,8 +33,8 @@ public static class FunderMapping
             BdmSurname = funder.Bdmsurname,
             BdmEmail = funder.Bdmemail,
             BdmPhone = funder.Bdmphone,
-            LogoImg = funder.LogoImg
-
+            LogoImg = funder.LogoImg,
+            EntityName = funder.EntityName ?? funder.Name
         };
     }
 
@@ -42,7 +42,7 @@ public static class FunderMapping
     {
         return new Funder()
         {
-            Id = dto.id==null?0: (int)dto.id,
+            Id = dto.id == null ? 0 : (int)dto.id,
             Name = dto.Name,
             Abn = dto.Abn,
             Status = dto.Status,
@@ -69,9 +69,9 @@ public static class FunderMapping
             Bdmphone = dto.BdmPhone,
             LogoImg = dto.LogoImg,
             CreatedDate = DateTime.Now,
-            CreatedBy = 0,         
+            CreatedBy = 0,
             IsDeleted = false,
-            EntityName=dto.Name
+            EntityName = dto.EntityName ?? dto.Name,
         };
     }
 
@@ -80,18 +80,18 @@ public static class FunderMapping
         return funders.Select(funder => funder.ToDto());
     }
 
-    public static DisplayFunderDTO ToDisplayFunderDTO(this Funder funder) 
+    public static DisplayFunderDTO ToDisplayFunderDTO(this Funder funder)
     {
         return new DisplayFunderDTO()
         {
             id = funder.Id,
-            Funder = funder.EntityName,
-            LegalName=funder.Name,
+            Funder = funder.EntityName??funder.Name,
+            LegalName = funder.Name,
             FinanceType = funder.FunderProductGuide != null ? funder.FunderProductGuide.TypeOfFinance : "",
             BdmName = $"{funder.Bdmname} {funder.Bdmsurname}",
-            BdmEmail=funder.Bdmemail,
-            BdmPhone=funder.Bdmphone??"",
-            Status=funder.Status
+            BdmEmail = funder.Bdmemail,
+            BdmPhone = funder.Bdmphone ?? "",
+            Status = funder.Status
         };
     }
 

@@ -35,8 +35,8 @@ public class EquipmentController : BaseController
     [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
     public async Task<IActionResult> GetAllEquipmentType(BaseModelSearchEntity searchModal)
     {
-        BaseRepsonseDTO<EquipmentRepsonseDTO> responseDTO = await _equipmentService.GetAllEquipmentType(searchModal);
-        if (!responseDTO.responseData.Any())
+        BaseResponseDTO<EquipmentRepsonseDTO> responseDTO = await _equipmentService.GetAllEquipmentType(searchModal);
+        if (!responseDTO.ResponseData.Any())
         {
             return NoContent();
         }

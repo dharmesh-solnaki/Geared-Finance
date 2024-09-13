@@ -3,7 +3,7 @@ using Entities.UtilityModels;
 
 namespace Repository.Interface
 {
-    public interface IRolePermisionRepo : IBaseRepo<Right>
+    public interface IRolePermissionRepo : IBaseRepo<Right>
     {
         Task<IQueryable<Role>> GetAllRolesAsync(BaseSearchEntity<Role> roleSearch);
         Task<IQueryable<Module>> GetAllModulesAsync();

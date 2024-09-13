@@ -37,9 +37,15 @@
           <th class="text-uppercase" *ngIf="isShowAction()">Actions</th>
         </tr>
         <tr *ngIf="!displayData.isNotEmpty()">
-          <th class="text-center">
-            <span class="text-muted">No Records Found</span>
-          </th>
+          <td
+            [attr.colspan]="
+              _gridSettings.isShowIndex
+                ? _gridSettings.columns.length + 2
+                : _gridSettings.columns.length + 1
+            "
+          >
+            <div class="text-center fw-bold m-2">No Record(s) Found</div>
+          </td>
         </tr>
       </thead>
       <tbody class="grid-body" *ngIf="displayData.isNotEmpty()">
@@ -119,13 +125,44 @@
                 (click)="this.onEditEvent.emit(item.id)"
               >
               </a>
+
+              <a
+                *ngIf="this._gridSettings.showDownload"
+                class="action-icon action-download-icon"
+                (click)="
+                  this.onDocumentEvent.emit({
+                    fileName: item['fileName'],
+                    type: 1
+                  })
+                "
+              ></a>
+              <a
+                *ngIf="this._gridSettings.showDocument"
+                class="action-icon action-view-icon"
+                (click)="
+                  this.onDocumentEvent.emit({
+                    fileName: item['fileName'],
+                    type: 2
+                  })
+                "
+              ></a>
+              <a
+                *ngIf="this._gridSettings.showDelete"
+                class="action-icon action-delete-icon"
+                (click)="
+                  this.onDocumentEvent.emit({
+                    fileName: item.id,
+                    type: 3
+                  })
+                "
+              ></a>
             </td>
           </tr>
         </ng-container>
       </tbody>
     </table>
   </div>
-  <div class="grid-footer" *ngIf="this.showPagination">
+  <div class="grid-footer" *ngIf="displayData.isNotEmpty()">
     <ul class="pagination m-0">
       <li
         class="page-item"

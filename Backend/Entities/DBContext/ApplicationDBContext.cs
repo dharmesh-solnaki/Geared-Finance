@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Entities.Models;
+﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -156,6 +154,7 @@ public partial class ApplicationDBContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
+            entity.Property(e => e.FullName).HasComputedColumnSql("(((\"Name\")::text || ' '::text) || (\"SurName\")::text)", true);
             entity.Property(e => e.IsCalcRateEditor).HasDefaultValueSql("true");
             entity.Property(e => e.IsFunderProfile).HasDefaultValueSql("true");
             entity.Property(e => e.IsPortalLogin).HasDefaultValueSql("false");

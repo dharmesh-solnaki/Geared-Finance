@@ -14,7 +14,7 @@ import { TokenService } from './Service/token.service';
 import { AppForgotPasswwordComponent } from './app-forgot-password/app-forgot-password.component';
 import { AccessDeniedPageComponent } from './Shared/access-denied-page/access-denied-page.component';
 import { AppHeaderComponent } from './app-header/app-header.component';
-import { SharedTemplateService } from './Models/shared-template.service';
+import { SharedTemplateService } from './Service/shared-template.service';
 import { SharedModule } from './Shared/shared.module';
 import { Loader } from '@googlemaps/js-api-loader';
 import { environment } from 'src/environments/environment.development';

@@ -16,16 +16,16 @@ export class Funder {
 export const FunderGridSettings: IGridSettings = {
   columns: [
     { name: 'funder', title: 'funder', sort: true },
-    { name: 'legalName', title: 'legalName', sort: true },
-    { name: 'financeType', title: 'financeType', sort: false },
+    { name: 'legalName', title: 'legal Name', sort: true },
+    { name: 'financeType', title: 'finance Type', sort: false },
 
-    { name: 'bdmName', title: 'bdmName', sort: true },
+    { name: 'bdmName', title: 'bdm Name', sort: true },
     {
       name: 'bdmEmail',
-      title: 'bdmEmail',
+      title: 'bdm Email',
       sort: true,
     },
-    { name: 'bdmPhone', title: 'bdmPhone', sort: true },
+    { name: 'bdmPhone', title: 'bdm Phone', sort: true },
     { name: 'status', title: 'status', sort: false, type: ColumnType.STATUS },
   ],
   showPagination: true,

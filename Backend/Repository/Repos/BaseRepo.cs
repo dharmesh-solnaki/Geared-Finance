@@ -2,9 +2,7 @@
 using Entities.UtilityModels;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
-using System.Linq;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Repository.Implementation
 {
@@ -19,7 +17,7 @@ namespace Repository.Implementation
             _dbSet = _dbContext.Set<T>();
         }
 
-        public async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
+        public  async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
         {
             IQueryable<T> query = _dbSet.AsNoTracking().AsQueryable();
 
@@ -33,15 +31,15 @@ namespace Repository.Implementation
                 {
                     return current.Include(include);
                 });
-            }            
-                if (searchEntity.thenIncludes != null)
+            }
+            if (searchEntity.thenIncludes != null)
+            {
+                query = searchEntity.thenIncludes.Aggregate(query, (current, include) =>
                 {
-                    query = searchEntity.thenIncludes.Aggregate(query, (current, include) =>
-                    {
-                        return current.Include(include);
-                    });
-                }                   
-            
+                    return current.Include(include);
+                });
+            }
+
             if (searchEntity.selects != null)
             {
                 query = query.Select(searchEntity.selects);
@@ -54,7 +52,7 @@ namespace Repository.Implementation
                     : query.OrderBy(searchEntity.sortingExpression);
             }
 
-            return query;
+            return  query;
         }
 
         public async Task AddAsync(T item)
@@ -93,10 +91,8 @@ namespace Repository.Implementation
             _dbSet.Update(item);
             await SaveChangesAsync();
         }
-        public async Task<T> GetByIdAsync(int id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
+
+        public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
         public async Task<U> GetByOtherAsync<U>(Expression<Func<U, bool>> predicate, Expression<Func<U, object>>[]? includes) where U : class
         {
@@ -122,6 +118,7 @@ namespace Repository.Implementation
             }
 
             return await query.FirstOrDefaultAsync(predicate);
+
         }
 
 
@@ -148,15 +145,20 @@ namespace Repository.Implementation
                     return item;
 
                 }).ToList();
-                _dbContext.UpdateRange(updatedItems);
+                _dbSet.UpdateRange(updatedItems);
             }
             else
             {
-                _dbContext.UpdateRange(items);
+                _dbSet.UpdateRange(items);
             }
 
             await SaveChangesAsync();
         }
-      
+
+        public  async Task DeleteRange(IEnumerable<T> item)
+        {
+             _dbSet.RemoveRange(item);
+            await SaveChangesAsync();
+        }
     }
 }

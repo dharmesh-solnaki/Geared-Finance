@@ -1,15 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs;
 
-public class FunderGuideTypeDTO :BaseDTO
+public class FunderGuideTypeDTO : BaseDTO
 {
     [StringLength(25)]
     public string? FinanceType { get; set; }
@@ -24,7 +17,7 @@ public class FunderGuideTypeDTO :BaseDTO
     public string? AccountKeepingFee { get; set; }
     public bool IsApplyDocumentFee { get; set; }
     public string? FunderDocFee { get; set; }
-    public string? MatrixNotes { get; set; }   
+    public string? MatrixNotes { get; set; }
     public string? GeneralNotes { get; set; }
 
     [StringLength(150)]
