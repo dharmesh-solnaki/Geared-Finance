@@ -85,13 +85,22 @@ public static class FunderMapping
         return new DisplayFunderDTO()
         {
             id = funder.Id,
-            Funder = funder.EntityName??funder.Name,
+            Funder = funder.EntityName ?? funder.Name,
             LegalName = funder.Name,
             FinanceType = funder.FunderProductGuide != null ? funder.FunderProductGuide.TypeOfFinance : "",
             BdmName = $"{funder.Bdmname} {funder.Bdmsurname}",
             BdmEmail = funder.Bdmemail,
             BdmPhone = funder.Bdmphone ?? "",
             Status = funder.Status
+        };
+    }
+
+    public static IdNameDTO ToIdNameList(this Funder funder)
+    {
+        return new IdNameDTO()
+        {
+            Id = funder.Id,
+            Name = funder.Name,
         };
     }
 

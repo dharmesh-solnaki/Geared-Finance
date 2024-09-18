@@ -8,7 +8,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { GeneralInterceptor } from './general-interceptor.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { AppLoginComponent } from './app-login/app-login.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './Service/auth.service';
 import { TokenService } from './Service/token.service';
 import { AppForgotPasswwordComponent } from './app-forgot-password/app-forgot-password.component';
@@ -72,6 +72,7 @@ const appRoutes: Routes = [
       preventDuplicates: true,
     }),
     SharedModule,
+    FormsModule,
   ],
 })
 export class AppModule {}

@@ -50,7 +50,7 @@ namespace Service.Extensions
                 Craa = funderGuideTypeDTO.Craa,
                 Eotnotes = funderGuideTypeDTO.EotNotes,
                 FunderId = (int)funderGuideTypeDTO.FunderId,
-                IsDeleted=false
+                IsDeleted = false
                 //SelectedFundings = funderGuideTypeDTO.selectedFundings
                 //                    .Select(f => f.FromDto()) // Assuming SelectedFundingDTO has a FromDto method
                 //                    .ToList()

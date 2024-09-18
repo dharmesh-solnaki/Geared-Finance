@@ -12,7 +12,7 @@ public static class DocumentMapping
         {
             id = doc.Id,
             FileName = doc.FileName,
-           CreatedDate = doc.CreatedDate.ToString("dd/MM/yyyy", new CultureInfo("en-US"))
+            CreatedDate = doc.CreatedDate.ToString("dd/MM/yyyy", new CultureInfo("en-US"))
         };
     }
 }

@@ -53,7 +53,7 @@ public class AuthService : BaseService<User>, IAuthService
             Subject = new ClaimsIdentity(new Claim[]
             {
                 new(Constants.USER_ROLE, user.Role.RoleName),
-                new(Constants.USER_NAME,user.Name),
+                new(Constants.USER_NAME,user.Name+" "+user.SurName),
                 new(Constants.USER_ID,user.Id.ToString()),
                 new(Constants.REF_TOKEN_EXP_TIME,refreshTokenExpTime.ToString())
             }),
@@ -153,7 +153,7 @@ public class AuthService : BaseService<User>, IAuthService
 
     public async Task<bool> UpdatePasswordAsync(PasswordUpdateReq model)
     {
-      
+
         BaseSearchEntity<User> baseSearchEntity = new()
         {
             predicate = x => x.Email == model.Email

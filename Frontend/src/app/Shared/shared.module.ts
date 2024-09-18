@@ -10,6 +10,8 @@ import { RemoveNondigitsDirective } from '../Directives/remove-nondigits.directi
 import { CommonTransferComponent } from './common-transfer/common-transfer.component';
 import { NumberWithPrecisionPipe } from '../Pipes/number-with-precision.pipe';
 import { LoaderComponent } from './loader/loader.component';
+import { SearchHighlightPipe } from '../Pipes/search-highlight.pipe';
+import { FormatDatePipe } from '../Pipes/format-date.pipe';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { LoaderComponent } from './loader/loader.component';
     CommonTransferComponent,
     NumberWithPrecisionPipe,
     LoaderComponent,
+    SearchHighlightPipe,
+    FormatDatePipe,
   ],
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   exports: [
@@ -34,6 +38,7 @@ import { LoaderComponent } from './loader/loader.component';
     CommonTransferComponent,
     NumberWithPrecisionPipe,
     LoaderComponent,
+    SearchHighlightPipe,
   ],
 })
 export class SharedModule {}

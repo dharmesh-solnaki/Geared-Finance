@@ -19,6 +19,7 @@ public static class PredicateBuilder
         Expression predicate = Expression.Constant(true);
 
 
+
         if (searchModel.Id.HasValue)
         {
             var idProperty = Expression.Property(parameter, "Id");

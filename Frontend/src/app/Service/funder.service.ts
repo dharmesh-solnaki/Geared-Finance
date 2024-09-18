@@ -7,9 +7,10 @@ import {
 } from '../Models/funderFormType.model';
 import { Observable } from 'rxjs';
 import { CommonSearch } from '../Models/common-search.model';
-import { BaseResponse } from '../Models/common-models';
+import { BaseResponse, HeaderSearchModel } from '../Models/common-models';
 import { Funder } from '../Models/funder.model';
 import { Document } from '../Models/document.model';
+import { Note } from '../Models/note.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -46,6 +47,20 @@ export class FunderService {
       responseType: 'blob',
     });
   }
+  getFunderSearch(search: string): Observable<HeaderSearchModel[]> {
+    return this._http.get<HeaderSearchModel[]>(
+      `${this.API_URL}/Funder?keyword=${search}`
+    );
+  }
+  getNotes(
+    searchModel: CommonSearch,
+    funderId: number
+  ): Observable<BaseResponse<Note>> {
+    return this._http.post<BaseResponse<Note>>(
+      `${this.API_URL}/Notes/${funderId}`,
+      searchModel
+    );
+  }
 
   upsertFunder(funder: FunderFormType): Observable<number> {
     return this._http.post<number>(`${this.API_URL}/Funder`, funder);
@@ -62,11 +77,17 @@ export class FunderService {
   uploadDocument(formData: FormData, funderId: number) {
     return this._http.post(`${this.API_URL}/Document?id=${funderId}`, formData);
   }
+  upsertNote(funderId: number, note: Note): Observable<number> {
+    return this._http.post<number>(`${this.API_URL}/Note/${funderId}`, note);
+  }
 
   deleteDocument(id: number) {
     return this._http.delete(`${this.API_URL}/Document?id=${id}`);
   }
   deleteFunder(id: number) {
     return this._http.delete(`${this.API_URL}/Funder/${id}`);
+  }
+  deleteNote(id: number) {
+    return this._http.delete(`${this.API_URL}/Note/${id}`);
   }
 }

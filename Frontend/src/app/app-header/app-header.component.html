@@ -1,8 +1,8 @@
 <div class="main-header">
-  <div class="appheader sticky-sm-top">
+  <div class="appheader">
     <div
       class="d-flex align-items-center"
-      [ngClass]="shuoldVisible ? 'logodivShrinked' : 'logodiv'"
+      [ngClass]="shouldVisible ? 'logodivShrinked' : 'logodiv'"
     >
       <img
         (click)="navExpand()"
@@ -14,58 +14,59 @@
         [attr.data-bs-target]="shouldVisibleCanvas ? '#navbarOffCanvas' : null"
       />
       <img
-        [ngClass]="{ 'd-none': shuoldVisible }"
+        [ngClass]="{ 'd-none': shouldVisible }"
         alt="site-logo"
         id="sitelogo"
         src="../../assets/Images/logo.svg"
       />
     </div>
-    <div
-      *ngIf="isShowsettingHeader"
-      class="ms-1 d-lg-flex justify-content-between align-items-center gap-1"
-      [ngClass]="shuoldVisible ? 'afterLogoDivShrinked' : 'afterLogoDiv'"
-      [ngClass]="{ 'd-none': isShowSettingHeaderSection }"
-      id="settingHeaderTop"
-    >
-      <button
-        class="btn btn-primary position-relative"
-        style="height: 35px; width: 35px; overflow: hidden"
+
+    <div class="w-100">
+      <div
+        class="headerTopTitle"
+        *ngIf="getHeaderTemplateRef && !getSearchStatus"
+        [ngClass]="shouldVisible ? 'topTitleShrinked' : 'topTitleNotShrinked'"
       >
+        <ng-container *ngTemplateOutlet="getHeaderTemplateRef"></ng-container>
+      </div>
+      <div
+        class="headerTopTitle headerSearch"
+        *ngIf="getSearchStatus"
+        [ngClass]="shouldVisible ? 'topTitleShrinked' : 'topTitleNotShrinked'"
+      >
+        <div class="header-outer-input">
+          <input
+            [(ngModel)]="headerSearchValue"
+            type="text"
+            maxlength="150"
+            class="header-search-input"
+            (input)="searchChangeHandler()"
+            (focus)="isOverlayVisible = true"
+            (blur)="isOverlayVisible = false"
+          />
+          <div class="header-search-result" *ngIf="headerSearchList.length > 0">
+            <ul
+              *ngFor="let item of headerSearchList; let i = index"
+              id="headerListSearch"
+            >
+              <li
+                (click)="headerListClickHandler(item.id)"
+                (mouseover)="selectedIndex = i"
+                [innerHTML]="item.name | searchHighlight : headerSearchValue"
+                [ngClass]="{ selectedHeaderItem: i == selectedIndex }"
+              ></li>
+            </ul>
+          </div>
+        </div>
         <img
-          src="../../assets/Images/icon-settings.svg"
-          class="position-absolute"
-          style="top: -30px"
-          width="30px"
-          alt=""
+          src="../../assets/Images/icon-close.svg"
+          width="23rem"
+          (click)="clearHeaderSearch()"
         />
-      </button>
-      <strong> - </strong>
-      <button class="btn btn-secondary fs-6">
-        {{ "Settings" | uppercase }}
-      </button>
+      </div>
     </div>
   </div>
 
-  <div
-    class="headerTopTitle p-0"
-    [ngClass]="
-      shuoldVisible ? 'headerDivSectionShrinked' : 'headerDivSectionNotShrinked'
-    "
-    *ngIf="getHeaderTemplateRef"
-  >
-    <ng-container *ngTemplateOutlet="getHeaderTemplateRef"></ng-container>
-  </div>
-
-  <div
-    class="headerDivSection p-0"
-    [ngClass]="
-      shuoldVisible ? 'headerDivSectionShrinked' : 'headerDivSectionNotShrinked'
-    "
-    *ngIf="getTemplateRef"
-  >
-    <ng-container *ngTemplateOutlet="getTemplateRef"></ng-container>
-  </div>
-  <br />
   <div
     class=""
     [ngClass]="shouldVisibleCanvas ? 'offcanvas offcanvas-start' : ''"
@@ -74,9 +75,9 @@
     aria-labelledby="offcanvasExampleLabel"
   >
     <div class="navbar d-flex flex-column justify-content-start">
-      <div [ngClass]="shuoldVisible ? 'userdiv-navshrinked' : 'userdiv'">
-        <span [ngClass]="{ 'd-none': shuoldVisible }">Welcome</span>
-        <h5 class="pb-3" [ngClass]="{ 'd-none': shuoldVisible }">
+      <div [ngClass]="shouldVisible ? 'userdiv-navshrinked' : 'userdiv'">
+        <span [ngClass]="{ 'd-none': shouldVisible }">Welcome</span>
+        <h5 class="pb-3" [ngClass]="{ 'd-none': shouldVisible }">
           {{ getUsername }}
         </h5>
         <div class="d-flex justify-content-between align-items-center">
@@ -86,7 +87,7 @@
               id="usericon"
               src="../../assets/Images/icon-profile.svg"
             />
-            <a class="userdivtext" [ngClass]="{ 'd-none': shuoldVisible }">
+            <a class="userdivtext" [ngClass]="{ 'd-none': shouldVisible }">
               EDIT PROFILE
             </a>
           </span>
@@ -99,7 +100,7 @@
             <a
               class="userdivtext"
               role="button"
-              [ngClass]="{ 'd-none': shuoldVisible }"
+              [ngClass]="{ 'd-none': shouldVisible }"
             >
               LOGOUT
             </a>
@@ -118,7 +119,7 @@
                   routerLinkActive="activelink"
                 >
                   <img class="menuicon" [src]="item.imagePath" />
-                  <span [ngClass]="{ 'd-none': shuoldVisible }">{{
+                  <span [ngClass]="{ 'd-none': shouldVisible }">{{
                     item.menuItem | uppercase
                   }}</span>
                 </a>
@@ -131,7 +132,7 @@
                   routerLinkActive="activelink"
                 >
                   <img class="menuicon" [src]="item.imagePath" />
-                  <span [ngClass]="{ 'd-none': shuoldVisible }">{{
+                  <span [ngClass]="{ 'd-none': shouldVisible }">{{
                     item.menuItem | uppercase
                   }}</span>
                 </a>
@@ -144,7 +145,7 @@
       <button
         class="btn"
         type="button"
-        [ngClass]="shuoldVisible ? 'navrightbtn' : 'navleftbtn'"
+        [ngClass]="shouldVisible ? 'navrightbtn' : 'navleftbtn'"
         [attr.data-bs-toggle]="shouldVisibleCanvas ? 'offcanvas' : null"
         [attr.data-bs-target]="'#navbarOffCanvas'"
         (click)="navExpand()"
@@ -152,3 +153,9 @@
     </div>
   </div>
 </div>
+
+<div
+  class="headerOverlay"
+  *ngIf="isOverlayVisible"
+  (click)="isOverlayVisible = false"
+></div>

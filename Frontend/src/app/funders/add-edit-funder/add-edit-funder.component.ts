@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, HostListener, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,7 @@ import { SharedTemplateService } from 'src/app/Service/shared-template.service';
 import { PhonePipe } from 'src/app/Pipes/phone.pipe';
 import { FunderService } from 'src/app/Service/funder.service';
 import {
+  csvMaker,
   getAddressFromApi,
   validateDocType,
 } from 'src/app/Shared/common-functions';
@@ -21,6 +22,15 @@ import {
   validationRegexes,
 } from 'src/app/Shared/constants';
 import { FunderProductGuideComponent } from '../funder-product-guide/funder-product-guide.component';
+import { Note, NotesGridSetting } from 'src/app/Models/note.model';
+import {
+  IGridSettings,
+  PaginationSetting,
+  SortConfiguration,
+} from 'src/app/Models/common-grid.model';
+import { CommonSearch } from 'src/app/Models/common-search.model';
+import { TokenService } from 'src/app/Service/token.service';
+import { NONE_TYPE } from '@angular/compiler';
 
 @Component({
   selector: 'app-add-edit-funder',
@@ -32,7 +42,6 @@ export class AddEditFunderComponent {
   activeTab: string = FunderModuleConstants.ACTIVE_OVERVIEW_TAB;
   selectMenuStatus: selectMenu[] = [];
   funderForm: FormGroup = new FormGroup({});
-  // funderGuideForm: FormGroup = new FormGroup({});
   availableFunding: CommonTransfer[] = [];
   existedFundings: CommonTransfer[] = [];
   editorConfig: CKEDITOR.config = ckEditorConfig;
@@ -61,13 +70,31 @@ export class AddEditFunderComponent {
   @ViewChild('funderProductGuide')
   funderProductGuide!: FunderProductGuideComponent;
 
+  // notes
+  notesModalTitle: string = String.Empty;
+  isSaveBtnDisabled: boolean = true;
+  isAddBtnDisabled: boolean = false;
+  noteDescription: string = String.Empty;
+  selectedNoteId: number = -1;
+  disableSave: boolean = false;
+  tempNote!: Note;
+  noteList: Note[] = [];
+  gridSetting!: IGridSettings;
+  paginationSettings!: PaginationSetting;
+  totalRecords: number = 0;
+  searchingModel: CommonSearch = {
+    pageNumber: 1,
+    pageSize: 10,
+  };
+
   constructor(
     private _templateService: SharedTemplateService,
     private _fb: FormBuilder,
     private _toaster: ToastrService,
     private _funderService: FunderService,
     private _route: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _tokenService: TokenService
   ) {
     this.isEdit = this._route.snapshot.params['id'] != undefined;
     if (this.isEdit) {
@@ -81,10 +108,12 @@ export class AddEditFunderComponent {
           // const externalLogoUrl = `https://img.logo.dev/${domainName}?token=${environment.LOGO_DEV_API}&size=50`;
           // this.funderLogoUrl = externalLogoUrl;
           this.funderForm.patchValue(res);
+
           this.funderDbLogo = `data:${res.imgType || 'image/png'};base64,${
             res.logoImg || ''
           }`;
           this.entityName = res.name;
+          this.notesModalTitle = `Notes | ${this.entityName.toUpperCase()}`;
         });
       }
     }
@@ -96,6 +125,10 @@ export class AddEditFunderComponent {
     this._templateService.setHeaderTemplate(this.addEditFunderHeader);
     this.selectMenuStatus = statusSelectMenu;
     this.initializeFunderForm();
+    if (this.isEdit) {
+      this.gridSetting = NotesGridSetting;
+      this.noteListSetter();
+    }
   }
 
   initializeFunderForm() {
@@ -257,5 +290,131 @@ export class AddEditFunderComponent {
   ngOnDestroy(): void {
     this._templateService.setTemplate(null);
     this._templateService.setHeaderTemplate(null);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  canChangePage(event: BeforeUnloadEvent) {
+    if (this.funderForm.dirty || this.isFunderGuideFormChanged) {
+      return window.confirm(alertResponses.UNSAVE_CONFIRMATION);
+    } else {
+      return;
+    }
+  }
+
+  onNoteAddition() {
+    const userName = this._tokenService.getUserNameFromToken();
+    this.tempNote = new Note(0, Date.now().toString(), userName, String.Empty);
+    this.noteList = [...this.noteList, this.tempNote];
+    this.isAddBtnDisabled = true;
+  }
+  onModalSaveClick() {
+    this._funderService
+      .upsertNote(this.funderId, this.tempNote)
+      .subscribe((res) => {
+        if (this.tempNote.id === 0) {
+          this.tempNote.id = res;
+        }
+        this.resetNoteField();
+      });
+    this.paginationSetter();
+  }
+  onModalClose() {
+    this.noteList = this.noteList.filter((x) => x.id !== 0);
+    this.isAddBtnDisabled = false;
+  }
+  onNoteEdition(ev: Note) {
+    this.selectedNoteId = ev.id;
+    this.noteDescription = ev.description;
+    this.tempNote = ev;
+  }
+  onNoteChange(ev: string) {
+    this.tempNote.description = ev;
+    this.noteDescription = ev;
+    this.isSaveBtnDisabled = ev == String.Empty;
+  }
+
+  onNoteDeletion(ev: number) {
+    if (ev > 0) {
+      this._funderService.deleteNote(ev).subscribe();
+    }
+    this.noteList = this.noteList.filter((x) => x.id != ev);
+    this.resetNoteField();
+  }
+
+  noteListSetter() {
+    this._funderService
+      .getNotes(this.searchingModel, this.funderId)
+      .subscribe((res) => {
+        if (res) {
+          this.totalRecords = res.totalRecords;
+          this.noteList = res.responseData;
+        }
+        this.paginationSetter();
+      });
+  }
+  paginationSetter() {
+    this.paginationSettings = {
+      totalRecords: this.totalRecords,
+      currentPage: this.searchingModel.pageNumber,
+      selectedPageSize: [`${this.searchingModel.pageSize} per page`],
+    };
+  }
+  pageChangeEventHandler(page: number) {
+    this.searchingModel.pageNumber = page;
+    this.noteListSetter();
+  }
+  pageSizeChangeHandler(pageSize: number) {
+    if (this.totalRecords > pageSize) {
+      this.searchingModel.pageNumber = 1;
+      this.searchingModel.pageSize = pageSize;
+      this.noteListSetter();
+    }
+  }
+  sortHandler(ev: SortConfiguration) {
+    const { sort, sortOrder } = ev;
+    this.searchingModel.sortBy = sort.trim();
+    this.searchingModel.sortOrder = sortOrder;
+    this.searchingModel.pageNumber = 1;
+    this.noteListSetter();
+  }
+  downloadNotes() {
+    const csvTitle = `Funder diary notes - ${this.entityName}`;
+    let downloadData: {
+      CreatedDate: string;
+      UserName: string;
+      Note: string;
+    }[] = [];
+
+    const download = (data: Note[]) => {
+      downloadData = data.map(({ createdDate, userName, description }) => ({
+        CreatedDate: createdDate,
+        UserName: userName,
+        Note: description,
+      }));
+      csvMaker(downloadData, csvTitle);
+    };
+
+    if (this.noteList.length === this.totalRecords) {
+      download(this.noteList);
+    } else {
+      const { pageNumber, pageSize } = this.searchingModel;
+      this.searchingModel.pageSize = Number.INT_MAX_VALUE;
+      this.noteListSetter();
+      this._funderService
+        .getNotes(this.searchingModel, this.funderId)
+        .subscribe((res) => {
+          download(res.responseData);
+          this.searchingModel.pageNumber = pageNumber;
+          this.searchingModel.pageSize = pageSize;
+        });
+    }
+  }
+
+  resetNoteField() {
+    this.selectedNoteId = -1;
+    this.noteDescription = String.Empty;
+    this.tempNote = new Note();
+    this.isAddBtnDisabled = false;
+    this.isSaveBtnDisabled = true;
   }
 }

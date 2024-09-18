@@ -107,7 +107,7 @@ public class FunderController : BaseController
     {
         ValidateString(docName);
         byte[] pdf = await _funderService.GetPdfDocumentAsync(docName);
-        return  File(pdf, "application/pdf", docName);
+        return File(pdf, "application/pdf", docName);
     }
 
     [HttpDelete("Document")]
@@ -120,10 +120,50 @@ public class FunderController : BaseController
     }
 
     [HttpDelete("Funder/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_DELETE)]
     public async Task<IActionResult> DeleteFunder(int id)
     {
         ValidateId(id);
         await _funderService.DeleteFunderAsync(id);
+        return Ok();
+    }
+
+
+    [HttpGet("Funder")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_VIEW)]
+    public async Task<IActionResult> GetFunderList(string? keyword)
+    {
+        IEnumerable<IdNameDTO> searchList = await _funderService.GetFunderSearchList(keyword);
+        return Ok(searchList);
+    }
+
+    [HttpPost("Notes/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_VIEW)]
+    public async Task<IActionResult> GetNotes(int id, BaseModelSearchEntity searchModel)
+    {
+        BaseResponseDTO<NoteDTO> notes = await _funderService.GetNoteListAsync(id, searchModel);
+        if (!notes.ResponseData.Any())
+        {
+            return NoContent();
+        }
+        return Ok(notes);
+    }
+
+    [HttpPost("Note/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_UPSERT, Constants.ID_TYPE)]
+    public async Task<IActionResult> UpsertNote(int id, NoteDTO note)
+    {
+        ValidateModel();
+        int noteId = await _funderService.UpsertNoteAsync(note, id);
+        return Ok(noteId);
+    }
+
+    [HttpDelete("Note/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_DELETE)]
+    public async Task<IActionResult> DeleteNote(int id)
+    {
+        ValidateId(id);
+        await _funderService.DeleteNoteAsync(id);
         return Ok();
     }
 

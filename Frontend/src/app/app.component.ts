@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { TokenService } from './Service/token.service';
 import { Router } from '@angular/router';
+import { SharedTemplateService } from './Service/shared-template.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,11 @@ import { Router } from '@angular/router';
 export class AppComponent {
   shouldApplyWrapper: boolean = false;
 
-  constructor(private _tokenService: TokenService, private _router: Router) {}
+  constructor(
+    private _tokenService: TokenService,
+    private _router: Router,
+    private _templateService: SharedTemplateService
+  ) {}
   viewHandler(isNavClosed: boolean) {
     this.shouldApplyWrapper = isNavClosed;
   }
@@ -20,5 +25,8 @@ export class AppComponent {
   }
   get isForgotPassStatus() {
     return this._router.url === '/forgot-password';
+  }
+  get getTemplateRef(): TemplateRef<any> | null {
+    return this._templateService.getTemplate();
   }
 }

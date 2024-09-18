@@ -23,6 +23,12 @@
   color: #fff !important;
   font-weight: 600 !important;
 }
+.btn-yellowed-bg{
+border: 1px solid #ffa737 !important ;
+}
+.btn-yellowed-bg:hover{
+  background-color:#ffa737 ;
+}
 .form-control {
   font-size: 0.875rem !important;
   line-height: 18px !important;
@@ -101,18 +107,18 @@ input.ng-invalid.ng-touched {
   box-shadow: 0 0 0 0.2rem rgba(0, 174, 123, 0.2) !important;
   color: white !important;
 }
-button:disabled {
+/* button:disabled {
   background-color: unset !important;
 
   border-color: unset !important;
-}
+} */
 /* app-header starts */
 .appheader {
   position: absolute;
 
   /* max-width: fit-content; */
   z-index: 2000;
-  width: auto;
+  width: 100% ;
 }
 .logodiv {
   width: 13rem;
@@ -459,6 +465,8 @@ height: inherit;
 .modal-header{
   background-color: #6c7e8f;
   color: white;
+  display: flex;
+  justify-content: space-between;
 }
 .btn-close{
   background-image: none !important;
@@ -599,9 +607,17 @@ background-image: url('../Images/ic-save-orange.svg') !important;
   width: calc(100% - 15rem) !important;
 }
 .headerTopTitle{
-  position:absolute ;
-  /* margin-top: 0.3rem !important; */
-  width: calc(100% - 15rem);
+   position:sticky ;
+   height: 4.8rem;
+   padding: 1rem ;
+}
+.topTitleShrinked{
+  margin-left:3.6rem !important ;
+  width: calc(100% - 3.75rem);
+}
+.topTitleNotShrinked{
+  margin-left:13rem !important ;
+  width: calc(100% - 13rem);
 }
 .header-tab {
   padding: 7px;
@@ -774,8 +790,7 @@ margin-top: 0px !important;
   position: relative;
 }
 .nav-progress-line{
-  height: 1px;
-  
+  height: 1px;  
   background-color: #000;
   margin-bottom: 0.5rem;
 }
@@ -838,7 +853,69 @@ opacity: 0.9;
   display: block !important;
 border: none !important;
 }
-
+.headerSearch{
+  background-color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+.header-search-input{
+  width: 100%;
+  height: 2.5rem;
+  padding-left: 0.7rem;
+  background: #ebebeb;
+  border-radius: 5px !important;
+  border: solid 1px transparent;
+  color: #6c7e8f;
+}
+.header-search input:focus{
+  border-color: #ffa737 !important;
+  background-color: #eef4f7;
+}
+.header-outer-input{
+ width: 100%;
+ position: relative;
+ margin: 0% 2%; 
+ margin-right: 1rem;
+}
+.header-search-result {
+  background-color: white;
+  position: absolute;
+  top:2.9rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-height: 20rem; 
+  overflow-y: auto; 
+  border: 1px solid #6c757d;
+  border-radius: 0.25rem;
+  z-index: 1000;
+}
+.header-search-result ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.header-search-result li {
+  padding: 0.5rem 1rem;
+  color: #333;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.header-search-result li:hover,
+.selectedHeaderItem {
+  background-color: #2f4963;
+  color: white !important;
+}
+.headerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Black transparent */
+  z-index: 999; /* Ensure it's above other elements */
+}
 @media (max-width: 768px)  {
   .nav-progress-line {
     height: 100%;
@@ -857,8 +934,9 @@ border: none !important;
 @media (min-width: 426px) and (max-width: 768px) {
   .appheader {
     width: 100%;
-    /* top: 0; */
-    background-color: rgb(240, 42, 42);
+  }
+  .headerSearch{
+    background-color: black  !important;
   }
   .setting-title-items{
     padding-left:  0px;
@@ -869,6 +947,13 @@ border: none !important;
   .forgot-password-content{
     min-height: 100vh !important;
   }
+  .topTitleShrinked{
+    background-color: white ;
+  }
+  .topTitleNotShrinked{
+    background-color: white ;
+  }
+
 }
 @media (min-width: 426px) {
   .setting-left-div {
@@ -877,14 +962,24 @@ border: none !important;
 }
 @media (max-width: 425px) {
   .appheader {
-    position: fixed;
-    width: 100%;
+  display: flex;
     background-color: black;
+  }
+ .topTitleShrinked{
+  margin-left:0% !important;
+  left:3.5rem !important;
+  width: 100%;
+  }
+  .topTitleNotShrinked{
+    margin-left:0% !important;
+    left:3.5rem !important;
+    width: 100% !important;
   }
   .logodiv {
     position: unset;
     width: min-content;
     height: 4.8rem;
+    margin-right: 0% !important;
     /* margin-right: 3rem; */
   }
   .logodivShrinked {
@@ -988,3 +1083,5 @@ border: none !important;
     bottom: 0.5rem;
   }
 }
+
+

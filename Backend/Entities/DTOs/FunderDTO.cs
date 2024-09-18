@@ -87,3 +87,5 @@ public class FunderDTO : BaseDTO
     public string? ImgType { get; set; }
     public string? EntityName { get; set; } = null!;
 }
+
+

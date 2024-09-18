@@ -35,9 +35,9 @@ export const FundingEquipmentTypeGridSetting: IGridSettings = {
   showEquipmentTypeSave: true,
   showEquipmentTypeEdit: true,
   pageSizeValues: [
-    { pageNo: 10, text: '10 per pager' },
-    { pageNo: 25, text: '25 per pager' },
-    { pageNo: 50, text: '50 per pager' },
-    { pageNo: 100, text: '100 per pager' },
+    { pageNo: 10, text: '10 per page' },
+    { pageNo: 25, text: '25 per page' },
+    { pageNo: 50, text: '50 per page' },
+    { pageNo: 100, text: '100 per page' },
   ],
 };

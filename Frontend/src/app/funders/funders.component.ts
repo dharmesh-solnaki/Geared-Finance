@@ -9,6 +9,17 @@ import {
   SortConfiguration,
 } from '../Models/common-grid.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  Subject,
+  Subscription,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  of,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 
 @Component({
   selector: 'app-funders',
@@ -27,18 +38,31 @@ export class FundersComponent {
     pageSize: 10,
   };
   isEnableLoader: boolean = false;
+  ngUnsubscribe = new Subject<void>();
+  isResetFunderList: boolean = true;
+  funderHeaderListSubscription = new Subscription();
   constructor(
     private _templateService: SharedTemplateService,
     private _funderService: FunderService,
     private _router: Router,
     private _route: ActivatedRoute
   ) {}
+
   ngOnInit(): void {
     this._templateService.setTemplate(this.funderDefaultHeader);
     this.gridSetting = FunderGridSettings;
     this.funderListSetter();
+    this._templateService.isSearchRequired = true;
+    this.getFunderSearchData();
+    this.getFilteredFunders();
+    this.getFunderListOnClearSearch();
   }
   onEditEventRecevier(id: number) {
+    this.isResetFunderList = false;
+    this._templateService.isSearchCleared.next(true);
+    this._templateService.searchedId.next(0);
+    this._templateService.searchList.next([]);
+    this._templateService.searchSubject.next(String.Empty);
     this._router.navigate([`${id}/Edit`], { relativeTo: this._route });
   }
   sortHandler(ev: SortConfiguration) {
@@ -56,16 +80,23 @@ export class FundersComponent {
   }
 
   ngOnDestroy(): void {
+    this.isResetFunderList = false;
     this._templateService.setTemplate(null);
+    this._templateService.isSearchRequired = false;
+    this.funderHeaderListSubscription.unsubscribe();
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
   pageChangeEventHandler(page: number) {
     this.searchingModel.pageNumber = page;
     this.funderListSetter();
   }
   pageSizeChangeHandler(pageSize: number) {
-    this.searchingModel.pageNumber = 1;
-    this.searchingModel.pageSize = pageSize;
-    this.funderListSetter();
+    if (this.totalRecords > pageSize) {
+      this.searchingModel.pageNumber = 1;
+      this.searchingModel.pageSize = pageSize;
+      this.funderListSetter();
+    }
   }
 
   funderListSetter() {
@@ -89,5 +120,55 @@ export class FundersComponent {
       currentPage: this.searchingModel.pageNumber,
       selectedPageSize: [`${this.searchingModel.pageSize} per page`],
     };
+  }
+  getFunderSearchData() {
+    this.funderHeaderListSubscription = this._templateService.searchSubject
+      .pipe(
+        takeUntil(this.ngUnsubscribe),
+        debounceTime(600),
+        distinctUntilChanged(),
+        // filter((search: string) => !!search.trim()),
+
+        switchMap((search) => {
+          if (search === '-1') {
+            return of([]);
+          } else {
+            return this._funderService.getFunderSearch(search);
+          }
+        })
+      )
+      .subscribe((res) => {
+        res && this._templateService.searchList.next(res);
+      });
+  }
+  getFilteredFunders() {
+    this._templateService.searchedId
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((res) => {
+        if (res > 0) {
+          this.funderList = this.funderList.filter((x) => x.id == res);
+          if (this.funderList.length == 0) {
+            this.searchingModel.id = res;
+            this.searchingModel.pageNumber = 1;
+            this.searchingModel.pageSize = 1;
+            this.funderListSetter();
+          }
+        }
+      });
+  }
+  getFunderListOnClearSearch() {
+    this.isResetFunderList &&
+      this._templateService.isSearchCleared
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe((res) => {
+          console.log(res && this.isResetFunderList);
+
+          if (res && this.isResetFunderList) {
+            this.searchingModel.id = undefined;
+            this.searchingModel.pageSize = 10;
+            this.funderListSetter();
+            this.isResetFunderList = true;
+          }
+        });
   }
 }

@@ -78,6 +78,9 @@ public partial class User
     [InverseProperty("Users")]
     public virtual ManagerLevel? Manager { get; set; }
 
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
+
     [ForeignKey("RelationshipManager")]
     [InverseProperty("InverseRelationshipManagerNavigation")]
     public virtual User? RelationshipManagerNavigation { get; set; }

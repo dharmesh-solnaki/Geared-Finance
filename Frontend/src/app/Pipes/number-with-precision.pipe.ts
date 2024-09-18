@@ -8,7 +8,6 @@ export class NumberWithPrecisionPipe implements PipeTransform {
     if (!value) {
       return '0.00';
     }
-    console.log(value);
     let stringValue = value.toString().replace(/[^0-9.]/g, '');
     const parts = stringValue.split('.');
 

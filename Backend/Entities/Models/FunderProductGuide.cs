@@ -53,6 +53,7 @@ public partial class FunderProductGuide
     public string? Eotnotes { get; set; }
 
     public int FunderId { get; set; }
+
     public bool IsDeleted { get; set; }
 
     [ForeignKey("FunderId")]

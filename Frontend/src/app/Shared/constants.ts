@@ -309,6 +309,7 @@ export const FunderModuleConstants = {
   CHOSEN_FUNDING_TITLE: 'Chosen Funding <span class="text-danger">*</span>',
   FUNDER_OVERVIEW: 'funderOverview',
 };
+
 // extensions methods..
 
 declare global {
@@ -318,9 +319,13 @@ declare global {
   interface NumberConstructor {
     INT_MAX_VALUE: number;
   }
+  interface StringConstructor {
+    Empty: string;
+  }
 }
 
 Number.INT_MAX_VALUE = 2147483647;
+String.Empty = '';
 Array.prototype.isNotEmpty = function (): boolean {
   return this && this.length > 0;
 };

@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  HostListener,
   OnInit,
   Output,
   TemplateRef,
@@ -10,6 +11,7 @@ import { TokenService } from '../Service/token.service';
 import { RolePermissionService } from '../Service/role-permission.service';
 import { SharedTemplateService } from '../Service/shared-template.service';
 import { getRoleIdByRoleName } from '../Shared/common-functions';
+import { HeaderSearchModel } from '../Models/common-models';
 
 @Component({
   selector: 'app-header',
@@ -18,13 +20,16 @@ import { getRoleIdByRoleName } from '../Shared/common-functions';
 })
 export class AppHeaderComponent implements OnInit {
   menuData: { menuItem: string; imagePath: string; routerPath?: string }[] = [];
-  shuoldVisible: boolean = false;
+  shouldVisible: boolean = false;
   shouldVisibleCanvas: boolean = false;
   userName: string = 'User';
   isShowsettingHeader: boolean = false;
   visibleModulesList: string[] = [];
-  isShowSearchBar: boolean = false;
-
+  headerSearchList: HeaderSearchModel[] = [];
+  isShowSearchBar: boolean = true;
+  headerSearchValue = String.Empty;
+  selectedIndex: number = 0;
+  isOverlayVisible: boolean = false;
   @Output() isNavOpned = new EventEmitter<boolean>();
 
   constructor(
@@ -35,10 +40,7 @@ export class AppHeaderComponent implements OnInit {
   ngOnInit(): void {
     this.menuData = menuBarItems;
     this.setVisibleModuleList();
-  }
-
-  get getTemplateRef(): TemplateRef<any> | null {
-    return this._templateService.getTemplate();
+    this.headerListSetter();
   }
 
   get getHeaderTemplateRef(): TemplateRef<any> | null {
@@ -46,7 +48,11 @@ export class AppHeaderComponent implements OnInit {
   }
 
   get getUsername(): string {
-    return this._tokenService.getUserNameFromToken();
+    return this._tokenService.getUserNameFromToken().split(' ')[0];
+  }
+
+  get getSearchStatus(): boolean {
+    return this._templateService.isSearchRequired;
   }
 
   get isShowSettingHeaderSection(): void {
@@ -65,12 +71,12 @@ export class AppHeaderComponent implements OnInit {
     const windowWidth = window.innerWidth;
     if (windowWidth <= 768) {
       this.shouldVisibleCanvas = true;
-      this.shuoldVisible = false;
+      this.shouldVisible = false;
     } else {
       this.shouldVisibleCanvas = false;
-      this.shuoldVisible = !this.shuoldVisible;
+      this.shouldVisible = !this.shouldVisible;
     }
-    this.isNavOpned.emit(this.shuoldVisible);
+    this.isNavOpned.emit(this.shouldVisible);
   }
   onLogout() {
     this._tokenService.clearToken();
@@ -95,5 +101,56 @@ export class AppHeaderComponent implements OnInit {
         });
       }
     });
+  }
+
+  searchChangeHandler() {
+    // if (this.headerSearchValue.trim()) {
+    this._templateService.searchSubject.next(this.headerSearchValue.trim());
+    // }
+  }
+  clearHeaderSearch() {
+    this.headerSearchValue = String.Empty;
+    this._templateService.searchList.next([]);
+    this._templateService.searchSubject.next('-1');
+    this._templateService.isSearchCleared.next(true);
+    this.isOverlayVisible = false;
+  }
+  headerListSetter() {
+    this._templateService.searchList.subscribe((res) => {
+      this.headerSearchList = res;
+    });
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDownEvent(event: KeyboardEvent): void {
+    const itemCount = this.headerSearchList.length;
+    if (itemCount > 0) {
+      switch (event.key) {
+        case 'ArrowDown':
+          this.selectedIndex = (this.selectedIndex + 1) % itemCount;
+          break;
+        case 'ArrowUp':
+          this.selectedIndex = (this.selectedIndex - 1 + itemCount) % itemCount;
+          break;
+        case 'Enter':
+          if (this.headerSearchList[this.selectedIndex]) {
+            const itemId = this.headerSearchList[this.selectedIndex].id;
+            this.headerListClickHandler(itemId);
+          }
+          break;
+      }
+    }
+  }
+
+  headerListClickHandler(id: number) {
+    this._templateService.searchedId.next(id);
+    this.headerSearchValue = this.headerSearchList.filter(
+      (x) => x.id == id
+    )[0].name;
+    this.headerSearchList = [];
+    this.isOverlayVisible = false;
+  }
+  listHoverHandler(index: number) {
+    this.selectedIndex = index;
   }
 }

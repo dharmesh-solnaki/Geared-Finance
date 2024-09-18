@@ -1,3 +1,4 @@
+import { outputAst } from '@angular/compiler';
 import {
   Component,
   EventEmitter,
@@ -15,7 +16,16 @@ export class CommonDialogComponent {
   @Input() bodyData: any;
   @Input() modalClass: string = '';
   @Input() modalId: string = '';
+  @Input() isShowSaveBtn: boolean = false;
+  @Input() isShowAddBtn: boolean = false;
+  @Input() isDisableSaveBtn: boolean = false;
+  @Input() isDisableAddBtn: boolean = false;
+
   @Output() onModalCloseEventEmitter = new EventEmitter();
+  @Output() onSaveEventEmitter = new EventEmitter();
+  @Output() onAddEventEmitter = new EventEmitter();
+  @Output() onSaveEmitter = new EventEmitter();
+  @Output() onCloseEmitter = new EventEmitter();
 
   get isTemplate(): boolean {
     return this.bodyData instanceof TemplateRef;

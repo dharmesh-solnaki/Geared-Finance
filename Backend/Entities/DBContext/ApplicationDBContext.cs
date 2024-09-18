@@ -130,6 +130,10 @@ public partial class ApplicationDBContext : DbContext
 
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Notes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Notes_CreatedBy_fkey");
+
             entity.HasOne(d => d.Funder).WithMany(p => p.Notes).HasConstraintName("FK_FUNDER_NOTES_FUNDERID");
         });
 

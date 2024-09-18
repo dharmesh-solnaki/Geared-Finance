@@ -24,6 +24,7 @@
   /* z-index: 100; */
 }
 
+
 .grid-header > th {
   font-weight: 500;
   white-space: nowrap;
@@ -107,6 +108,10 @@ tbody > tr > td {
 
 }
 
+button:disabled {
+    background-color: unset !important;  
+  border-color: unset !important;
+}
 
 @media (max-width: 768px) {
   .table-responsive {   

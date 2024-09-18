@@ -78,6 +78,9 @@ export class CommonGridComponent {
     fileName: string;
     type: number;
   }>();
+  @Output() onEditNote = new EventEmitter();
+  @Output() onDeleteNote = new EventEmitter();
+  @Output() onNoteEditChange = new EventEmitter<string>();
   ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
@@ -187,8 +190,10 @@ export class CommonGridComponent {
       this._gridSettings.showEquipmentTypeSave ||
       this._gridSettings.showRolePermissionEdit ||
       this._gridSettings?.showDocument ||
-      this.gridSettings?.showDownload ||
-      this.gridSettings?.showDelete
+      this._gridSettings?.showDownload ||
+      this._gridSettings?.showDelete ||
+      this._gridSettings?.showNoteEdit ||
+      this._gridSettings?.showNoteDelete
     );
   }
 }

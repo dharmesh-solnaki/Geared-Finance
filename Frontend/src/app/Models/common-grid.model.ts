@@ -9,6 +9,8 @@ export interface IGridSettings {
   showDelete?: boolean;
   showDownload?: boolean;
   showDocument?: boolean;
+  showNoteEdit?: boolean;
+  showNoteDelete?: boolean;
   pageSizeValues?: { pageNo: number; text: string }[];
 }
 
@@ -40,6 +42,8 @@ export enum ColumnType {
   STATUS = 'STATUS',
   LOGINSTATUS = 'LOGINSTATUS',
   EQUIPMENTTYPE = 'EQUIPMENTTYPE',
+  NOTE = 'NOTE',
+  DATE = 'DATE',
 }
 
 export enum SortOrder {
@@ -101,9 +105,9 @@ export class SortConfiguration {
 //   ],
 //   showPagination: true,
 //   pageSizeValues: [
-//     { pageNo: 10, text: '10 per pager' },
-//     { pageNo: 25, text: '25 per pager' },
-//     { pageNo: 50, text: '50 per pager' },
-//     { pageNo: 100, text: '100 per pager' },
+//     { pageNo: 10, text: '10 per page' },
+//     { pageNo: 25, text: '25 per page' },
+//     { pageNo: 50, text: '50 per page' },
+//     { pageNo: 100, text: '100 per page' },
 //   ],
 // };

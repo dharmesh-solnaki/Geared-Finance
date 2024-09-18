@@ -53,7 +53,8 @@ public class UserService : BaseService<User>, IUserService
         baseSearchEntity.SetSortingExpression();
         IQueryable<User> users = await GetAllAsync(baseSearchEntity);
         BaseResponseDTO<UserDTO> userDataResponse = new() { TotalRecords = users.Count() };
-        List<User> userPageList = await GetPaginatedList(searchEntity.pageNumber, searchEntity.pageSize, users).ToListAsync();
+        //List<User> userPageList = await GetPaginatedList(searchEntity.pageNumber, searchEntity.pageSize, users).ToListAsync();
+        List<User> userPageList = await users.GetSelectedListAsync(searchEntity.pageNumber,searchEntity.pageSize).ToListAsync();
         userDataResponse.ResponseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
 
         return userDataResponse;

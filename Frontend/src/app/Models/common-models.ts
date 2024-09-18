@@ -1,3 +1,5 @@
+import { Call } from '@angular/compiler';
+
 export class BaseResponse<T> {
   constructor(public responseData: T[], public totalRecords: number) {}
 }
@@ -25,4 +27,8 @@ export interface ApiAddress {
   suburb: string;
   streetNumber: string;
   route: string;
+}
+
+export class HeaderSearchModel {
+  constructor(public id: number, public name: string) {}
 }

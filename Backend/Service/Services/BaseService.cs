@@ -44,12 +44,6 @@ public class BaseService<T> : IBaseService<T> where T : class
         return await _repo.GetByOtherAsync(predicate, includes);
     }
 
-    public IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData)
-    {
-        return searchData.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsQueryable();
-
-    }
-
     public async Task SaveChangesAsync()
     {
         await _repo.SaveChangesAsync();

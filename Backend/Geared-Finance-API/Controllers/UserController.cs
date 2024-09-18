@@ -19,7 +19,7 @@ public class UserController : BaseController
     }
 
     [HttpPost("Users")]
-    [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)] 
+    [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
     public async Task<IActionResult> GetAll(UserSearchEntity seachParams)
     {
         BaseResponseDTO<UserDTO> userData = await _service.GetUsersAsync(seachParams);

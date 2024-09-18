@@ -1,10 +1,10 @@
-import { ColumnType, IGridSettings } from "src/app/Models/common-grid.model";
-import { Vendor } from "./common-models";
-import { ManagerLevel } from "./ManagerLevel.model";
+import { ColumnType, IGridSettings } from 'src/app/Models/common-grid.model';
+import { Vendor } from './common-models';
+import { ManagerLevel } from './ManagerLevel.model';
 
 export class User {
   constructor(
-    public id:number,
+    public id: number,
     public name: string,
     public surName: string,
     public email: string,
@@ -25,26 +25,28 @@ export class User {
     public isFunderProfile?: boolean,
     public isProceedBtnInApp?: boolean,
     public isCalcRateEditor?: boolean,
-    public staffCode?:string,
-    public vendorId?:number,
-    public vendorManagerLevelId?:number,
-    public vendor?:Vendor,
-    public managerLevels?:ManagerLevel,
-    public venodrName?:string,
-    public relationshipManagerName?:string
-  )
-  {}
+    public staffCode?: string,
+    public vendorId?: number,
+    public vendorManagerLevelId?: number,
+    public vendor?: Vendor,
+    public managerLevels?: ManagerLevel,
+    public venodrName?: string,
+    public relationshipManagerName?: string
+  ) {}
 }
 
-
-export const UserGridSetting:IGridSettings={
+export const UserGridSetting: IGridSettings = {
   columns: [
     { name: 'name', title: 'name', sort: true },
     { name: 'surName', title: 'surName', sort: true },
     { name: 'staffCode', title: 'staff code', sort: false },
 
     { name: 'venodrName', title: 'vendor', sort: false },
-    { name: 'relationshipManagerName', title: 'relationship Manager', sort: false },
+    {
+      name: 'relationshipManagerName',
+      title: 'relationship Manager',
+      sort: false,
+    },
     { name: 'roleName', title: 'role', sort: true },
 
     { name: 'email', title: 'email', sort: true },
@@ -56,11 +58,11 @@ export const UserGridSetting:IGridSettings={
       type: ColumnType.LOGINSTATUS,
     },
   ],
-  showPagination:true,
-  pageSizeValues:[
-    { pageNo: 10, text: '10 per pager' },
-    { pageNo: 25, text: '25 per pager' },
-    { pageNo: 50, text: '50 per pager' },
-    { pageNo: 100, text: '100 per pager' },
-  ]
-}
+  showPagination: true,
+  pageSizeValues: [
+    { pageNo: 10, text: '10 per page' },
+    { pageNo: 25, text: '25 per page' },
+    { pageNo: 50, text: '50 per page' },
+    { pageNo: 100, text: '100 per page' },
+  ],
+};

@@ -17,7 +17,7 @@ namespace Repository.Implementation
             _dbSet = _dbContext.Set<T>();
         }
 
-        public  async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
+        public async Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity)
         {
             IQueryable<T> query = _dbSet.AsNoTracking().AsQueryable();
 
@@ -52,7 +52,7 @@ namespace Repository.Implementation
                     : query.OrderBy(searchEntity.sortingExpression);
             }
 
-            return  query;
+            return query;
         }
 
         public async Task AddAsync(T item)
@@ -155,9 +155,9 @@ namespace Repository.Implementation
             await SaveChangesAsync();
         }
 
-        public  async Task DeleteRange(IEnumerable<T> item)
+        public async Task DeleteRange(IEnumerable<T> item)
         {
-             _dbSet.RemoveRange(item);
+            _dbSet.RemoveRange(item);
             await SaveChangesAsync();
         }
     }

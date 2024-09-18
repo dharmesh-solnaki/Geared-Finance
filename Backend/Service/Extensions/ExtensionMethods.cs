@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Geared_Finance_API;
@@ -36,7 +37,14 @@ public static class ExtensionMethods
             _ => "application/octet-stream",
         };
     }
+
+    public static  IQueryable<T> GetSelectedListAsync<T>(this IQueryable<T> mainList, int pageNo,int pageSize)
+    {
+        return  mainList.Skip((pageNo - 1) * pageSize).Take(pageSize).AsQueryable();
+    } 
 }
+
+
 public static class MapperHelper
 {
     private static IMapper GetMapper()

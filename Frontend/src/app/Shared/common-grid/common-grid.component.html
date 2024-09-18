@@ -84,6 +84,24 @@
                     {{ item[key.name] }}
                   </span>
                 </ng-container>
+                <ng-container *ngSwitchCase="'NOTE'">
+                  <span *ngIf="item.id == selectedId">
+                    <textarea
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="equipmentType"
+                      (input)="onNoteEditChange.emit(equipmentType)"
+                    ></textarea>
+                  </span>
+                  <span *ngIf="item.id != selectedId">
+                    {{ item[key.name] }}
+                  </span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'DATE'">
+                  <span>
+                    {{ item[key.name] | formatDate }}
+                  </span>
+                </ng-container>
                 <ng-container *ngSwitchDefault>
                   <span>
                     {{ item[key.name] }}
@@ -155,6 +173,18 @@
                     type: 3
                   })
                 "
+              ></a>
+              <a
+                *ngIf="_gridSettings.showNoteEdit"
+                class="action-icon action-edit-icon"
+                (click)="onEditNote.emit(item)"
+              >
+              </a>
+
+              <a
+                *ngIf="_gridSettings.showNoteDelete"
+                class="action-icon action-delete-icon"
+                (click)="onDeleteNote.emit(item.id)"
               ></a>
             </td>
           </tr>

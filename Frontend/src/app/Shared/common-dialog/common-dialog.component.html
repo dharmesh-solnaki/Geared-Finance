@@ -13,13 +13,53 @@
         <h1 class="modal-title fs-5" id="staticBackdropLabel">
           {{ modalTitle }}
         </h1>
-        <button
+        <!-- <button
           type="button"
           class="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
           (click)="onModalCloseEventEmitter.emit()"
-        ></button>
+        ></button> -->
+
+        <div>
+          <button
+            *ngIf="isShowAddBtn"
+            class="btn btn-primary py-1 px-3 mx-1"
+            (click)="onAddEventEmitter.emit()"
+            [disabled]="isDisableAddBtn"
+          >
+            <img
+              src="../../../assets/Images/icon-plus-dark.svg"
+              width="17rem"
+            />
+          </button>
+
+          <button
+            class="btn btn-primary py-1 px-3 mx-1 position-relative overflow-hidden"
+            style="height: 2.1rem; width: 3rem"
+            *ngIf="isShowSaveBtn"
+            (click)="onSaveEmitter.emit()"
+            [disabled]="isDisableSaveBtn"
+          >
+            <img
+              src="../../../assets/Images/icon-save.svg"
+              class="position-absolute"
+              style="top: -22px; left: 22%"
+              width="25px"
+            />
+          </button>
+
+          <img
+            class="btn-close"
+            role="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            src="../../../assets/Images/icon-close.svg"
+            width="20rem"
+            (click)="onCloseEmitter.emit()"
+          />
+        </div>
       </div>
       <div class="modal-body">
         <ng-container *ngIf="isTemplate; else otherContent">

@@ -10,6 +10,9 @@
   *ngIf="!isForgotPassStatus && getLoginStatus"
   [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'"
 >
+  <div class="card-title" *ngIf="getTemplateRef">
+    <ng-container *ngTemplateOutlet="getTemplateRef"></ng-container>
+  </div>
   <div class="card">
     <router-outlet></router-outlet>
   </div>

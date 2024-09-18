@@ -1,6 +1,6 @@
 <ng-template #funderHeaderTabs>
-  <div class="d-lg-flex justify-content-between">
-    <div class="d-lg-flex justify-content-between my-2">
+  <div class="d-lg-flex justify-content-between my-1">
+    <div class="d-lg-flex justify-content-between">
       <a
         class="header-tab text-center"
         [ngClass]="{ 'header-active-tab': activeTab === 'overview' }"
@@ -35,18 +35,23 @@
           <span>{{ isEdit ? "Edit" : "Set" }} entity name</span>
         </button>
 
-        <button class="btn btn-primary position-relative">
+        <button
+          class="btn btn-primary position-relative"
+          data-bs-toggle="modal"
+          data-bs-target="#funerNotes"
+        >
           <img
             src="../../../assets/Images/ic-diarynote.svg"
-            class="position-absolute d-none"
+            class="position-absolute"
             style="top: -22px; left: 10%"
             width="25px"
-            alt=""
+            [ngClass]="{ 'd-none': noteList.length == 0 }"
           />
 
           <img
             src="../../../assets/Images/ic-white-diarynote.svg"
             width="19px"
+            [ngClass]="{ 'd-none': noteList.length > 0 }"
           />
         </button>
       </ng-container>
@@ -68,7 +73,9 @@
 </ng-template>
 
 <ng-template #addEditFunderHeader>
-  <div class="d-flex align-items-center justify-content-between mt-3">
+  <div
+    class="d-lg-flex d-md-flex d-none align-items-center justify-content-between mt-2"
+  >
     <div class="d-flex align-items-center">
       <label
         class="btn header-btn"
@@ -111,7 +118,7 @@
     <div class="ms-auto me-0">
       <a
         href="javascript: history.go(-1)"
-        class="text-decoration-none h4 text-dark"
+        class="text-decoration-none h5 text-dark"
       >
         <img
           src="../../../assets/Images/caret-left-fill.svg"
@@ -120,6 +127,11 @@
         />
         FUNDERS
       </a>
+    </div>
+  </div>
+  <div>
+    <div class="h6 text-light m-1 d-md-none mt-2 w-100 h-100">
+      <span> {{ entityName | uppercase }}</span>
     </div>
   </div>
 </ng-template>
@@ -136,10 +148,24 @@
 ></app-common-dialog>
 
 <app-common-dialog
-  modalTitle="Delete Funder"
+  modalTitle="Entity Name"
   [bodyData]="EntityNameSetter"
   modalClass="modal-dialog-centered"
   modalId="enityNameSetter"
+></app-common-dialog>
+
+<app-common-dialog
+  [modalTitle]="notesModalTitle"
+  [bodyData]="NotesTemplate"
+  modalClass=" modal-lg modal-dialog-centered"
+  modalId="funerNotes"
+  [isShowAddBtn]="true"
+  [isDisableAddBtn]="isAddBtnDisabled"
+  [isShowSaveBtn]="true"
+  [isDisableSaveBtn]="isSaveBtnDisabled"
+  (onAddEventEmitter)="onNoteAddition()"
+  (onSaveEmitter)="onModalSaveClick()"
+  (onCloseEmitter)="onModalClose()"
 ></app-common-dialog>
 
 <ng-template #overViewTemplate>
@@ -599,6 +625,29 @@
       data-bs-dismiss="modal"
     >
       Cancel
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #NotesTemplate>
+  <app-common-grid
+    [data]="noteList"
+    [gridSettings]="gridSetting"
+    [paginationSettings]="paginationSettings"
+    (onSortEvent)="sortHandler($event)"
+    [isEditable]="true"
+    [selectedId]="selectedNoteId"
+    [equipmentType]="noteDescription"
+    (onPageChange)="pageChangeEventHandler($event)"
+    (onpageSizeChange)="pageSizeChangeHandler($event)"
+    (onEditNote)="onNoteEdition($event)"
+    (onDeleteNote)="onNoteDeletion($event)"
+    (onNoteEditChange)="onNoteChange($event)"
+  >
+  </app-common-grid>
+  <div class="mt-2 float-end" *ngIf="noteList.length > 0">
+    <button class="btn btn-yellowed-bg" (click)="downloadNotes()">
+      <img src="../../../assets/Images/download-icon.svg" width="20px" />
     </button>
   </div>
 </ng-template>

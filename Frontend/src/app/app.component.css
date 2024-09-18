@@ -1,6 +1,6 @@
-.wrapper {
+/* .wrapper {
    height: calc(100% - 24px);
-  padding: 6.25rem 1.25rem 1.25rem 14rem;
+  padding: 6.25rem 1.25rem 1rem 14rem;
 }
 .card { 
   width: auto;
@@ -11,7 +11,7 @@
 }
 .wrapper-shriked {
   height: calc(100% - 24px);
-  padding: 6.25rem 1.25rem 1.25rem 5rem;
+  padding: 6.25rem 1.25rem 1rem 5rem;
 }
 
 @media (max-width: 768px) {
@@ -24,4 +24,38 @@
   }
 }
 
- 
+  */
+
+  .wrapper {
+    height: 100%;
+    padding: 4.7rem 1.25rem 1rem 14rem;
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .wrapper-shriked {
+    height: 100%;
+    padding: 4.7rem 1.25rem 1rem 5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card {
+    flex: 1 1 auto; 
+    width: auto;
+    overflow-y: auto;
+    box-shadow: 0 5px 27px rgba(0, 0, 0, 0.27);
+    margin-top:0.5rem;
+  }   
+  .card-title {
+   margin-top: 0.5rem;
+  }  
+
+  @media (max-width: 768px) {
+    .wrapper, .wrapper-shriked {
+      padding: 4.7rem 1rem 1rem 1rem !important;
+    }
+  }
+  

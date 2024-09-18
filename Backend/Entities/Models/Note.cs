@@ -27,6 +27,10 @@ public partial class Note
 
     public bool IsDeleted { get; set; }
 
+    [ForeignKey("CreatedBy")]
+    [InverseProperty("Notes")]
+    public virtual User CreatedByNavigation { get; set; } = null!;
+
     [ForeignKey("FunderId")]
     [InverseProperty("Notes")]
     public virtual Funder? Funder { get; set; }
