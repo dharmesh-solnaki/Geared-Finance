@@ -1,8 +1,6 @@
-﻿namespace Entities.UtilityModels
+﻿namespace Entities.UtilityModels;
+public class IsExistData
 {
-    public class IsExistData
-    {
-        public bool IsEmailExist { get; set; }
-        public bool IsExistMobile { get; set; }
-    }
+    public bool IsEmailExist { get; set; }
+    public bool IsExistMobile { get; set; }
 }

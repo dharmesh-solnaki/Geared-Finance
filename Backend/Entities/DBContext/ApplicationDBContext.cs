@@ -1,4 +1,6 @@
-﻿using Entities.Models;
+﻿using System;
+using System.Collections.Generic;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities.DBContext;
@@ -26,11 +28,17 @@ public partial class ApplicationDBContext : DbContext
 
     public virtual DbSet<FundingEquipmentType> FundingEquipmentTypes { get; set; }
 
+    public virtual DbSet<InterestChart> InterestCharts { get; set; }
+
+    public virtual DbSet<InterestChartFunding> InterestChartFundings { get; set; }
+
     public virtual DbSet<ManagerLevel> ManagerLevels { get; set; }
 
     public virtual DbSet<Module> Modules { get; set; }
 
     public virtual DbSet<Note> Notes { get; set; }
+
+    public virtual DbSet<RateChartOption> RateChartOptions { get; set; }
 
     public virtual DbSet<Right> Rights { get; set; }
 
@@ -112,6 +120,36 @@ public partial class ApplicationDBContext : DbContext
                 .HasConstraintName("FK_FundingEquipmentType_FundingCategory");
         });
 
+        modelBuilder.Entity<InterestChart>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("InterestChart_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RateChart).WithMany(p => p.InterestCharts)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("InterestChart_RateChartId_fkey");
+        });
+
+        modelBuilder.Entity<InterestChartFunding>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("InterestChartFundings_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ChartEquipment).WithMany(p => p.InterestChartFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("InterestChartFundings_ChartEquipmentId_fkey");
+
+            entity.HasOne(d => d.EquipmentCategory).WithMany(p => p.InterestChartFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("InterestChartFundings_EquipmentCategoryId_fkey");
+
+            entity.HasOne(d => d.Equipment).WithMany(p => p.InterestChartFundings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("InterestChartFundings_EquipmentId_fkey");
+        });
+
         modelBuilder.Entity<ManagerLevel>(entity =>
         {
             entity.HasOne(d => d.Vendor).WithMany(p => p.ManagerLevels).HasConstraintName("FK_ManagerLevels_Vendors_ManagerId");
@@ -135,6 +173,17 @@ public partial class ApplicationDBContext : DbContext
                 .HasConstraintName("Notes_CreatedBy_fkey");
 
             entity.HasOne(d => d.Funder).WithMany(p => p.Notes).HasConstraintName("FK_FUNDER_NOTES_FUNDERID");
+        });
+
+        modelBuilder.Entity<RateChartOption>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("RateChartOptions_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Funder).WithMany(p => p.RateChartOptions)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("RateChartOptions_FunderId_fkey");
         });
 
         modelBuilder.Entity<Right>(entity =>

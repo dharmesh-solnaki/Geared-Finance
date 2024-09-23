@@ -6,27 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
-[Table("FunderProductFunding")]
-public partial class FunderProductFunding
+public partial class InterestChartFunding
 {
     [Key]
     public int Id { get; set; }
 
-    public int FundingProductGuideId { get; set; }
+    public int ChartEquipmentId { get; set; }
 
     public int EquipmentId { get; set; }
 
     public int EquipmentCategoryId { get; set; }
 
+    [ForeignKey("ChartEquipmentId")]
+    [InverseProperty("InterestChartFundings")]
+    public virtual RateChartOption ChartEquipment { get; set; } = null!;
+
     [ForeignKey("EquipmentId")]
-    [InverseProperty("FunderProductFundings")]
+    [InverseProperty("InterestChartFundings")]
     public virtual FundingEquipmentType Equipment { get; set; } = null!;
 
     [ForeignKey("EquipmentCategoryId")]
-    [InverseProperty("FunderProductFundings")]
+    [InverseProperty("InterestChartFundings")]
     public virtual FundingCategory EquipmentCategory { get; set; } = null!;
-
-    [ForeignKey("FundingProductGuideId")]
-    [InverseProperty("FunderProductFundings")]
-    public virtual FunderProductGuide FundingProductGuide { get; set; } = null!;
 }

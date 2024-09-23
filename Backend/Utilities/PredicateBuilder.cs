@@ -11,6 +11,8 @@ public class PredicateModel
     public Dictionary<string, object>? Criteria { get; set; }
 }
 
+
+
 public static class PredicateBuilder
 {
     public static Expression<Func<T, bool>> BuildPredicate<T>(PredicateModel searchModel)
@@ -48,13 +50,10 @@ public static class PredicateBuilder
                     condition = Expression.Call(propertyToLower, containsMethod, valueToLower);
 
                 }
-                else if (property.Type == typeof(int) ||
-                            property.Type == typeof(bool))
+                else if (property.Type == typeof(int) ||   property.Type == typeof(bool))
                 {
-
                     condition = Expression.Equal(property, valueConstant);
                 }
-
                 if (condition != null)
                 {
                     predicate = Expression.AndAlso(predicate, condition);
@@ -97,7 +96,7 @@ public static class PredicateBuilder
         }
 
         return currentExpression as MemberExpression;
-    }
+    }   
 }
 
 

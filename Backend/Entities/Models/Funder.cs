@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -119,4 +122,7 @@ public partial class Funder
 
     [InverseProperty("Funder")]
     public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
+
+    [InverseProperty("Funder")]
+    public virtual ICollection<RateChartOption> RateChartOptions { get; set; } = new List<RateChartOption>();
 }

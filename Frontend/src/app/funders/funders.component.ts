@@ -14,8 +14,6 @@ import {
   Subscription,
   debounceTime,
   distinctUntilChanged,
-  filter,
-  map,
   of,
   switchMap,
   takeUntil,
@@ -28,7 +26,7 @@ import {
 })
 export class FundersComponent {
   @ViewChild('funderDefaultHeader', { static: true })
-  funderDefaultHeader!: TemplateRef<any>;
+  funderDefaultHeader!: TemplateRef<HTMLElement>;
   funderList: Funder[] = [];
   gridSetting!: IGridSettings;
   paginationSettings!: PaginationSetting;
@@ -128,7 +126,6 @@ export class FundersComponent {
         debounceTime(600),
         distinctUntilChanged(),
         // filter((search: string) => !!search.trim()),
-
         switchMap((search) => {
           if (search === '-1') {
             return of([]);
@@ -157,18 +154,15 @@ export class FundersComponent {
       });
   }
   getFunderListOnClearSearch() {
-    this.isResetFunderList &&
-      this._templateService.isSearchCleared
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe((res) => {
-          console.log(res && this.isResetFunderList);
-
-          if (res && this.isResetFunderList) {
-            this.searchingModel.id = undefined;
-            this.searchingModel.pageSize = 10;
-            this.funderListSetter();
-            this.isResetFunderList = true;
-          }
-        });
+    this._templateService.isSearchCleared
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((res) => {
+        if (res && this.isResetFunderList) {
+          this.searchingModel.id = undefined;
+          this.searchingModel.pageSize = 10;
+          this.funderListSetter();
+          this.isResetFunderList = true;
+        }
+      });
   }
 }

@@ -8,6 +8,6 @@ export class RemoveNondigitsDirective {
 
   @HostListener('input', ['$event']) onInput(ev: Event): void {
     const input = ev.target as HTMLInputElement;
-    input.value = input.value.replace(/\D/g, '');
+    input.value = input.value.replace(/\D/g, String.Empty);
   }
 }

@@ -7,6 +7,7 @@ using Repository.Interface;
 using Service.Implementation;
 using Service.Interface;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using Utilities;
 
 namespace Service.Services;
@@ -24,43 +25,45 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
     {
 
 
-        if (string.IsNullOrEmpty(searchModal.sortBy))
+        if (string.IsNullOrEmpty(searchModal.SortBy))
         {
-            searchModal.sortBy = Constants.NAME;
+            searchModal.SortBy = Constants.NAME;
         }
-        else if (searchModal.sortBy == "categoryName")
+        else if (searchModal.SortBy == "categoryName")
         {
-            searchModal.sortBy = Constants.CATEGORYNAME;
+            searchModal.SortBy = Constants.CATEGORYNAME;
         }
 
         PredicateModel predicateModel = new()
         {
             Criteria = new Dictionary<string, object>
             {
-                {Constants.CATEGORYNAME,searchModal.name},
-                //{"category.name",searchModal.name},
+            
+                {Constants.CATEGORYNAME,searchModal.Name},
                 {Constants.ISDELETED,false},
             },
+
             Property1 = Constants.NAME,
-            Keyword = searchModal.name
+            Keyword = searchModal.Name,
         };
         Expression<Func<FundingEquipmentType, bool>> predicate = PredicateBuilder.BuildPredicate<FundingEquipmentType>(predicateModel);
 
         BaseSearchEntity<FundingEquipmentType> baseSearchEntity = new()
         {
-            predicate = predicate,
-            includes = new Expression<Func<FundingEquipmentType, object>>[] { x => x.Category },
-            pageNumber = searchModal.pageNumber,
-            pageSize = searchModal.pageSize,
-            sortBy = searchModal.sortBy,
-            sortOrder = searchModal.sortOrder,
+            Predicate = predicate,
+            Includes = new Expression<Func<FundingEquipmentType, object>>[] { x => x.Category },
+            PageNumber = searchModal.PageNumber,
+            PageSize = searchModal.PageSize,
+            SortBy = searchModal.SortBy,
+            SortOrder = searchModal.SortOrder,
         };
         baseSearchEntity.SetSortingExpression();
 
         IQueryable<FundingEquipmentType> fundingEquipmentTypes = await GetAllAsync(baseSearchEntity);
         BaseResponseDTO<EquipmentRepsonseDTO> baseRepsonse = new() { TotalRecords = fundingEquipmentTypes.Count() };
 
-        List<FundingEquipmentType> paginatedFundingEquipmentTypes = await GetPaginatedList(searchModal.pageNumber, searchModal.pageSize, fundingEquipmentTypes).ToListAsync();
+        //List<FundingEquipmentType> paginatedFundingEquipmentTypes = await GetPaginatedList(searchModal.pageNumber, searchModal.pageSize, fundingEquipmentTypes).ToListAsync();
+        List<FundingEquipmentType> paginatedFundingEquipmentTypes = await fundingEquipmentTypes.GetSelectedListAsync(searchModal.PageNumber, searchModal.PageSize).ToListAsync();
 
         baseRepsonse.ResponseData = MapperHelper.MapTo<List<FundingEquipmentType>, List<EquipmentRepsonseDTO>>(paginatedFundingEquipmentTypes);
         return baseRepsonse;
@@ -84,9 +87,10 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
     }
     public async Task<bool> DeleteEuipmentTypeAsync(int id)
     {
-        FundingEquipmentType record = await GetByIdAsync(id);
+        FundingEquipmentType record = await GetByIdAsync(id) ;
         if (record == null) return false;
         record.IsDeleted = true;
+        
         await UpdateAsync(record);
         return true;
     }

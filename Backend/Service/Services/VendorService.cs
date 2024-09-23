@@ -20,15 +20,15 @@ public class VendorService : BaseService<Vendor>, IVendorService
     {
         BaseSearchEntity<Vendor> searchEntity2 = new()
         {
-            pageNumber = searchEntity.pageNumber,
-            pageSize = searchEntity.pageSize,
-            sortBy = searchEntity.sortBy,
-            sortOrder = searchEntity.sortOrder,
+            PageNumber = searchEntity.PageNumber,
+            PageSize = searchEntity.PageSize,
+            SortBy = searchEntity.SortBy,
+            SortOrder = searchEntity.SortOrder,
 
         };
-        if (searchEntity.id != null && searchEntity.id != 0)
+        if (searchEntity.Id != null && searchEntity.Id != 0)
         {
-            searchEntity2.predicate = x => x.Id == searchEntity.id;
+            searchEntity2.Predicate = x => x.Id == searchEntity.Id;
         }
         return MapperHelper.MapTo<IEnumerable<Vendor>, IEnumerable<VendorDTO>>(await _vendorRepo.GetAllAsync(searchEntity2));
 

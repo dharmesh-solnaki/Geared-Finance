@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -24,4 +27,7 @@ public partial class FundingEquipmentType
 
     [InverseProperty("Equipment")]
     public virtual ICollection<FunderProductFunding> FunderProductFundings { get; set; } = new List<FunderProductFunding>();
+
+    [InverseProperty("Equipment")]
+    public virtual ICollection<InterestChartFunding> InterestChartFundings { get; set; } = new List<InterestChartFunding>();
 }

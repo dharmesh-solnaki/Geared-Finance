@@ -13,7 +13,7 @@ namespace Repository.Repos
         {
             _dbContext = dbContext;
         }
-        public async Task<IQueryable<FunderProductFunding>> GetFundingsAsync(int id)
+        public IQueryable<FunderProductFunding> GetFundings(int id)
         {
             return _dbContext.FunderProductFundings.Where(f => f.FundingProductGuideId == id).Include(x => x.Equipment).Include(x => x.EquipmentCategory).AsQueryable();
         }

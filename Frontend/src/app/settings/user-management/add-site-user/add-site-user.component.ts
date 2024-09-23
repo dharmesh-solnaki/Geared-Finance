@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, forkJoin, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 import { PhonePipe } from 'src/app/Pipes/phone.pipe';
 import {
@@ -14,7 +14,6 @@ import {
   validationRegexes,
   MonthEnum,
   alertResponses,
-  SiteRolesId,
 } from 'src/app/Shared/constants';
 import { User } from 'src/app/Models/user.model';
 import { UserService } from 'src/app/Service/user.service';
@@ -42,8 +41,9 @@ export class AddSiteUserComponent implements OnInit {
   isShowVenderManagerField: boolean = true;
   isFormSubmitted: boolean = false;
   userDataOnEdit: User = new User(0, '', '', '', '');
-  private isValidationInProgress = false;
-
+  isValidationInProgress = false;
+  isFormInitializationInProgress = false;
+  vendorId = 0;
   constructor(
     private _fb: FormBuilder,
     private _userService: UserService,
@@ -85,9 +85,9 @@ export class AddSiteUserComponent implements OnInit {
 
   setUpFormValueChanges() {
     this.userForm.controls['role'].valueChanges.subscribe((res) => {
-      if (this.isValidationInProgress) return;
+      if (this.isValidationInProgress || this.isFormInitializationInProgress)
+        return;
       this.userForm.markAsUntouched();
-      const role = res;
       this.isFormSubmitted = false;
       if (
         [
@@ -98,43 +98,44 @@ export class AddSiteUserComponent implements OnInit {
       ) {
         this.vendorDataSetter();
         this.relationshipManagerDataSetter();
-
-        this.userForm.controls['vendor'].valueChanges.subscribe((res) => {
-          if (this.isValidationInProgress) return;
-          const vendorId = res || 0;
-
-          this.reportingToDataSetter(vendorId, 0);
-          if (role == RoleEnum.VendorManager) {
-            this.managerLevelsDataSetter(vendorId);
-            this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(
-              (res) => {
-                if (this.isValidationInProgress) return;
-                const managerLevelId = res || 0;
-                let maxLevel = 0;
-                let selectedValueLevel = 0;
-
-                this.selectMenuManagerLevels.forEach((e) => {
-                  let tempMax = +e.option.charAt(e.option.length - 1);
-
-                  if (tempMax >= maxLevel) {
-                    maxLevel = tempMax;
-                  }
-                  if (managerLevelId == e.value) {
-                    selectedValueLevel = tempMax;
-                  }
-                });
-                if (maxLevel == selectedValueLevel) {
-                  this.isShowFieldReportTo = false;
-                } else {
-                  this.isShowFieldReportTo = true;
-                  this.reportingToDataSetter(vendorId, managerLevelId);
-                }
-              }
-            );
-          }
-        });
       }
     });
+    this.userForm.controls['vendor'].valueChanges.subscribe((res) => {
+      if (this.isValidationInProgress || this.isFormInitializationInProgress)
+        return;
+      this.vendorId = res || 0;
+
+      this.reportingToDataSetter(this.vendorId, 0);
+      if (this.userForm.get('role')?.value == RoleEnum.VendorManager) {
+        this.managerLevelsDataSetter(this.vendorId);
+      }
+    });
+    this.userForm.controls['vendorManagerLevel'].valueChanges.subscribe(
+      (res) => {
+        if (this.isValidationInProgress || this.isFormInitializationInProgress)
+          return;
+        const managerLevelId = res || 0;
+        let maxLevel = 0;
+        let selectedValueLevel = 0;
+
+        this.selectMenuManagerLevels.forEach((e) => {
+          let tempMax = +e.option.charAt(e.option.length - 1);
+
+          if (tempMax >= maxLevel) {
+            maxLevel = tempMax;
+          }
+          if (managerLevelId == e.value) {
+            selectedValueLevel = tempMax;
+          }
+        });
+        if (maxLevel == selectedValueLevel) {
+          this.isShowFieldReportTo = false;
+        } else {
+          this.isShowFieldReportTo = true;
+          this.reportingToDataSetter(this.vendorId, managerLevelId);
+        }
+      }
+    );
   }
 
   userFormInitializerOnEdit() {
@@ -165,6 +166,7 @@ export class AddSiteUserComponent implements OnInit {
             )
           : of([]),
       ]).subscribe((res) => {
+        this.isFormInitializationInProgress = true;
         res[0].map((e) => {
           this.selectMenuVendors.push({ option: e.name, value: e.id });
         });
@@ -221,6 +223,8 @@ export class AddSiteUserComponent implements OnInit {
       vendor: formdata.vendor && +formdata.vendor.id,
       vendorManagerLevel: formdata.vendorManagerLevelId,
     });
+
+    this.isFormInitializationInProgress = false;
   }
 
   addFormBirthHandler() {
@@ -451,7 +455,6 @@ export class AddSiteUserComponent implements OnInit {
       this.userForm.controls['portalLogin'].setValue(false);
     }
   }
-
   isFieldRequired() {
     const userForm = this.userForm;
     this.isValidationInProgress = true;
@@ -512,7 +515,6 @@ export class AddSiteUserComponent implements OnInit {
     userForm.get('password')?.updateValueAndValidity();
     this.isValidationInProgress = false;
   }
-
   deleteUser() {
     const id = this._route.snapshot.params['id'];
 
@@ -579,7 +581,6 @@ export class AddSiteUserComponent implements OnInit {
   }
   reportingToDataSetter(vendorId: number, managerLevelId: number) {
     vendorId != 0 &&
-      managerLevelId != 0 &&
       this._userService.getReportingTo(vendorId, managerLevelId).subscribe(
         (res) => {
           this.selectMenuReportingTo = [];

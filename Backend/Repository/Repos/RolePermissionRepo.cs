@@ -14,23 +14,23 @@ namespace Repository.Repos
             _dbContext = context;
         }
 
-        public async Task<IQueryable<Module>> GetAllModulesAsync()
+        public IQueryable<Module> GetAllModules()
         {
             return _dbContext.Modules.AsQueryable();
         }
 
-        public async Task<IQueryable<Role>> GetAllRolesAsync(BaseSearchEntity<Role> searchEntity)
+        public IQueryable<Role> GetAllRoles(BaseSearchEntity<Role> searchEntity)
         {
             var query = _dbContext.Roles.AsQueryable();
-            if (searchEntity.predicate != null)
+            if (searchEntity.Predicate != null)
             {
-                query = query.Where(searchEntity.predicate);
+                query = query.Where(searchEntity.Predicate);
             }
-            if (searchEntity.sortingExpression != null)
+            if (searchEntity.SortingExpression != null)
             {
-                query = searchEntity.sortOrder?.ToLower() == "desc"
-                    ? query.OrderByDescending(searchEntity.sortingExpression)
-                    : query.OrderBy(searchEntity.sortingExpression);
+                query = searchEntity.SortOrder?.ToLower() == "desc"
+                    ? query.OrderByDescending(searchEntity.SortingExpression)
+                    : query.OrderBy(searchEntity.SortingExpression);
             }
 
             return query;

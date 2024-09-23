@@ -19,9 +19,9 @@ namespace Geared_Finance_API.Controllers
 
         [HttpGet]
         [AuthorizePermission(Constants.SETTINGS, Constants.CAN_VIEW)]
-        public async Task<IActionResult> GetModules()
+        public IActionResult GetModules()
         {
-            IEnumerable<ModulesDTO> modules = await _rolePermissionService.GetModulesAsync();
+            IEnumerable<ModulesDTO> modules =  _rolePermissionService.GetModules();
             if (!modules.Any()) return NoContent();
             return Ok(modules);
         }
@@ -45,9 +45,9 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpPost("Roles")]
-        public async Task<IActionResult> GetAllRoles(BaseModelSearchEntity model)
+        public IActionResult GetAllRoles(BaseModelSearchEntity model)
         {
-            IEnumerable<RoleDTO> roles = await _rolePermissionService.GetAllRolesAsync(model);
+            IEnumerable<RoleDTO> roles =  _rolePermissionService.GetAllRoles(model);
             if (!roles.Any()) return NoContent();
             return Ok(roles);
         }

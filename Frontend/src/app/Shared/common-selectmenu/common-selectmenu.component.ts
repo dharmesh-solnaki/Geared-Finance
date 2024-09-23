@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { selectMenu } from '../constants';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-
 @Component({
   selector: 'app-common-selectmenu',
   templateUrl: './common-selectmenu.component.html',
@@ -65,7 +64,6 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.resetElement()
     const currentValue = changes['optionData']?.currentValue;
 
     if (
@@ -79,7 +77,6 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
     } else {
       this.optionData = currentValue;
     }
-    // this.optionData = changes['optionData'].currentValue
     this.workingOptionData = this.optionData;
   }
   ngOnInit(): void {

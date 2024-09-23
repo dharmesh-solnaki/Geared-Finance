@@ -4,25 +4,22 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
   selector: '[appPhoneMasking]',
 })
 export class PhoneMaskingDirective {
-  private previousValue: string = '';
   constructor(private el: ElementRef<HTMLInputElement>) {}
 
   @HostListener('input', ['$event']) onInput(event: Event) {
     const input = event.target as HTMLInputElement;
-    const trimmedValue = input.value.replace(/\D/g, '');
+    const trimmedValue = input.value.replace(/\D/g, String.Empty);
     const formattedValue = this.formatPhoneNumber(trimmedValue);
 
-      input.value = formattedValue;
-
-    
-    }
+    input.value = formattedValue;
+  }
 
   formatPhoneNumber(value: string): string {
     const firstPart = value.slice(0, 4);
     const secondPart = value.slice(4, 7);
     const thirdPart = value.slice(7, 10);
 
-    let formattedValue = '';
+    let formattedValue = String.Empty;
     if (firstPart) {
       formattedValue += firstPart;
     }

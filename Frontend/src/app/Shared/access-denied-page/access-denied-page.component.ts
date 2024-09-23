@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-access-denied-page',
-  // templateUrl: './access-denied-page.component.html',
   template: `<p class="text-center display-4 fw-semibold text-danger mt-5">
       Access Denied!
     </p>

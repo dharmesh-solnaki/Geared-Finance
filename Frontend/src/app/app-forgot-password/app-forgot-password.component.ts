@@ -13,7 +13,7 @@ import { matchPasswords } from '../Shared/validators/password-match.validator';
 export class AppForgotPasswwordComponent {
   isShowOtp: boolean = false;
   isShowPass: boolean = false;
-  userMail: string = '';
+  userMail: string = String.Empty;
   forgotPassForm: FormGroup;
   isFormSubmitted: boolean = false;
   constructor(
@@ -29,7 +29,7 @@ export class AppForgotPasswwordComponent {
   addEmailControl() {
     this.forgotPassForm.addControl(
       'email',
-      this.fb.control('', [
+      this.fb.control(String.Empty, [
         Validators.required,
         Validators.pattern(validationRegexes.EMAIL_REGEX),
       ])
@@ -39,21 +39,21 @@ export class AppForgotPasswwordComponent {
   addOtpControl() {
     this.forgotPassForm.addControl(
       'otp',
-      this.fb.control('', Validators.required)
+      this.fb.control(String.Empty, Validators.required)
     );
   }
 
   addPasswordControls() {
     this.forgotPassForm.addControl(
       'newPass',
-      this.fb.control('', [
+      this.fb.control(String.Empty, [
         Validators.required,
         Validators.pattern(validationRegexes.PASSWORD_REGEX),
       ])
     );
     this.forgotPassForm.addControl(
       'confirmPass',
-      this.fb.control('', [Validators.required])
+      this.fb.control(String.Empty, [Validators.required])
     );
     this.forgotPassForm.setValidators(matchPasswords('newPass', 'confirmPass'));
   }
@@ -128,7 +128,7 @@ export class AppForgotPasswwordComponent {
   }
 
   OtpBackBtnClick() {
-    this.userMail = '';
+    this.userMail = String.Empty;
     this.isShowOtp = false;
     this.addEmailControl();
     this.removeControls(['otp']);

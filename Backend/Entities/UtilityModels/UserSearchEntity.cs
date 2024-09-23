@@ -2,6 +2,6 @@
 {
     public class UserSearchEntity : BaseModelSearchEntity
     {
-        public string? roleName { get; set; }
+        public string? RoleName { get; set; }
     }
 }

@@ -18,17 +18,17 @@ public class RolePermissionService : BaseService<Right>, IRolePermissionService
         _repo = repo;
     }
 
-    public async Task<IEnumerable<ModulesDTO>> GetModulesAsync()
+    public IEnumerable<ModulesDTO> GetModules()
     {
-        return MapperHelper.MapTo<IEnumerable<Module>, IEnumerable<ModulesDTO>>(await _repo.GetAllModulesAsync());
+        return MapperHelper.MapTo<IEnumerable<Module>, IEnumerable<ModulesDTO>>( _repo.GetAllModules());
     }
 
     public async Task<IEnumerable<RightsDTO>> GetRolePermissionAsync(int roleId)
     {
         BaseSearchEntity<Right> baseSearchEntity = new()
         {
-            predicate = x => x.RoleId == roleId,
-            includes = new Expression<Func<Right, object>>[] { x => x.Module }
+            Predicate = x => x.RoleId == roleId,
+            Includes = new Expression<Func<Right, object>>[] { x => x.Module }
         };
         var rights = await _repo.GetAllAsync(baseSearchEntity);
         return MapperHelper.MapTo<IEnumerable<Right>, IEnumerable<RightsDTO>>(rights);
@@ -51,8 +51,8 @@ public class RolePermissionService : BaseService<Right>, IRolePermissionService
     {
         BaseSearchEntity<Right> baseSearchEntity = new()
         {
-            predicate = x => (x.RoleId == roleId && x.Module.ModuleName.ToLower() == module.ToLower()),
-            includes = new Expression<Func<Right, object>>[] { x => x.Module }
+            Predicate = x => (x.RoleId == roleId && x.Module.ModuleName.ToLower() == module.ToLower()),
+            Includes = new Expression<Func<Right, object>>[] { x => x.Module }
         };
         IEnumerable<Right> rights = await GetAllAsync(baseSearchEntity);
 
@@ -63,16 +63,16 @@ public class RolePermissionService : BaseService<Right>, IRolePermissionService
         return MapperHelper.MapTo<Right, RightsDTO>(rights.FirstOrDefault());
     }
 
-    public async Task<IEnumerable<RoleDTO>> GetAllRolesAsync(BaseModelSearchEntity model)
+    public IEnumerable<RoleDTO> GetAllRoles(BaseModelSearchEntity model)
     {
         BaseSearchEntity<Role> roleSearch = new()
         {
-            predicate = model.id.HasValue ? x => x.Id == model.id : null,
-            sortBy = Constants.ROLENAME.Split('.').Last(),
-            sortOrder = string.IsNullOrWhiteSpace(model.sortOrder) ? Constants.ASC : model.sortOrder,
+            Predicate = model.Id.HasValue ? x => x.Id == model.Id : null,
+            SortBy = Constants.ROLENAME.Split('.').Last(),
+            SortOrder = string.IsNullOrWhiteSpace(model.SortOrder) ? Constants.ASC : model.SortOrder,
         };
         roleSearch.SetSortingExpression();
-        return MapperHelper.MapTo<IEnumerable<Role>, IEnumerable<RoleDTO>>(await _repo.GetAllRolesAsync(roleSearch));
+        return MapperHelper.MapTo<IEnumerable<Role>, IEnumerable<RoleDTO>>( _repo.GetAllRoles(roleSearch));
 
     }
 

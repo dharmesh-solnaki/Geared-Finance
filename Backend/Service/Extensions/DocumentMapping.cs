@@ -10,7 +10,7 @@ public static class DocumentMapping
     {
         return new DocumentDTO()
         {
-            id = doc.Id,
+            Id = doc.Id,
             FileName = doc.FileName,
             CreatedDate = doc.CreatedDate.ToString("dd/MM/yyyy", new CultureInfo("en-US"))
         };

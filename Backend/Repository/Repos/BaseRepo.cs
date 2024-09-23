@@ -21,35 +21,35 @@ namespace Repository.Implementation
         {
             IQueryable<T> query = _dbSet.AsNoTracking().AsQueryable();
 
-            if (searchEntity.predicate != null)
+            if (searchEntity.Predicate != null)
             {
-                query = query.Where(searchEntity.predicate);
+                query = query.Where(searchEntity.Predicate);
             }
-            if (searchEntity.includes != null)
+            if (searchEntity.Includes != null)
             {
-                query = searchEntity.includes.Aggregate(query, (current, include) =>
+                query = searchEntity.Includes.Aggregate(query, (current, include) =>
                 {
                     return current.Include(include);
                 });
             }
-            if (searchEntity.thenIncludes != null)
+            if (searchEntity.ThenIncludes != null)
             {
-                query = searchEntity.thenIncludes.Aggregate(query, (current, include) =>
+                query = searchEntity.ThenIncludes.Aggregate(query, (current, include) =>
                 {
                     return current.Include(include);
                 });
             }
 
-            if (searchEntity.selects != null)
+            if (searchEntity.Selects != null)
             {
-                query = query.Select(searchEntity.selects);
+                query = query.Select(searchEntity.Selects);
             }
 
-            if (searchEntity.sortingExpression != null)
+            if (searchEntity.SortingExpression != null)
             {
-                query = searchEntity.sortOrder?.ToLower() == "desc"
-                    ? query.OrderByDescending(searchEntity.sortingExpression)
-                    : query.OrderBy(searchEntity.sortingExpression);
+                query = searchEntity.SortOrder?.ToLower() == "desc"
+                    ? query.OrderByDescending(searchEntity.SortingExpression)
+                    : query.OrderBy(searchEntity.SortingExpression);
             }
 
             return query;

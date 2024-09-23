@@ -1,7 +1,5 @@
-﻿namespace Entities.DTOs
+﻿namespace Entities.DTOs;
+public class BaseDTO
 {
-    public class BaseDTO
-    {
-        public int? id { get; set; }
-    }
+    public int? Id { get; set; }
 }

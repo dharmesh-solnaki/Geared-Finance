@@ -24,14 +24,14 @@ export class AppLoginComponent {
   ) {
     this.loginForm = this._fb.group({
       email: [
-        '',
+        String.Empty,
         [
           Validators.required,
           Validators.pattern(validationRegexes.EMAIL_REGEX),
         ],
       ],
       password: [
-        '',
+        String.Empty,
         [
           Validators.required,
           Validators.minLength(8),

@@ -8,7 +8,7 @@ public static class FunderMapping
     {
         return new FunderDTO()
         {
-            id = funder.Id,
+            Id = funder.Id,
             Name = funder.Name,
             Abn = funder.Abn,
             Status = funder.Status,
@@ -42,7 +42,7 @@ public static class FunderMapping
     {
         return new Funder()
         {
-            Id = dto.id == null ? 0 : (int)dto.id,
+            Id = dto.Id == null ? 0 : (int)dto.Id,
             Name = dto.Name,
             Abn = dto.Abn,
             Status = dto.Status,
@@ -84,7 +84,7 @@ public static class FunderMapping
     {
         return new DisplayFunderDTO()
         {
-            id = funder.Id,
+            Id = funder.Id,
             Funder = funder.EntityName ?? funder.Name,
             LegalName = funder.Name,
             FinanceType = funder.FunderProductGuide != null ? funder.FunderProductGuide.TypeOfFinance : "",

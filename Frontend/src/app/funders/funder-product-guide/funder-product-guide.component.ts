@@ -39,16 +39,16 @@ import { Document } from 'src/app/Models/document.model';
 export class FunderProductGuideComponent {
   funderGuideForm: FormGroup = new FormGroup({});
   editorConfig: CKEDITOR.config = ckEditorConfig;
-  activeFunderTemplate: TemplateRef<any> | null = null;
+  activeFunderTemplate: TemplateRef<HTMLElement> | null = null;
   availableFunding: CommonTransfer[] = [];
   existedFundings: CommonTransfer[] = [];
   activeFunderTab: string = FunderModuleConstants.FUNDER_OVERVIEW;
   chosenFundingTitle: string = FunderModuleConstants.CHOSEN_FUNDING_TITLE;
   documentList: Document[] = [];
   @ViewChild('funderOverview', { static: true })
-  funderOverview!: TemplateRef<any>;
+  funderOverview!: TemplateRef<HTMLElement>;
   @ViewChild('funderDocuments', { static: true })
-  funderDocuments!: TemplateRef<any>;
+  funderDocuments!: TemplateRef<HTMLElement>;
   @ViewChild('LtoRTransfer', { static: false })
   LtoRTransfer!: CommonTransferComponent;
   @ViewChild('RtoLTransfer', { static: false })
@@ -63,8 +63,8 @@ export class FunderProductGuideComponent {
   paginationSettings!: PaginationSetting;
 
   @Output() isFunderGuideDirty = new EventEmitter<boolean>();
-  selectedDocName: string = '';
-  documentUrlSrc: string = '';
+  selectedDocName: string = String.Empty;
+  documentUrlSrc: string = String.Empty;
 
   constructor(
     private _fb: FormBuilder,
@@ -97,7 +97,7 @@ export class FunderProductGuideComponent {
 
   initializeFunderOverviewForm() {
     this.funderGuideForm = this._fb.group({
-      financeType: ['', [Validators.required]],
+      financeType: [String.Empty, [Validators.required]],
       rates: [],
       isBrokerageCapped: [false],
       isApplyRitcFee: [false],
@@ -131,7 +131,7 @@ export class FunderProductGuideComponent {
       const invalidFields = Object.keys(this.funderGuideForm.controls)
         .filter((field) => this.funderGuideForm.get(field)?.invalid)
         .map((field) => `<br> - ${field}`);
-      this._toaster.error(`${errorMsg} ${invalidFields}`, '', {
+      this._toaster.error(`${errorMsg} ${invalidFields}`, String.Empty, {
         enableHtml: true,
       });
       return;
@@ -239,12 +239,12 @@ export class FunderProductGuideComponent {
     if (!formField?.value) {
       formField?.setValue('0.00');
     } else {
-      let cleanedInput = formField?.value.replace(/[^\d.]/g, '');
+      let cleanedInput = formField?.value.replace(/[^\d.]/g, String.Empty);
       const dotIndex = cleanedInput.indexOf('.');
       if (dotIndex !== -1) {
         cleanedInput =
           cleanedInput.substring(0, dotIndex + 1) +
-          cleanedInput.substring(dotIndex + 1).replace(/\./g, '');
+          cleanedInput.substring(dotIndex + 1).replace(/\./g, String.Empty);
       }
       let result2 =
         type == 1
@@ -256,16 +256,16 @@ export class FunderProductGuideComponent {
   }
   handleCheckoxChange(type: number) {
     const financeType = this.funderGuideForm.get('financeType');
-    const financeTypeValue = financeType?.value || '';
+    const financeTypeValue = financeType?.value || String.Empty;
     const selectedType = type === 0 ? 'Chattel mortgage' : 'Rental';
     const hasType = financeTypeValue.includes(selectedType);
 
     let updatedValue: string;
     if (hasType) {
       updatedValue = financeTypeValue
-        .replace(selectedType, '')
+        .replace(selectedType, String.Empty)
         .replace(/,\s*,/g, ',')
-        .replace(/^\s*,|,\s*$/g, '')
+        .replace(/^\s*,|,\s*$/g, String.Empty)
         .trim();
     } else {
       updatedValue = financeTypeValue

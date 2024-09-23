@@ -8,7 +8,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* font-weight: 600; */
 }
 .btn-primary {
   background-color: #ffa737 !important;
@@ -89,9 +88,6 @@ ul {
 input.ng-invalid.ng-touched {
   border-color: #dc3545 !important;
 }
-/* .requiredFormField{
-  border-color: #dc3545 !important;
-} */
 .ng-in-valid > div > button {
   border-color: #dc3545 !important;
 }
@@ -107,16 +103,9 @@ input.ng-invalid.ng-touched {
   box-shadow: 0 0 0 0.2rem rgba(0, 174, 123, 0.2) !important;
   color: white !important;
 }
-/* button:disabled {
-  background-color: unset !important;
 
-  border-color: unset !important;
-} */
-/* app-header starts */
 .appheader {
   position: absolute;
-
-  /* max-width: fit-content; */
   z-index: 2000;
   width: 100% ;
 }
@@ -148,7 +137,6 @@ input.ng-invalid.ng-touched {
   background-color: transparent;
 }
 #siteicon {
-  /* width: rem; */
   height: 4rem;
   padding: 1rem 0.8rem 1rem 0.8rem;
 }
@@ -222,8 +210,6 @@ input.ng-invalid.ng-touched {
   height: 2.188rem;
   align-items: center;
   overflow: hidden;
-
-  /* background-color: red; */
 }
 .menubar > ul > li > a > span {
   margin-left: 3.6rem;
@@ -251,7 +237,6 @@ input.ng-invalid.ng-touched {
   height: 1.4rem;
   position: absolute;
   bottom: 10%;
-  /* margin-top: calc(100vh - 823px + 15rem); */
   margin-left: 9.5rem;
 }
 .navrightbtn {
@@ -259,7 +244,6 @@ input.ng-invalid.ng-touched {
   background-repeat: no-repeat;
   height: 1.4rem;
   position: absolute;
-  /* margin-top: calc(100vh - 823px + 15rem); */
   bottom: 10%;
 
   margin-left: 1rem;
@@ -267,16 +251,8 @@ input.ng-invalid.ng-touched {
 .offcanvas.offcanvas-start {
   width: 13rem !important;
 }
-
-/* Hear style Ends */
-
-/* Settings module syles */
 .setting-wrapper {
-  /* max-height: 43.29rem;
-  min-height: 43.29rem; */
 height: inherit;
-
-  /* position: relative; */
 }
 .setting-wrapper-row {
   width: auto;
@@ -305,7 +281,6 @@ height: inherit;
   color: #2e2e2e;
   font-size: 0.87rem;
   padding: 2px 10px;
-  /* position: relative; */
 }
 .settingsliactivelink {
   background-color: #f1f6f9;
@@ -371,7 +346,6 @@ height: inherit;
   transform: rotate(180deg);
 }
 .selected-text {
-  /* max-width: calc(100% - 1px);  */
   width: auto;
   display: inline-block;
   vertical-align: middle;
@@ -382,15 +356,12 @@ height: inherit;
   position: absolute;
   width: 100%;
   min-width: 10rem;
-  /* height : calc(100% + 7rem); */
   overflow-y: scroll;
   max-height: 14rem;
   z-index: 100;
   background: #fff;
   margin-top: 3px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  /* min-width: 160px; */
-  /* height: fit-content; */
 }
 
 .dropdown-list > ul > li {
@@ -410,7 +381,6 @@ height: inherit;
   position: relative;
   padding: 5px !important;
 }
-
 .search-input {
   border: none;
   outline: none;
@@ -420,7 +390,6 @@ height: inherit;
   color: #333;
   background-color: transparent;
 }
-
 .page-section-title {
   font-size: 16px;
   line-height: 30px;
@@ -438,8 +407,6 @@ height: inherit;
 }
 
 .download-icon-btn{
-  /* width: 24px;  */
-  /* height: 34px; */
   display: inline-block;
   position: relative;
   overflow: hidden;
@@ -620,16 +587,18 @@ background-image: url('../Images/ic-save-orange.svg') !important;
   width: calc(100% - 13rem);
 }
 .header-tab {
-  padding: 7px;
+  padding: 0.7rem 1rem;
+  vertical-align:middle ;
   text-decoration: none;
   color: #000;
   border-bottom: 2px solid transparent;
   font-weight: bold;
   cursor: pointer;
+  font-size: 0.86rem !important;
 }
 .header-active-tab{
    border: 1px solid black;
-   border-radius:9px;
+   border-radius:0.5rem
 }
 .radio-group {
   display: flex;
@@ -789,6 +758,10 @@ margin-top: 0px !important;
 .nav-container{
   position: relative;
 }
+.nav-wrapper {
+  background-color: white;
+  z-index: 50;
+}
 .nav-progress-line{
   height: 1px;  
   background-color: #000;
@@ -913,10 +886,69 @@ border: none !important;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Black transparent */
-  z-index: 999; /* Ensure it's above other elements */
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 999;
 }
-@media (max-width: 768px)  {
+
+.nav-dot-interestChart{  
+position: absolute; top: -10 !important;
+}  
+.funder-interest-header {
+  border-top: 2px solid #6c7e8f  ;
+  border-bottom: 2px solid #6c7e8f  ;
+ position: relative;
+}
+.funder-interest-table  td {
+  vertical-align: text-top;
+}
+.funder-interest-table:first-child{
+ text-wrap: nowrap ;
+ min-width: fit-content;
+}
+.funder-interest-table tr td:not(:first-child){
+  text-wrap: wrap;
+  text-align: center;
+  padding: 0.3rem 0.6rem;
+ width: 7rem ;
+}
+.funder-interest-body tr td {
+  border: none !important;
+}
+.left-sticky-column{
+  width: fit-content;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+.btn-funder-interest{
+  border-color: #34495e !important;
+  color: #6c7e8f;
+  background: #eef4f7;
+}
+.btn-funder-interest:hover{
+  background: #a4b0ba !important;
+  color: #2e2e2e !important;
+}
+.input-doller-container {  
+  position: relative;
+}
+.input-doller-container::before {
+  content: '$';
+  position: absolute;
+  left: 0.6rem; 
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #6c757d;
+  pointer-events: none; 
+}
+
+.dollar-input-field {
+  padding-left: 1.3rem !important; 
+}
+@media (max-width: 768px) 
+ {
   .nav-progress-line {
     height: 100%;
     width: 1px;    
@@ -930,6 +962,12 @@ border: none !important;
   .nav-tab-link {
     padding-left: 20px;
   }
+  .header-tab{
+    width: 100%;
+    display: block !important;
+    text-align: start !important;
+  }
+ 
 }
 @media (min-width: 426px) and (max-width: 768px) {
   .appheader {
@@ -980,7 +1018,6 @@ border: none !important;
     width: min-content;
     height: 4.8rem;
     margin-right: 0% !important;
-    /* margin-right: 3rem; */
   }
   .logodivShrinked {
     position: unset;
@@ -1002,8 +1039,6 @@ border: none !important;
   }
 
   .setting-wrapper-row {
-    /* position: relative; */
-    /* height: 100%; */
     max-height: unset;
     min-height: unset;
   }
@@ -1013,8 +1048,6 @@ border: none !important;
     top: 0;
     z-index: 100;
     height : 100%;
-    /* margin-left: 1rem; */
-    /* margin-left: 0px !important; */
     background-color: white;
     border-right: 1px solid black;
     padding-top: 1rem;

@@ -30,7 +30,8 @@ import {
 } from 'src/app/Models/common-grid.model';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 import { TokenService } from 'src/app/Service/token.service';
-import { NONE_TYPE } from '@angular/compiler';
+import { environment } from 'src/environments/environment.development';
+import { FunderChartComponent } from '../funder-chart/funder-chart.component';
 
 @Component({
   selector: 'app-add-edit-funder',
@@ -38,7 +39,7 @@ import { NONE_TYPE } from '@angular/compiler';
   styleUrls: ['../../../assets/Styles/appStyle.css'],
 })
 export class AddEditFunderComponent {
-  activeTemplate: TemplateRef<any> | null = null;
+  activeTemplate: TemplateRef<HTMLElement> | null = null;
   activeTab: string = FunderModuleConstants.ACTIVE_OVERVIEW_TAB;
   selectMenuStatus: selectMenu[] = [];
   funderForm: FormGroup = new FormGroup({});
@@ -50,25 +51,27 @@ export class AddEditFunderComponent {
   isFormSubmitted: boolean = false;
   isEdit: boolean = false;
   entityName = 'Funder';
-  funderLogoUrl: string = '';
-  funderDbLogo: string = '';
+  funderLogoUrl: string = String.Empty;
+  funderDbLogo: string = String.Empty;
   isFunderGuideFormChanged: boolean = false;
   @ViewChild('overViewTemplate', { static: true })
-  overViewTemplate!: TemplateRef<any>;
+  overViewTemplate!: TemplateRef<HTMLElement>;
   @ViewChild('funderProductTypeGuide', { static: true })
-  funderProductTypeGuide!: TemplateRef<any>;
+  funderProductTypeGuide!: TemplateRef<HTMLElement>;
   @ViewChild('funderHeaderTabs', { static: true })
-  funderHeaderTabs!: TemplateRef<any>;
+  funderHeaderTabs!: TemplateRef<HTMLElement>;
   @ViewChild('addEditFunderHeader', { static: true })
-  addEditFunderHeader!: TemplateRef<any>;
+  addEditFunderHeader!: TemplateRef<HTMLElement>;
   @ViewChild('funderOverview', { static: true })
-  funderOverview!: TemplateRef<any>;
+  funderOverview!: TemplateRef<HTMLElement>;
   @ViewChild('funderDocuments', { static: true })
-  funderDocuments!: TemplateRef<any>;
+  funderDocuments!: TemplateRef<HTMLElement>;
   @ViewChild('commonShareComponent', { static: false })
   commonShareComponent!: CommonTransferComponent;
   @ViewChild('funderProductGuide')
   funderProductGuide!: FunderProductGuideComponent;
+  @ViewChild('funderInterestRateChart')
+  funderInterestRateChart!: FunderChartComponent;
 
   // notes
   notesModalTitle: string = String.Empty;
@@ -76,7 +79,7 @@ export class AddEditFunderComponent {
   isAddBtnDisabled: boolean = false;
   noteDescription: string = String.Empty;
   selectedNoteId: number = -1;
-  disableSave: boolean = false;
+  // disableSave: boolean = false;
   tempNote!: Note;
   noteList: Note[] = [];
   gridSetting!: IGridSettings;
@@ -110,9 +113,9 @@ export class AddEditFunderComponent {
           this.funderForm.patchValue(res);
 
           this.funderDbLogo = `data:${res.imgType || 'image/png'};base64,${
-            res.logoImg || ''
+            res.logoImg || String.Empty
           }`;
-          this.entityName = res.name;
+          this.entityName = res.entityName;
           this.notesModalTitle = `Notes | ${this.entityName.toUpperCase()}`;
         });
       }
@@ -169,12 +172,12 @@ export class AddEditFunderComponent {
           Validators.pattern(validationRegexes.EMAIL_REGEX),
         ],
       ],
-      bdmPhone: [''],
+      bdmPhone: [String.Empty],
       id: [0],
       entityName: [],
     });
   }
-  setActiveTab(tab: string, template: TemplateRef<any>) {
+  setActiveTab(tab: string, template: TemplateRef<HTMLElement>) {
     if (
       (this.funderForm.dirty &&
         this.activeTab === FunderModuleConstants.ACTIVE_OVERVIEW_TAB) ||
@@ -187,6 +190,7 @@ export class AddEditFunderComponent {
         return;
       }
     }
+
     this.activeTab = tab;
     this.activeTemplate = template;
   }
@@ -225,7 +229,7 @@ export class AddEditFunderComponent {
 
       const phonevalue = (
         this.funderForm.get('bdmPhone')?.value as string
-      ).replaceAll(' ', '');
+      ).replaceAll(' ', String.Empty);
       this.funderForm.get('bdmPhone')?.setValue(phonevalue);
 
       this._funderService.upsertFunder(this.funderForm.value).subscribe(

@@ -9,7 +9,7 @@ namespace Service.Extensions
         {
             return new FunderGuideTypeDTO
             {
-                id = funderProductGuide.Id,
+                Id = funderProductGuide.Id,
                 FinanceType = funderProductGuide.TypeOfFinance,
                 Rates = funderProductGuide.Rates,
                 IsBrokerageCapped = funderProductGuide.IsBrokerageCapped,
@@ -25,16 +25,13 @@ namespace Service.Extensions
                 Craa = funderProductGuide.Craa,
                 EotNotes = funderProductGuide.Eotnotes,
                 FunderId = funderProductGuide.FunderId,
-                //selectedFundings = funderProductGuide.SelectedFundings
-                //                      .Select(f => f.ToDto()) // Assuming SelectedFunding has a ToDto method
-                //                      .ToArray()
             };
         }
         public static FunderProductGuide FromDto(this FunderGuideTypeDTO funderGuideTypeDTO)
         {
             return new FunderProductGuide
             {
-                Id = funderGuideTypeDTO.id == null ? 0 : (int)funderGuideTypeDTO.id,
+                Id = funderGuideTypeDTO.Id == null ? 0 : (int)funderGuideTypeDTO.Id,
                 TypeOfFinance = funderGuideTypeDTO.FinanceType,
                 Rates = funderGuideTypeDTO.Rates,
                 IsBrokerageCapped = funderGuideTypeDTO.IsBrokerageCapped,
@@ -51,9 +48,6 @@ namespace Service.Extensions
                 Eotnotes = funderGuideTypeDTO.EotNotes,
                 FunderId = (int)funderGuideTypeDTO.FunderId,
                 IsDeleted = false
-                //SelectedFundings = funderGuideTypeDTO.selectedFundings
-                //                    .Select(f => f.FromDto()) // Assuming SelectedFundingDTO has a FromDto method
-                //                    .ToList()
             };
         }
     }

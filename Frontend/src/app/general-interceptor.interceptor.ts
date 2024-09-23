@@ -34,7 +34,7 @@ export class GeneralInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        let errorMessage = '';
+        let errorMessage = String.Empty;
         if (error.error instanceof ErrorEvent) {
           errorMessage = `${errorResponses.CLIEENTSIDE_ERROR}: ${error.error.message}`;
         } else {

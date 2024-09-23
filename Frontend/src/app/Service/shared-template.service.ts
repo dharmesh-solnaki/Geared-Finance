@@ -13,20 +13,20 @@ export class SharedTemplateService {
   searchList = new BehaviorSubject<HeaderSearchModel[]>([]);
   searchedId = new BehaviorSubject<number>(0);
   isSearchCleared = new Subject<boolean>();
-  private templateRef!: TemplateRef<any> | null;
-  private headerTemplateRef!: TemplateRef<any> | null;
+  private templateRef!: TemplateRef<HTMLElement> | null;
+  private headerTemplateRef!: TemplateRef<HTMLElement> | null;
 
-  setTemplate(template: TemplateRef<any> | null) {
+  setTemplate(template: TemplateRef<HTMLElement> | null) {
     this.templateRef = template;
   }
-  getTemplate(): TemplateRef<any> | null {
+  getTemplate(): TemplateRef<HTMLElement> | null {
     return this.templateRef;
   }
 
-  setHeaderTemplate(template: TemplateRef<any> | null) {
+  setHeaderTemplate(template: TemplateRef<HTMLElement> | null) {
     this.headerTemplateRef = template;
   }
-  getHeaderTemplate(): TemplateRef<any> | null {
+  getHeaderTemplate(): TemplateRef<HTMLElement> | null {
     return this.headerTemplateRef;
   }
 }

@@ -43,7 +43,7 @@ export class AppHeaderComponent implements OnInit {
     this.headerListSetter();
   }
 
-  get getHeaderTemplateRef(): TemplateRef<any> | null {
+  get getHeaderTemplateRef(): TemplateRef<HTMLElement> | null {
     return this._templateService.getHeaderTemplate();
   }
 
@@ -78,6 +78,7 @@ export class AppHeaderComponent implements OnInit {
     }
     this.isNavOpned.emit(this.shouldVisible);
   }
+
   onLogout() {
     this._tokenService.clearToken();
   }

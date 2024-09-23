@@ -54,7 +54,7 @@ export class CommonGridComponent {
   @Input() isEditable: boolean = false;
   @Input() isEquipmentTypeEditable: boolean = false;
   @Input() selectedId: number = 0;
-  @Input() equipmentType: string = '';
+  @Input() equipmentType: string = String.Empty;
   @Input() public set gridSettings(value: IGridSettings) {
     this._gridSettings = value || this.defaultSettings;
     this.showPagination = this._gridSettings.showPagination || false;
@@ -81,6 +81,7 @@ export class CommonGridComponent {
   @Output() onEditNote = new EventEmitter();
   @Output() onDeleteNote = new EventEmitter();
   @Output() onNoteEditChange = new EventEmitter<string>();
+
   ngOnInit(): void {
     this.updateDisplayedData();
     this.pagSizeSetter();
@@ -128,6 +129,11 @@ export class CommonGridComponent {
   }
 
   ///-----------------pagination
+  isShowPagination() {
+    return this._gridSettings.showPagination && this.data.length > 0;
+    // &&
+    //   this.data.length < this.paginationSetting.totalRecords
+  }
 
   goToPreviousPage() {
     if (this.paginationSetting.currentPage > 1) {

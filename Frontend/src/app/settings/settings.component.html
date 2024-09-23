@@ -1,27 +1,25 @@
-<!-- <div
-*ngIf="isShowsettingHeader"
-class="ms-1 d-lg-flex justify-content-between align-items-center gap-1"
-[ngClass]="shuoldVisible ? 'afterLogoDivShrinked' : 'afterLogoDiv'"
-[ngClass]="{ 'd-none': isShowSettingHeaderSection }"
-id="settingHeaderTop"
->
-<button
-  class="btn btn-primary position-relative"
-  style="height: 35px; width: 35px; overflow: hidden"
->
-  <img
-    src="../../assets/Images/icon-settings.svg"
-    class="position-absolute"
-    style="top: -30px"
-    width="30px"
-    alt=""
-  />
-</button>
-<strong> - </strong>
-<button class="btn btn-secondary fs-6">
-  {{ "Settings" | uppercase }}
-</button>
-</div> -->
+<ng-template #SettignsHeader>
+  <div class="d-flex align-item-center gap-2 z-n1">
+    <button
+      class="btn btn-primary position-relative overflow-hidden d-none d-md-block"
+      style="width: 35px; height: 33px"
+    >
+      <img
+        class="position-absolute"
+        src="../../assets/Images/icon-settings.svg"
+        width="29px"
+        style="bottom: 0; left: 10%"
+      />
+    </button>
+    <span class="d-none d-md-block h4">-</span>
+    <button
+      class="btn inner-page-heading-title m-0 px-3 py-1"
+      style="border: 1px solid #ffa737 !important"
+    >
+      Settings
+    </button>
+  </div>
+</ng-template>
 
 <div class="setting-wrapper">
   <div class="row setting-wrapper-row">

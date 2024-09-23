@@ -21,40 +21,40 @@ public class UserService : BaseService<User>, IUserService
     public async Task<BaseResponseDTO<UserDTO>> GetUsersAsync(UserSearchEntity searchEntity)
     {
 
-        if (string.IsNullOrEmpty(searchEntity.sortBy))
+        if (string.IsNullOrEmpty(searchEntity.SortBy))
         {
-            searchEntity.sortBy = Constants.NAME;
+            searchEntity.SortBy = Constants.NAME;
         }
-        else if (searchEntity.sortBy == "roleName")
+        else if (searchEntity.SortBy == "roleName")
         {
-            searchEntity.sortBy = Constants.ROLEID;
+            searchEntity.SortBy = Constants.ROLEID;
         }
         PredicateModel model = new()
         {
-            Id = searchEntity.id,
+            Id = searchEntity.Id,
             Criteria = new Dictionary<string, object>
             {
-                {Constants.ROLENAME,searchEntity.roleName }
+                {Constants.ROLENAME,searchEntity.RoleName }
             },
             Property1 = Constants.FULLNAME,
-            Keyword = searchEntity.name,
+            Keyword = searchEntity.Name,
         };
+
 
         Expression<Func<User, bool>> predicate = PredicateBuilder.BuildPredicate<User>(model);
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-            predicate = predicate,
-            includes = new Expression<Func<User, object>>[] { x => x.Role, x => x.Manager, x => x.Vendor, x => x.RelationshipManagerNavigation },
-            pageNumber = searchEntity.pageNumber,
-            pageSize = searchEntity.pageSize,
-            sortBy = searchEntity.sortBy,
-            sortOrder = searchEntity.sortOrder,
+            Predicate = predicate,
+            Includes = new Expression<Func<User, object>>[] { x => x.Role, x => x.Manager, x => x.Vendor, x => x.RelationshipManagerNavigation },
+            PageNumber = searchEntity.PageNumber,
+            PageSize = searchEntity.PageSize,
+            SortBy = searchEntity.SortBy,
+            SortOrder = searchEntity.SortOrder,
         };
         baseSearchEntity.SetSortingExpression();
         IQueryable<User> users = await GetAllAsync(baseSearchEntity);
         BaseResponseDTO<UserDTO> userDataResponse = new() { TotalRecords = users.Count() };
-        //List<User> userPageList = await GetPaginatedList(searchEntity.pageNumber, searchEntity.pageSize, users).ToListAsync();
-        List<User> userPageList = await users.GetSelectedListAsync(searchEntity.pageNumber,searchEntity.pageSize).ToListAsync();
+        List<User> userPageList = await users.GetSelectedListAsync(searchEntity.PageNumber, searchEntity.PageSize).ToListAsync();
         userDataResponse.ResponseData = MapperHelper.MapTo<List<User>, List<UserDTO>>(userPageList);
 
         return userDataResponse;
@@ -66,7 +66,7 @@ public class UserService : BaseService<User>, IUserService
         IsExistData response = new();
         try
         {
-            if (model.id == 0)
+            if (model.Id == 0)
             {
                 await AddAsync(user);
             }
@@ -98,10 +98,8 @@ public class UserService : BaseService<User>, IUserService
     {
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-
-            pageSize = int.MaxValue,
-            predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || (x.RoleId == (int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
-
+            PageSize = int.MaxValue,
+            Predicate = x => x.RoleId == (int)RoleEnum.GearedSalesRep || (x.RoleId == (int)RoleEnum.GearedSuperAdmin && (bool)x.IsUserInGafsalesRepList)
         };
         return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(await GetAllAsync(baseSearchEntity));
     }
@@ -122,7 +120,6 @@ public class UserService : BaseService<User>, IUserService
     public async Task<IEnumerable<RelationshipManagerDTO>> GetReportingToListAsync(int vendorId, int managerLevelId)
     {
         BaseSearchEntity<User> searchEntity = new();
-
         int originalLevelNo = 0;
         if (managerLevelId != 0)
         {
@@ -130,13 +127,10 @@ public class UserService : BaseService<User>, IUserService
             ManagerLevel mangerLevel = await GetOtherAsync(predicate, null);
             originalLevelNo = mangerLevel.LevelNo;
         }
-        searchEntity.pageSize = int.MaxValue;
-        searchEntity.predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1);
-        searchEntity.includes = new Expression<Func<User, object>>[] { x => x.Manager };
-
-
+        searchEntity.PageSize = int.MaxValue;
+        searchEntity.Predicate = (managerLevelId != 0 ? x => x.Manager.LevelNo == originalLevelNo + 1 : x => x.Manager.VendorId == vendorId && x.Manager.LevelNo == 1);
+        searchEntity.Includes = new Expression<Func<User, object>>[] { x => x.Manager };
         return MapperHelper.MapTo<IEnumerable<User>, IEnumerable<RelationshipManagerDTO>>(await _userRepo.GetAllAsync(searchEntity));
-
     }
 
 

@@ -12,7 +12,6 @@ import { NumberWithPrecisionPipe } from '../Pipes/number-with-precision.pipe';
 import { LoaderComponent } from './loader/loader.component';
 import { SearchHighlightPipe } from '../Pipes/search-highlight.pipe';
 import { FormatDatePipe } from '../Pipes/format-date.pipe';
-
 @NgModule({
   declarations: [
     CommonGridComponent,

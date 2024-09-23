@@ -22,11 +22,11 @@ namespace Geared_Finance_API.Controllers
         }
 
         [HttpGet("Token")]
-        public async Task<IActionResult> ValidateToken([FromHeader(Name = "Authorization")] string token)
+        public IActionResult ValidateToken([FromHeader(Name = "Authorization")] string token)
         {
             ValidateString(token);
             token = token["Bearer ".Length..].Trim();
-            string accessToken = await _authService.ValidateRefreshToken(token);
+            string accessToken =  _authService.ValidateRefreshToken(token);
             return Ok(new { accessToken });
         }
 

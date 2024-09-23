@@ -6,10 +6,10 @@ namespace Service.Interface
 {
     public interface IRolePermissionService : IBaseService<Right>
     {
-        Task<IEnumerable<ModulesDTO>> GetModulesAsync();
+        IEnumerable<ModulesDTO> GetModules();
         Task<RightsDTO> GetRightByModule(string module, int roleId);
         Task<IEnumerable<RightsDTO>> GetRolePermissionAsync(int roleId);
         Task UpsertRightsAsync(IEnumerable<RightsDTO> rightsDTOs);
-        Task<IEnumerable<RoleDTO>> GetAllRolesAsync(BaseModelSearchEntity model);
+        IEnumerable<RoleDTO> GetAllRoles(BaseModelSearchEntity model);
     }
 }

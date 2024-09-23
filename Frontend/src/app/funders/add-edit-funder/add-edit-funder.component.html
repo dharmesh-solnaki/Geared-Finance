@@ -1,20 +1,32 @@
 <ng-template #funderHeaderTabs>
   <div class="d-lg-flex justify-content-between my-1">
-    <div class="d-lg-flex justify-content-between">
+    <div class="d-lg-flex justify-content-between pb-1">
       <a
-        class="header-tab text-center"
+        class="header-tab text-center text-uppercase"
         [ngClass]="{ 'header-active-tab': activeTab === 'overview' }"
         (click)="setActiveTab('overview', overViewTemplate)"
       >
         Overview
       </a>
       <a
-        class="header-tab text-center"
+        class="header-tab text-center text-uppercase"
         [ngClass]="{ 'header-active-tab': activeTab === 'funderProductGuide' }"
         (click)="setActiveTab('funderProductGuide', funderProductTypeGuide)"
         *ngIf="isEdit"
       >
         Funder Product Guide
+      </a>
+      <a
+        class="header-tab text-center text-uppercase"
+        [ngClass]="{
+          'header-active-tab': activeTab === 'funderInterestRateChart'
+        }"
+        (click)="
+          setActiveTab('funderInterestRateChart', funderInterestRateChart)
+        "
+        *ngIf="isEdit"
+      >
+        Interest Rate Chart
       </a>
     </div>
     <div class="d-flex gap-1 m-1 mt-2 h-25">
@@ -36,7 +48,7 @@
         </button>
 
         <button
-          class="btn btn-primary position-relative"
+          class="btn btn-primary position-relative overflow-hidden"
           data-bs-toggle="modal"
           data-bs-target="#funerNotes"
         >
@@ -86,7 +98,7 @@
         <div
           *ngIf="!isEdit"
           class="position-relative"
-          style="width: 30px; height: 30px; background-color: #ffa737"
+          style="width: 35px; height: 30px; background-color: #ffa737"
         >
           <img
             class="position-absolute"
@@ -570,6 +582,7 @@
           appPhoneMasking
           class="form-control"
           maxlength="12"
+          minlength="12"
         />
       </div>
     </div>
@@ -582,6 +595,9 @@
     (isFunderGuideDirty)="funderGuideFormchange($event)"
   >
   </app-funder-product-guide>
+</ng-template>
+<ng-template #funderInterestRateChart>
+  <app-funder-chart></app-funder-chart>
 </ng-template>
 
 <ng-template #EntityNameSetter>

@@ -35,8 +35,8 @@ public class AuthService : BaseService<User>, IAuthService
         model.Password = SecretHasher.EnryptString(model.Password.Trim());
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-            predicate = x => (x.Email == model.Email && x.Password == model.Password),
-            includes = new Expression<Func<User, object>>[] { x => x.Role }
+            Predicate = x => (x.Email == model.Email && x.Password == model.Password),
+            Includes = new Expression<Func<User, object>>[] { x => x.Role }
         };
         IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         User user = await userData.FirstOrDefaultAsync() ?? throw new KeyNotFoundException(Constants.RECORD_NOT_FOUND);
@@ -65,7 +65,7 @@ public class AuthService : BaseService<User>, IAuthService
 
 
 
-    public async Task<string> ValidateRefreshToken(string token)
+    public string ValidateRefreshToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
@@ -113,7 +113,7 @@ public class AuthService : BaseService<User>, IAuthService
     {
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-            predicate = x => x.Email == email
+            Predicate = x => x.Email == email
         };
         IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         if (!userData.Any())
@@ -140,7 +140,7 @@ public class AuthService : BaseService<User>, IAuthService
     {
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-            predicate = x => x.Email == model.Email
+            Predicate = x => x.Email == model.Email
         };
         IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         if (!userData.Any())
@@ -156,7 +156,7 @@ public class AuthService : BaseService<User>, IAuthService
 
         BaseSearchEntity<User> baseSearchEntity = new()
         {
-            predicate = x => x.Email == model.Email
+            Predicate = x => x.Email == model.Email
         };
         IQueryable<User> userData = await _userRepo.GetAllAsync(baseSearchEntity);
         if (!userData.Any())

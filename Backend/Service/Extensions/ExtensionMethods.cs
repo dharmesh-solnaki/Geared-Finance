@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Entities.DTOs;
 using Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,15 @@ public static class ExtensionMethods
     public static  IQueryable<T> GetSelectedListAsync<T>(this IQueryable<T> mainList, int pageNo,int pageSize)
     {
         return  mainList.Skip((pageNo - 1) * pageSize).Take(pageSize).AsQueryable();
-    } 
+    }
+
+    public static async Task<BaseResponseDTO<U>> GetBaseResponseAsync<T,U>(this IQueryable<T> baseList,int pageNumber, int pageSize, Func<T,U> mapToDto) where U : class
+    {
+        BaseResponseDTO<U> response = new() { TotalRecords = await baseList.CountAsync() };
+        List<T> selectedList = baseList.GetSelectedListAsync(pageNumber,pageSize).ToList(); 
+        response.ResponseData = selectedList.Select(mapToDto).ToList();
+        return response;
+    }
 }
 
 

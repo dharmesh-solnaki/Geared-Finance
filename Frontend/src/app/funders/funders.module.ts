@@ -9,6 +9,7 @@ import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { CKEditorModule } from 'ng2-ckeditor';
 import { FunderProductGuideComponent } from './funder-product-guide/funder-product-guide.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { FunderChartComponent } from './funder-chart/funder-chart.component';
 
 const routes: Routes = [
   { path: '', component: FundersComponent },
@@ -21,6 +22,7 @@ const routes: Routes = [
     FundersComponent,
     AddEditFunderComponent,
     FunderProductGuideComponent,
+    FunderChartComponent,
   ],
   imports: [
     CommonModule,

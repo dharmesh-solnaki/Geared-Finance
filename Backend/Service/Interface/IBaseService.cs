@@ -6,8 +6,6 @@ namespace Service.Interface
     public interface IBaseService<T> where T : class
     {
         public Task<IQueryable<T>> GetAllAsync(BaseSearchEntity<T> searchEntity);
-
-        public IQueryable<T> GetPaginatedList(int pageNumber, int pageSize, IQueryable<T> searchData);
         public Task<T> GetByIdAsync(int id);
         public Task AddAsync(T item);
         public Task AddRangeAsync(IEnumerable<T> items);

@@ -26,7 +26,7 @@ export class AppComponent {
   get isForgotPassStatus() {
     return this._router.url === '/forgot-password';
   }
-  get getTemplateRef(): TemplateRef<any> | null {
+  get getTemplateRef(): TemplateRef<HTMLElement> | null {
     return this._templateService.getTemplate();
   }
 }

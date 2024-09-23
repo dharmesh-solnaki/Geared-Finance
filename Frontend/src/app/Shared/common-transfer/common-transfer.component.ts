@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component,  Input } from '@angular/core';
 import { CommonTransfer } from 'src/app/Models/common-transfer.model';
 
 @Component({
@@ -12,14 +12,7 @@ export class CommonTransferComponent {
   @Input() listInput: CommonTransfer[] = [];
   availableDivDisplayList: CommonTransfer[] = [];
   tempList: CommonTransfer[] = [];
-
-  // selectedDivDisplayList: CommonTransfer[] = [];
-  // originalSelectedDivDisplayList: CommonTransfer[] = [];
-
   tempAvailableList = new Map();
-  // tempSelectedList = new Map();
-  // @Output() selectedListEmitter = new EventEmitter<CommonTransfer[]>();
-  // @Output() remainingListEmitter = new EventEmitter<CommonTransfer[]>();
 
   ngOnInit(): void {
     this.availableDivDisplayList = this.listInput;
@@ -88,51 +81,6 @@ export class CommonTransferComponent {
   getHighlights(catId: number, subCatId: number): boolean {
     return this.tempAvailableList.get(catId)?.includes(subCatId) || false;
   }
-  // updateList(sourceList: CommonTransfer[], targetList: CommonTransfer[]): void {
-  //   const tempList = this.tempAvailableList;
-  //   const itemsToRemove: CommonTransfer[] = [];
-
-  //   tempList.forEach((subCatIds, catId) => {
-  //     const matchingTransfer = sourceList.find(
-  //       (transfer) => transfer.id === catId
-  //     );
-  //     if (!matchingTransfer) return;
-
-  //     const matchingSubCategories = matchingTransfer.subCategory.filter(
-  //       (subCat) => subCatIds.includes(subCat.id)
-  //     );
-
-  //     if (matchingSubCategories.length > 0) {
-  //       const existingItem = targetList.find((item) => item.id === catId);
-  //       if (existingItem) {
-  //         existingItem.subCategory.push(...matchingSubCategories);
-  //       } else {
-  //         targetList.push(
-  //           new CommonTransfer(
-  //             catId,
-  //             matchingTransfer.name,
-  //             matchingSubCategories
-  //           )
-  //         );
-  //       }
-  //       matchingTransfer.subCategory = matchingTransfer.subCategory.filter(
-  //         (subCat) => !subCatIds.includes(subCat.id)
-  //       );
-  //       if (matchingTransfer.subCategory.length === 0) {
-  //         itemsToRemove.push(matchingTransfer);
-  //       }
-  //     }
-  //   });
-  //   itemsToRemove.forEach((item) => {
-  //     const index = sourceList.indexOf(item);
-  //     if (index > -1) {
-  //       sourceList.splice(index, 1);
-  //     }
-  //   });
-  //   this.sortDisplayList(targetList);
-  //   this.sortDisplayList(sourceList);
-  //   tempList.clear();
-  // }
   updateList(sourceList: CommonTransfer[], targetList: CommonTransfer[]): void {
     const tempList = this.tempAvailableList;
     const itemsToRemove: CommonTransfer[] = [];
@@ -184,7 +132,6 @@ export class CommonTransferComponent {
       }
     });
 
-    // Sort the lists after the update
     this.sortDisplayList(targetList);
     this.sortDisplayList(sourceList);
     tempList.clear();

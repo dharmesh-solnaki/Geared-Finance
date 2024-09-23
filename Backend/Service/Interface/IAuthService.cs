@@ -10,7 +10,7 @@ namespace Repository.Interface
         Task<bool> IsValidMailAsync(string email);
         Task<bool> UpdatePasswordAsync(PasswordUpdateReq model);
         Task<bool> ValidateOtpAsync(OtpRequest model);
-        Task<string> ValidateRefreshToken(string token);
+        string ValidateRefreshToken(string token);
         int GetUserId();
     }
 }

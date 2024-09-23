@@ -4,7 +4,7 @@ namespace Utilities;
 
 public class StringGenerator
 {
-    private static Random random = new();
+    private readonly static  Random random = new();
 
     public static string GenerateUniqueString(int length = 3)
     {

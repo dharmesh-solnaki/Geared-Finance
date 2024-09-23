@@ -45,7 +45,7 @@ public class FunderService : BaseService<Funder>, IFunderService
 
         PredicateModel model = new()
         {
-            Id = searchModel.id,
+            Id = searchModel.Id,
             Criteria = new Dictionary<string, object>
             {
             {Constants.ISDELETED,false }
@@ -55,20 +55,16 @@ public class FunderService : BaseService<Funder>, IFunderService
         Expression<Func<Funder, bool>> predicate = PredicateBuilder.BuildPredicate<Funder>(model);
         BaseSearchEntity<Funder> baseSearchEntity = new()
         {
-            predicate = predicate,
-            includes = new Expression<Func<Funder, object>>[] { x => x.FunderProductGuide },
-            pageNumber = searchModel.pageNumber,
-            pageSize = searchModel.pageSize,
-            sortBy = searchModel.sortBy,
-            sortOrder = searchModel.sortOrder,
+            Predicate = predicate,
+            Includes = new Expression<Func<Funder, object>>[] { x => x.FunderProductGuide },
+            PageNumber = searchModel.PageNumber,
+            PageSize = searchModel.PageSize,
+            SortBy = searchModel.SortBy,
+            SortOrder = searchModel.SortOrder,
         };
         baseSearchEntity.SetSortingExpression();
         IQueryable<Funder> funders = await GetAllAsync(baseSearchEntity);
-        BaseResponseDTO<DisplayFunderDTO> fudnerResponse = new() { TotalRecords = await funders.CountAsync() };
-        //List<Funder> userPageList = GetPaginatedList(searchModel.pageNumber, searchModel.pageSize, funders).ToList();
-        List<Funder> funderList = await funders.GetSelectedListAsync(searchModel.pageNumber, searchModel.pageSize).ToListAsync();
-        fudnerResponse.ResponseData = funderList.Select(funder => funder.ToDisplayFunderDTO()).ToList();
-        return fudnerResponse;
+        return await funders.GetBaseResponseAsync(searchModel.PageNumber,searchModel.PageSize,funder=>funder.ToDisplayFunderDTO());
     }
 
     public async Task<FunderDTO> GetFunder(int id)
@@ -92,13 +88,9 @@ public class FunderService : BaseService<Funder>, IFunderService
     }
 
     public async Task<FunderGuideTypeDTO> GetFunderType(int id)
-    {
-        //Expression<Func<FunderProductGuide, bool>> predicate = ; 
-
-        //Expression<Func<FunderProductGuide, object>>[] includes = new Expression<Func<FunderProductGuide, object>>[] { x => x.FunderProductFundings , x=>x.FunderProductFundings.Select(f=>f.Equipment) , x=>x.FunderProductFundings.Select(f=>f.EquipmentCategory)};
+    { 
         FunderProductGuide funderGuide = await _funderRepo.GetByOtherAsync<FunderProductGuide>(x => x.FunderId == id, null) ?? throw new KeyNotFoundException(Constants.RECORD_NOT_FOUND);
-
-        funderGuide.FunderProductFundings = (await _funderRepo.GetFundingsAsync(funderGuide.Id)).ToList();
+        funderGuide.FunderProductFundings = ( _funderRepo.GetFundings(funderGuide.Id)).ToList();
         SelectedFundingDTO[] selectedFundings = Array.Empty<SelectedFundingDTO>();
         if (funderGuide.FunderProductFundings.Any())
         {
@@ -112,7 +104,7 @@ public class FunderService : BaseService<Funder>, IFunderService
     public async Task<int> UpsertFunder(FunderDTO funderDTO)
     {
         Funder funder = funderDTO.FromDto();
-        if (!funderDTO.id.HasValue || funderDTO.id == 0)
+        if (!funderDTO.Id.HasValue || funderDTO.Id == 0)
         {
             funder.CreatedBy = _authService.GetUserId();
             await _funderRepo.AddAsync(funder);
@@ -129,7 +121,7 @@ public class FunderService : BaseService<Funder>, IFunderService
     public async Task<int> UpsertFunderGuide(FunderGuideTypeDTO funderGuideTypeDTO)
     {
         FunderProductGuide funderProductGuide = funderGuideTypeDTO.FromDto();
-        if (!funderGuideTypeDTO.id.HasValue)
+        if (!funderGuideTypeDTO.Id.HasValue)
         {
             await _productGuideRepo.AddAsync(funderProductGuide);
         }
@@ -145,9 +137,7 @@ public class FunderService : BaseService<Funder>, IFunderService
 
     private async Task SetFunderFundings(int funderGuideId, List<FunderProductFunding> selectedFundings)
     {
-
-
-        IQueryable<FunderProductFunding> existingFundingList = await _funderRepo.GetFundingsAsync(funderGuideId);
+        IQueryable<FunderProductFunding> existingFundingList =  _funderRepo.GetFundings(funderGuideId);
         if (!existingFundingList.Any())
         {
             await _fundingRepo.AddRangeAsync(selectedFundings);
@@ -170,7 +160,6 @@ public class FunderService : BaseService<Funder>, IFunderService
                             selected.EquipmentCategoryId == existing.EquipmentCategoryId &&
                             selected.FundingProductGuideId == existing.FundingProductGuideId))
                     .ToList();
-
 
             await _fundingRepo.AddRangeAsync(fundingsToAdd);
             await _fundingRepo.DeleteRange(fundingsToRemove);
@@ -228,18 +217,15 @@ public class FunderService : BaseService<Funder>, IFunderService
     {
         BaseSearchEntity<Document> baseSearchEntity = new()
         {
-            predicate = x => x.FunderId == id && x.IsDeleted == false,
-            pageNumber = searchModel.pageNumber,
-            pageSize = searchModel.pageSize,
-            sortBy = searchModel.sortBy,
-            sortOrder = searchModel.sortOrder,
+            Predicate = x => x.FunderId == id && x.IsDeleted == false,
+            PageNumber = searchModel.PageNumber,
+            PageSize = searchModel.PageSize,
+            SortBy = searchModel.SortBy,
+            SortOrder = searchModel.SortOrder,
         };
         baseSearchEntity.SetSortingExpression();
         IQueryable<Document> docs = await _docRepo.GetAllAsync(baseSearchEntity);
-        BaseResponseDTO<DocumentDTO> fudnerResponse = new() { TotalRecords = await docs.CountAsync() };
-        List<Document> docList = docs.Skip((searchModel.pageNumber - 1) * searchModel.pageSize).Take(searchModel.pageSize).ToList();
-        fudnerResponse.ResponseData = docList.Select(doc => doc.ToDto()).ToList();
-        return fudnerResponse;
+        return  await docs.GetBaseResponseAsync(searchModel.PageNumber, searchModel.PageSize, doc => doc.ToDto());
     }
 
     public async Task<byte[]> GetPdfDocumentAsync(string docName)
@@ -271,31 +257,31 @@ public class FunderService : BaseService<Funder>, IFunderService
         Funder funder = await GetByIdAsync(id) ?? throw new KeyNotFoundException(Constants.RECORD_NOT_FOUND);
         BaseSearchEntity<Document> search = new()
         {
-            predicate = (x) => x.FunderId == id && x.IsDeleted == false
+            Predicate = (x) => x.FunderId == id && !x.IsDeleted 
 
         };
         IEnumerable<Document> documents = (await _docRepo.GetAllAsync(search)).ToList();
-        string path = Path.Combine("Uploads", "Documents");
-        foreach (var item in documents)
+        if (documents.Any())
         {
-            path = Path.Combine(path, item.FileName);
-            if (File.Exists(path))
+            string path = Path.Combine("Uploads", "Documents");
+            foreach (var item in documents)
             {
-                File.Delete(path);
-            }  
-            
-            item.IsDeleted = true;
-            
-        }
-
-        await _docRepo.UpdateRangeAsync(documents);
+                path = Path.Combine(path, item.FileName);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                item.IsDeleted = true;
+            }
+            await _docRepo.UpdateRangeAsync(documents);
+        }   
 
 
         FunderProductGuide funderProductGuide = await _productGuideRepo.GetOneAsync((x) => x.FunderId == id, null);
         if (funderProductGuide != null)
         {
 
-            IQueryable<FunderProductFunding> fundings = await _funderRepo.GetFundingsAsync(funderProductGuide.Id);
+            IQueryable<FunderProductFunding> fundings =  _funderRepo.GetFundings(funderProductGuide.Id);
             await _fundingRepo.DeleteRange(fundings);
 
             funderProductGuide.IsDeleted = true;            
@@ -303,9 +289,9 @@ public class FunderService : BaseService<Funder>, IFunderService
         }
 
         string imgPath = Path.Combine("Uploads", "LogoImages", funder.LogoImg ?? "");
-        if (File.Exists(path))
+        if (File.Exists(imgPath))
         {
-            File.Delete(path);
+            File.Delete(imgPath);
         }
         funder.LogoImg = string.Empty;
         funder.IsDeleted = true;
@@ -319,12 +305,12 @@ public class FunderService : BaseService<Funder>, IFunderService
     {
         BaseSearchEntity<Funder> funderSearch = new()
         {
-            predicate = x => !x.IsDeleted
+            Predicate = x => !x.IsDeleted
         };
         if (name != null)
         {
             name = name.ToLower();
-            funderSearch.predicate = x => (x.Name.ToLower().Contains(name) || x.Bdmname.ToLower().Contains(name) || x.Bdmsurname.ToLower().Contains(name) || x.EntityName.ToLower().Contains(name) || x.Abn.Contains(name)) && !x.IsDeleted;
+            funderSearch.Predicate = x => (x.Name.ToLower().Contains(name) || x.Bdmname.ToLower().Contains(name) || x.Bdmsurname.ToLower().Contains(name) || x.EntityName.ToLower().Contains(name) || x.Abn.Contains(name)) && !x.IsDeleted;
         }
 
         IEnumerable<Funder> funders = (await GetAllAsync(funderSearch)).ToList();
@@ -335,19 +321,17 @@ public class FunderService : BaseService<Funder>, IFunderService
     {
         BaseSearchEntity<Note> baseSearchEntity = new()
         {
-            predicate = x => x.FunderId == funderId && !x.IsDeleted,
-            includes = new Expression<Func<Note, object>>[] { x => x.CreatedByNavigation },
-            pageNumber = searchModel.pageNumber,
-            pageSize = searchModel.pageSize,
-            sortBy = searchModel.sortBy,
-            sortOrder = searchModel.sortOrder,
+            Predicate = x => x.FunderId == funderId && !x.IsDeleted,
+            Includes = new Expression<Func<Note, object>>[] { x => x.CreatedByNavigation },
+            PageNumber = searchModel.PageNumber,
+            PageSize = searchModel.PageSize,
+            SortBy = searchModel.SortBy,
+            SortOrder = searchModel.SortOrder,
         };
         baseSearchEntity.SetSortingExpression();
         IQueryable<Note> notes = await _noteRepo.GetAllAsync(baseSearchEntity);
-        BaseResponseDTO<NoteDTO> noteResponse = new() { TotalRecords = await notes.CountAsync() };
-        List<Note> noteLList = notes.Skip((searchModel.pageNumber - 1) * searchModel.pageSize).Take(searchModel.pageSize).ToList();
-        noteResponse.ResponseData = noteLList.Select(note => note.ToDto()).ToList();
-        return noteResponse;
+        return await notes.GetBaseResponseAsync(searchModel.PageNumber,searchModel.PageSize, note=>note.ToDto());
+
     }
 
     public async Task<int> UpsertNoteAsync(NoteDTO noteDto, int funderId)
