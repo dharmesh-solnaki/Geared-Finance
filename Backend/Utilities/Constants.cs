@@ -106,6 +106,11 @@ public static class Constants
     #endregion
 
 
+    #region SqlFunctionQueries
+    public const string GET_LEADS = @"SELECT * FROM get_leads({0},{1},{2},{3},{4},{5},{6},{7})";
+
+    #endregion
+
 }
 
 

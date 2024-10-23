@@ -14,7 +14,6 @@ using System.Text;
 using Utilities;
 
 namespace Service.Services;
-
 public class AuthService : BaseService<User>, IAuthService
 {
     private readonly IBaseRepo<User> _userRepo;

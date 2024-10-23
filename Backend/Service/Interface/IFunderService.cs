@@ -3,24 +3,25 @@ using Entities.Models;
 using Entities.UtilityModels;
 using Microsoft.AspNetCore.Http;
 
-namespace Service.Interface
+namespace Service.Interface;
+public interface IFunderService : IBaseService<Funder>
 {
-    public interface IFunderService : IBaseService<Funder>
-    {
-        Task DeleteDocAsync(int id);
-        Task DeleteFunderAsync(int id);
-        Task DeleteNoteAsync(int id);
-        Task<BaseResponseDTO<DisplayFunderDTO>> GetAllFunders(BaseModelSearchEntity searchModel);
-        Task<BaseResponseDTO<DocumentDTO>> GetDcoumentsAsync(int id, BaseModelSearchEntity searchModel);
-        Task<FunderDTO> GetFunder(int id);
-        Task<IEnumerable<IdNameDTO>> GetFunderSearchList(string name);
-        Task<FunderGuideTypeDTO> GetFunderType(int id);
-        Task<BaseResponseDTO<NoteDTO>> GetNoteListAsync(int funderId, BaseModelSearchEntity searchModel);
-        Task<byte[]> GetPdfDocumentAsync(string docName);
-        Task SaveDocumentAsync(int id, IFormFile document);
-        Task SaveLogoImageAsync(int id, IFormFile logoImage);
-        Task<int> UpsertFunder(FunderDTO funderDTO);
-        Task<int> UpsertFunderGuide(FunderGuideTypeDTO funderGuideTypeDTO);
-        Task<int> UpsertNoteAsync(NoteDTO note, int funderId);
-    }
+    Task DeleteDocAsync(int id);
+    Task DeleteFunderAsync(int id);
+    Task DeleteNoteAsync(int id);
+    Task DeleteRateChartAsync(int id);
+    Task<BaseResponseDTO<DisplayFunderDTO>> GetAllFunders(BaseModelSearchEntity searchModel);
+    Task<BaseResponseDTO<DocumentDTO>> GetDcoumentsAsync(int id, BaseModelSearchEntity searchModel);
+    Task<FunderDTO> GetFunder(int id);
+    Task<IEnumerable<IdNameDTO>> GetFunderSearchList(string name);
+    Task<FunderGuideTypeDTO> GetFunderType(int id);
+    Task<BaseResponseDTO<NoteDTO>> GetNoteListAsync(int funderId, BaseModelSearchEntity searchModel);
+    Task<byte[]> GetPdfDocumentAsync(string docName);
+    Task<RateChartResponseDTO> GetRateChartsAsync(int funderId);
+    Task SaveDocumentAsync(int id, IFormFile document);
+    Task SaveLogoImageAsync(int id, IFormFile logoImage);
+    Task<int> UpsertFunder(FunderDTO funderDTO);
+    Task<int> UpsertFunderGuide(FunderGuideTypeDTO funderGuideTypeDTO);
+    Task<int> UpsertNoteAsync(NoteDTO note, int funderId);
+    Task UpsertRateChartOptionAsync(int funderId, List<RateChartOptionDTO> ratechartOptions);
 }

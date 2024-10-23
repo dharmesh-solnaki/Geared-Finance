@@ -9,7 +9,6 @@ namespace Geared_Finance_API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
 public class EquipmentController : BaseController
 {
     private readonly IEquipmentService _equipmentService;

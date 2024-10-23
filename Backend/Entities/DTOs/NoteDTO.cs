@@ -1,5 +1,4 @@
 ﻿namespace Entities.DTOs;
-
 public class NoteDTO
 {
     public int Id { get; set; }

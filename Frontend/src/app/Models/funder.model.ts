@@ -6,6 +6,7 @@ export class Funder {
     public funder: string,
     public legalName: string,
     public financeType: string,
+    public rateCharts: number,
     public bdmName: string,
     public bdmEmail: string,
     public bdmPhone: string,
@@ -18,7 +19,7 @@ export const FunderGridSettings: IGridSettings = {
     { name: 'funder', title: 'funder', sort: true },
     { name: 'legalName', title: 'legal Name', sort: true },
     { name: 'financeType', title: 'finance Type', sort: false },
-
+    { name: 'rateCharts', title: 'Rate Charts', sort: false },
     { name: 'bdmName', title: 'bdm Name', sort: true },
     {
       name: 'bdmEmail',

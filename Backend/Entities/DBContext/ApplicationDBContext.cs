@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Entities.Extentions;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +15,29 @@ public partial class ApplicationDBContext : DbContext
     {
     }
 
+    public virtual DbSet<AppSource> AppSources { get; set; }
+
+    public virtual DbSet<Application> Applications { get; set; }
+
+    public virtual DbSet<Client> Clients { get; set; }
+
+    public virtual DbSet<CrmCode> CrmCodes { get; set; }
+
+    public virtual DbSet<Deal> Deals { get; set; }
+
+    public virtual DbSet<DealStatus> DealStatuses { get; set; }
+
+    public virtual DbSet<DealVendor> DealVendors { get; set; }
+
     public virtual DbSet<Document> Documents { get; set; }
+
+    public virtual DbSet<EquipmentCategory> EquipmentCategories { get; set; }
+
+    public virtual DbSet<EquipmentCategory1> EquipmentCategories1 { get; set; }
+
+    public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
+
+    public virtual DbSet<FinanceQuote> FinanceQuotes { get; set; }
 
     public virtual DbSet<Funder> Funders { get; set; }
 
@@ -32,11 +53,19 @@ public partial class ApplicationDBContext : DbContext
 
     public virtual DbSet<InterestChartFunding> InterestChartFundings { get; set; }
 
+    public virtual DbSet<Lead> Leads { get; set; }
+
+    public virtual DbSet<LeadSource> LeadSources { get; set; }
+
     public virtual DbSet<ManagerLevel> ManagerLevels { get; set; }
 
     public virtual DbSet<Module> Modules { get; set; }
 
     public virtual DbSet<Note> Notes { get; set; }
+
+    public virtual DbSet<ParentDealStatus> ParentDealStatuses { get; set; }
+
+    public virtual DbSet<Quote> Quotes { get; set; }
 
     public virtual DbSet<RateChartOption> RateChartOptions { get; set; }
 
@@ -48,12 +77,105 @@ public partial class ApplicationDBContext : DbContext
 
     public virtual DbSet<Vendor> Vendors { get; set; }
 
+    public virtual DbSet<VendorIndustry> VendorIndustries { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("User ID = postgres;Password=root;Server=localhost;Port=5432;Database=GearedFinance;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ConfigureKeylessEntities();
+
+        modelBuilder.Entity<AppSource>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("AppSource_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Application>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Applications_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Appsource).WithMany(p => p.Applications).HasConstraintName("Applications_Appsourceid_fkey");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Applications).HasConstraintName("Applications_Categoryid_fkey");
+
+            entity.HasOne(d => d.Crm).WithMany(p => p.Applications).HasConstraintName("Applications_Crmid_fkey");
+
+            entity.HasOne(d => d.Dealstatus).WithMany(p => p.Applications).HasConstraintName("Applications_Dealstatusid_fkey");
+
+            entity.HasOne(d => d.Equipmentcategory).WithMany(p => p.Applications).HasConstraintName("Applications_Equipmentcategoryid_fkey");
+
+            entity.HasOne(d => d.Industry).WithMany(p => p.Applications).HasConstraintName("Applications_Industryid_fkey");
+
+            entity.HasOne(d => d.Lead).WithMany(p => p.Applications).HasConstraintName("Applications_Leadid_fkey");
+
+            entity.HasOne(d => d.Parentdealstatus).WithMany(p => p.Applications).HasConstraintName("Applications_Parentdealstatusid_fkey");
+
+            entity.HasOne(d => d.Quote).WithMany(p => p.Applications).HasConstraintName("Applications_Quoteid_fkey");
+
+            entity.HasOne(d => d.Salesstaff).WithMany(p => p.ApplicationSalesstaffs).HasConstraintName("Applications_Salesstaffid_fkey");
+
+            entity.HasOne(d => d.Vendor).WithMany(p => p.Applications).HasConstraintName("Applications_Vendorid_fkey");
+
+            entity.HasOne(d => d.Vendorrep).WithMany(p => p.ApplicationVendorreps).HasConstraintName("Applications_Vendorrepid_fkey");
+        });
+
+        modelBuilder.Entity<Client>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Clients_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<CrmCode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CrmCodes_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<Deal>(entity =>
+        {
+            entity.HasKey(e => e.Iddeals).HasName("Deals_pkey");
+
+            entity.Property(e => e.Iddeals).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.App).WithMany(p => p.Deals).HasConstraintName("Deals_AppID_fkey");
+
+            entity.HasOne(d => d.Crm).WithMany(p => p.Deals).HasConstraintName("Deals_CrmID_fkey");
+
+            entity.HasOne(d => d.ParentDealStatus).WithMany(p => p.Deals).HasConstraintName("Deals_ParentDealStatusID_fkey");
+
+            entity.HasOne(d => d.SalesStaff).WithMany(p => p.Deals).HasConstraintName("Deals_SalesStaffID_fkey");
+        });
+
+        modelBuilder.Entity<DealStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("DealStatus_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<DealVendor>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("DealVendors_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Deal).WithMany(p => p.DealVendors)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("DealVendors_DealID_fkey");
+
+            entity.HasOne(d => d.Vendor).WithMany(p => p.DealVendors).HasConstraintName("DealVendors_VendorID_fkey");
+
+            entity.HasOne(d => d.VendorRep).WithMany(p => p.DealVendors).HasConstraintName("DealVendors_VendorRepID_fkey");
+        });
+
         modelBuilder.Entity<Document>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Documents_pkey");
@@ -63,6 +185,34 @@ public partial class ApplicationDBContext : DbContext
             entity.HasOne(d => d.Funder).WithMany(p => p.Documents)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_FUNDER_DOCUMENT_FUNDERID");
+        });
+
+        modelBuilder.Entity<EquipmentCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("EquipmentCategory_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<EquipmentCategory1>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("EquipmentCategories_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<EquipmentType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("EquipmentType_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<FinanceQuote>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("FinanceQuote_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<Funder>(entity =>
@@ -124,7 +274,7 @@ public partial class ApplicationDBContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("InterestChart_pkey");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
             entity.HasOne(d => d.RateChart).WithMany(p => p.InterestCharts)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -135,7 +285,7 @@ public partial class ApplicationDBContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("InterestChartFundings_pkey");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
             entity.HasOne(d => d.ChartEquipment).WithMany(p => p.InterestChartFundings)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -148,6 +298,44 @@ public partial class ApplicationDBContext : DbContext
             entity.HasOne(d => d.Equipment).WithMany(p => p.InterestChartFundings)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("InterestChartFundings_EquipmentId_fkey");
+        });
+
+        modelBuilder.Entity<Lead>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Leads_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.CategoryNavigation).WithMany(p => p.Leads).HasConstraintName("Leads_Category_fkey");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.LeadCreatedByNavigations)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Leads_CreatedBy_fkey");
+
+            entity.HasOne(d => d.Crm).WithMany(p => p.Leads).HasConstraintName("Leads_CrmID_fkey");
+
+            entity.HasOne(d => d.DealStatus).WithMany(p => p.Leads).HasConstraintName("Leads_DealStatusID_fkey");
+
+            entity.HasOne(d => d.EquipmentCategory).WithMany(p => p.Leads).HasConstraintName("Leads_EquipmentCategoryID_fkey");
+
+            entity.HasOne(d => d.IndustryNavigation).WithMany(p => p.Leads).HasConstraintName("Leads_Industry_fkey");
+
+            entity.HasOne(d => d.LeadSourceNavigation).WithMany(p => p.Leads).HasConstraintName("Leads_LeadSource_fkey");
+
+            entity.HasOne(d => d.ParentDealStatus).WithMany(p => p.Leads).HasConstraintName("Leads_ParentDealStatusID_fkey");
+
+            entity.HasOne(d => d.SalesStaff).WithMany(p => p.LeadSalesStaffs).HasConstraintName("Leads_SalesStaffID_fkey");
+
+            entity.HasOne(d => d.Vendor).WithMany(p => p.Leads).HasConstraintName("Leads_VendorId_fkey");
+
+            entity.HasOne(d => d.VendorRep).WithMany(p => p.LeadVendorReps).HasConstraintName("Leads_VendorRepId_fkey");
+        });
+
+        modelBuilder.Entity<LeadSource>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("LeadSource_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<ManagerLevel>(entity =>
@@ -175,11 +363,43 @@ public partial class ApplicationDBContext : DbContext
             entity.HasOne(d => d.Funder).WithMany(p => p.Notes).HasConstraintName("FK_FUNDER_NOTES_FUNDERID");
         });
 
+        modelBuilder.Entity<ParentDealStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ParentDealStatus_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Quote>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Quote_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Crm).WithMany(p => p.Quotes).HasConstraintName("Quotes_CrmID_fkey");
+
+            entity.HasOne(d => d.DealStatus).WithMany(p => p.Quotes).HasConstraintName("Quotes_DealStatusID_fkey");
+
+            entity.HasOne(d => d.EquipmentCategory).WithMany(p => p.Quotes).HasConstraintName("Quotes_EquipmentCategoryID_fkey");
+
+            entity.HasOne(d => d.Equipment).WithMany(p => p.QuoteEquipments).HasConstraintName("Quotes_EquipmentID_fkey");
+
+            entity.HasOne(d => d.EquipmentType).WithMany(p => p.QuoteEquipmentTypes).HasConstraintName("Quotes_EquipmentTypeID_fkey");
+
+            entity.HasOne(d => d.Lead).WithMany(p => p.Quotes).HasConstraintName("Quotes_LeadID_fkey");
+
+            entity.HasOne(d => d.ParentDealStatus).WithMany(p => p.Quotes).HasConstraintName("Quotes_ParentDealStatusID_fkey");
+
+            entity.HasOne(d => d.SalesStaff).WithMany(p => p.Quotes).HasConstraintName("Quotes_SalesStaffID_fkey");
+
+            entity.HasOne(d => d.Vendor).WithMany(p => p.Quotes).HasConstraintName("Quotes_VendorId_fkey");
+        });
+
         modelBuilder.Entity<RateChartOption>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("RateChartOptions_pkey");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
 
             entity.HasOne(d => d.Funder).WithMany(p => p.RateChartOptions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -227,6 +447,13 @@ public partial class ApplicationDBContext : DbContext
                 .HasConstraintName("FK_Users_Roles_RolesId");
 
             entity.HasOne(d => d.Vendor).WithMany(p => p.Users).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<VendorIndustry>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("VendorIndustry_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
         });
 
         OnModelCreatingPartial(modelBuilder);

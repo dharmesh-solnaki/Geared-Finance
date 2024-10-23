@@ -2,13 +2,11 @@
 using Entities.Models;
 using Entities.UtilityModels;
 
-namespace Service.Interface
+namespace Service.Interface;
+public interface IEquipmentService : IBaseService<FundingEquipmentType>
 {
-    public interface IEquipmentService : IBaseService<FundingEquipmentType>
-    {
-        Task<BaseResponseDTO<EquipmentRepsonseDTO>> GetAllEquipmentType(BaseModelSearchEntity searchModal);
-        Task<IEnumerable<FundingCategoryDTO>> GetEquipmentCategoriesAsync();
-        Task UpsertAsync(EquipmentTypeDTO model);
-        Task<bool> DeleteEuipmentTypeAsync(int id);
-    }
+    Task<BaseResponseDTO<EquipmentRepsonseDTO>> GetAllEquipmentType(BaseModelSearchEntity searchModal);
+    Task<IEnumerable<FundingCategoryDTO>> GetEquipmentCategoriesAsync();
+    Task UpsertAsync(EquipmentTypeDTO model);
+    Task<bool> DeleteEuipmentTypeAsync(int id);
 }

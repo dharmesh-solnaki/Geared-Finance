@@ -88,6 +88,7 @@ public static class FunderMapping
             Funder = funder.EntityName ?? funder.Name,
             LegalName = funder.Name,
             FinanceType = funder.FunderProductGuide != null ? funder.FunderProductGuide.TypeOfFinance : "",
+            RateCharts = funder.RateChartOptions.Count(),
             BdmName = $"{funder.Bdmname} {funder.Bdmsurname}",
             BdmEmail = funder.Bdmemail,
             BdmPhone = funder.Bdmphone ?? "",

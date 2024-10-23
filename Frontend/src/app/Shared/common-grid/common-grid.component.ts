@@ -63,6 +63,7 @@ export class CommonGridComponent {
 
   @Input() public set paginationSettings(value: PaginationSetting) {
     this.paginationSetting = value || this.defaultPaginationSetting;
+
     this.pageSize = +this.paginationSetting.selectedPageSize![0].split(' ')[0];
     this.updateDisplayedData();
   }
@@ -84,11 +85,12 @@ export class CommonGridComponent {
 
   ngOnInit(): void {
     this.updateDisplayedData();
-    this.pagSizeSetter();
+    this.pageSizeSetter();
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] || changes['paginationSettings']) {
       this.updateDisplayedData();
+      this.pageSizeSetter();
     }
   }
 
@@ -171,7 +173,7 @@ export class CommonGridComponent {
     this.pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  pagSizeSetter() {
+  pageSizeSetter() {
     if (this._gridSettings && this._gridSettings.pageSizeValues) {
       this.pageSizeOptions = this._gridSettings.pageSizeValues.map((item) => ({
         option: item.text,

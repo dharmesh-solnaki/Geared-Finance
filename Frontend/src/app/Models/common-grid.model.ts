@@ -44,6 +44,7 @@ export enum ColumnType {
   EQUIPMENTTYPE = 'EQUIPMENTTYPE',
   NOTE = 'NOTE',
   DATE = 'DATE',
+  DATEORG = 'DATEORG',
 }
 
 export enum SortOrder {

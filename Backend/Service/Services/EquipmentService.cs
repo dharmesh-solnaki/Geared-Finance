@@ -7,7 +7,6 @@ using Repository.Interface;
 using Service.Implementation;
 using Service.Interface;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using Utilities;
 
 namespace Service.Services;
@@ -38,7 +37,7 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
         {
             Criteria = new Dictionary<string, object>
             {
-            
+
                 {Constants.CATEGORYNAME,searchModal.Name},
                 {Constants.ISDELETED,false},
             },
@@ -50,7 +49,9 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
 
         BaseSearchEntity<FundingEquipmentType> baseSearchEntity = new()
         {
-            Predicate = predicate,
+            //Predicate = predicate,
+            Predicate = x => (string.IsNullOrWhiteSpace(searchModal.Name) || x.Name.ToLower().Contains(searchModal.Name.ToLower()) || (x.Category.Name.ToLower().Contains(searchModal.Name.ToLower()))) && !x.IsDeleted,
+
             Includes = new Expression<Func<FundingEquipmentType, object>>[] { x => x.Category },
             PageNumber = searchModal.PageNumber,
             PageSize = searchModal.PageSize,
@@ -87,10 +88,10 @@ public class EquipmentService : BaseService<FundingEquipmentType>, IEquipmentSer
     }
     public async Task<bool> DeleteEuipmentTypeAsync(int id)
     {
-        FundingEquipmentType record = await GetByIdAsync(id) ;
+        FundingEquipmentType record = await GetByIdAsync(id);
         if (record == null) return false;
         record.IsDeleted = true;
-        
+
         await UpdateAsync(record);
         return true;
     }

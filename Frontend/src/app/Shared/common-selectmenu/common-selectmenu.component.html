@@ -1,9 +1,21 @@
-
 <div class="selectionmenuholder">
-  <button type="button" class="dropdownselection " 
+  <button type="button" class="dropdownselection" (click)="menuToggler()">
+    <span class="selected-text" *ngIf="!isShowMultipleSelect">{{
+      selectedOption
+    }}</span>
 
-  (click)="menuToggler()">
-    <span class="selected-text">{{ selectedOption }}</span>
+    <div *ngIf="isShowMultipleSelect">
+      <span *ngIf="checkedList.length === 0"> {{ selectedOption }}</span>
+      <div *ngIf="checkedList.length !== 0">
+        <span style="background-color: #34495e; color: white" class="px-1">
+          {{ checkedList[0].option }}
+          <span class="ms-1" (click)="removeFromTheCheckList()">x</span>
+        </span>
+        <span *ngIf="checkedList.length > 1">
+          +{{ checkedList.length - 1 }}
+        </span>
+      </div>
+    </div>
     <img
       class="dropdownImage"
       [ngClass]="isMenuOpen ? 'dropdownImageTransform' : ''"
@@ -11,18 +23,104 @@
       src="../../../assets/Images/icon-dropdown-arrow.svg"
     />
   </button>
-  
-  <div class="dropdown-list" [ngClass]="isMenuOpen ? 'd-block' : 'd-none'">
-   
 
-    <ul  class="p-0 m-0">
-      <li  *ngIf="needsSearching" class="filter-textbox">
-        <input type="text" #searchFromSelectList placeholder="search"
-        class="search-input"
-         (input)="filterHandler(searchFromSelectList.value)">
-        </li>
-      <li *ngFor="let item of workingOptionData" (click)="valueChangeHadler(item)">{{ item.option }}</li>
+  <div
+    class="dropdown-list"
+    *ngIf="!isShowMultipleSelect"
+    [ngClass]="isMenuOpen ? 'd-block' : 'd-none'"
+  >
+    <ul class="p-0 m-0">
+      <li *ngIf="needsSearching" class="filter-textbox">
+        <input
+          type="text"
+          #searchFromSelectList
+          placeholder="search"
+          class="search-input"
+          (input)="filterHandler(searchFromSelectList.value)"
+        />
+      </li>
+
+      <li
+        *ngFor="let item of workingOptionData"
+        (click)="valueChangeHadler(item)"
+      >
+        {{ item.option }}
+      </li>
+    </ul>
+  </div>
+  <!-- dropdown for ckeckboxess -->
+  <div
+    class="dropdown-list"
+    *ngIf="isShowMultipleSelect"
+    [ngClass]="isMenuOpen ? 'd-block' : 'd-none'"
+  >
+    <ul class="p-0 m-0">
+      <li
+        *ngIf="isShowMultipleSelect"
+        class="filter-textbox py-2"
+        (click)="
+          handleListCheboxChange(checkedList.length == workingOptionData.length)
+        "
+      >
+        <div class="align-items-center d-inline-flex">
+          <span class="custom-checkbox-container">
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              [checked]="checkedList.length == workingOptionData.length"
+            />
+            <span class="custom-checkbox"></span>
+          </span>
+          <!-- [checked]=" currentForm .get('typeOfFinance')
+          ?.value.includes('Chattel mortgage') "
+          (change)="handleCheckboxChange(0)"  -->
+
+          <span
+            class="ms-3"
+            *ngIf="checkedList.length != workingOptionData.length"
+            >Select All
+          </span>
+          <span
+            class="ms-3"
+            *ngIf="checkedList.length == workingOptionData.length"
+            >Unselect All
+          </span>
+        </div>
+      </li>
+      <li *ngIf="needsSearching" class="filter-textbox">
+        <input
+          type="text"
+          #searchFromSelectList
+          placeholder="search"
+          class="search-input"
+          (input)="filterHandler(searchFromSelectList.value)"
+        />
+      </li>
+
+      <li
+        *ngFor="let item of workingOptionData"
+        [ngClass]="{ ' d-flex align-item-center': isShowMultipleSelect }"
+        [ngClass]="{ includedListItem: checkedList.includes(item) }"
+        (click)="handleOptionCheckboxChange(item)"
+      >
+        <div
+          *ngIf="isShowMultipleSelect"
+          class="align-items-center d-inline-block me-2"
+        >
+          <span class="custom-checkbox-container">
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              [checked]="checkedList.includes(item)"
+            />
+            <span class="custom-checkbox"></span>
+          </span>
+        </div>
+
+        <span class="d-inline-block" style="text-wrap: nowrap !important">
+          {{ item.option }}</span
+        >
+      </li>
     </ul>
   </div>
 </div>
-

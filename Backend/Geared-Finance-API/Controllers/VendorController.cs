@@ -5,42 +5,41 @@ using Microsoft.AspNetCore.Mvc;
 
 using Service.Interface;
 
-namespace Geared_Finance_API.Controllers
+namespace Geared_Finance_API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class VendorController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class VendorController : ControllerBase
+    private readonly IVendorService _vendorService;
+    public VendorController(IVendorService vendorService)
     {
-        private readonly IVendorService _vendorService;
-        public VendorController(IVendorService vendorService)
+        _vendorService = vendorService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> GetAll(BaseModelSearchEntity searchEntity)
+    {
+        IEnumerable<VendorDTO> vendorData = await _vendorService.GetAllVendors(searchEntity);
+        if (!vendorData.Any())
         {
-            _vendorService = vendorService;
+            return NoContent();
         }
-
-        [HttpPost]
-        public async Task<IActionResult> GetAll(BaseModelSearchEntity searchEntity)
-        {
-            IEnumerable<VendorDTO> vendorData = await _vendorService.GetAllVendors(searchEntity);
-            if (!vendorData.Any())
-            {
-                return NoContent();
-            }
-            return Ok(vendorData);
-
-        }
-
-        [HttpGet("ManagerLevels")]
-        public async Task<IActionResult> ManagerLevels([FromQuery] int id)
-        {
-            IEnumerable<ManagerLevelDTO> managerLevelData = await _vendorService.GetManagerLevels(id);
-            if (!managerLevelData.Any())
-            {
-                return NoContent();
-            }
-            return Ok(managerLevelData);
-        }
-
+        return Ok(vendorData);
 
     }
+
+    [HttpGet("ManagerLevels")]
+    public async Task<IActionResult> ManagerLevels([FromQuery] int id)
+    {
+        IEnumerable<ManagerLevelDTO> managerLevelData = await _vendorService.GetManagerLevels(id);
+        if (!managerLevelData.Any())
+        {
+            return NoContent();
+        }
+        return Ok(managerLevelData);
+    }
+
+
 }

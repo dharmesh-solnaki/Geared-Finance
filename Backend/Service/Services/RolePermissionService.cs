@@ -20,7 +20,7 @@ public class RolePermissionService : BaseService<Right>, IRolePermissionService
 
     public IEnumerable<ModulesDTO> GetModules()
     {
-        return MapperHelper.MapTo<IEnumerable<Module>, IEnumerable<ModulesDTO>>( _repo.GetAllModules());
+        return MapperHelper.MapTo<IEnumerable<Module>, IEnumerable<ModulesDTO>>(_repo.GetAllModules());
     }
 
     public async Task<IEnumerable<RightsDTO>> GetRolePermissionAsync(int roleId)
@@ -72,7 +72,7 @@ public class RolePermissionService : BaseService<Right>, IRolePermissionService
             SortOrder = string.IsNullOrWhiteSpace(model.SortOrder) ? Constants.ASC : model.SortOrder,
         };
         roleSearch.SetSortingExpression();
-        return MapperHelper.MapTo<IEnumerable<Role>, IEnumerable<RoleDTO>>( _repo.GetAllRoles(roleSearch));
+        return MapperHelper.MapTo<IEnumerable<Role>, IEnumerable<RoleDTO>>(_repo.GetAllRoles(roleSearch));
 
     }
 

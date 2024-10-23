@@ -10,8 +10,8 @@
         id="siteicon"
         src="../../assets/Images/site-icon.svg"
         type="button"
-        [attr.data-bs-toggle]="'offcanvas'"
-        [attr.data-bs-target]="shouldVisibleCanvas ? '#navbarOffCanvas' : null"
+        [attr.data-bs-toggle]="shouldVisibleCanvas ? 'offcanvas' : ''"
+        [attr.data-bs-target]="shouldVisibleCanvas ? '#navbarOffCanvas' : ''"
       />
       <img
         [ngClass]="{ 'd-none': shouldVisible }"
@@ -68,7 +68,6 @@
   </div>
 
   <div
-    class=""
     [ngClass]="shouldVisibleCanvas ? 'offcanvas offcanvas-start' : ''"
     tabindex="-1"
     id="navbarOffCanvas"
@@ -146,7 +145,7 @@
         class="btn"
         type="button"
         [ngClass]="shouldVisible ? 'navrightbtn' : 'navleftbtn'"
-        [attr.data-bs-toggle]="shouldVisibleCanvas ? 'offcanvas' : null"
+        [attr.data-bs-toggle]="shouldVisibleCanvas ? 'offcanvas' : ''"
         [attr.data-bs-target]="'#navbarOffCanvas'"
         (click)="navExpand()"
       ></button>

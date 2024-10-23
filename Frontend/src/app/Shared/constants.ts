@@ -11,6 +11,7 @@ export const menuBarItems = [
   {
     menuItem: 'Applications',
     imagePath: '../../assets/Images/icon-applications.svg',
+    routerPath: '/application',
   },
   {
     menuItem: 'Clients',
@@ -113,7 +114,7 @@ export const roleSelectionMenu = [
   },
 ];
 
-export const dateSelectonMenu = (days: number) => {
+export const dateSelectionMenu = (days: number) => {
   let dateArray = [];
   for (let i = 1; i <= days; i++) {
     dateArray.push({ option: i.toString(), value: i });
@@ -121,7 +122,7 @@ export const dateSelectonMenu = (days: number) => {
 
   return dateArray;
 };
-export const monthSelectonMenu = (month: number): selectMenu[] => {
+export const monthSelectionMenu = (month: number): selectMenu[] => {
   let monthArray: selectMenu[] = [];
   if (month == -1) {
     Object.keys(MonthEnum).forEach((key) => {
@@ -203,6 +204,8 @@ export const alertResponses = {
     'You have unsaved changes. Do you want to leave without saving?',
   DOC_UPLOAD_SUCCESS: 'Document uploaded successfully',
   DOC_DELETE_SUCCESS: 'Document deleted successfully',
+  INTEREST_CHART_SAVED: 'Interest chart(s) saved',
+  INTEREST_CHART_DELETE: 'Interest chart deleted',
 };
 
 export const errorResponses = {
@@ -252,8 +255,55 @@ export const FunderModuleConstants = {
   ACTIVE_FUNDER_PRODUCT_GUIDE_TAB: 'funderProductGuide',
   CHOSEN_FUNDING_TITLE: 'Chosen Funding <span class="text-danger">*</span>',
   FUNDER_OVERVIEW: 'funderOverview',
-  ACTIVE_FUNDER_INTEREST_RATE_CHART: 'interestRateChart',
+  ACTIVE_FUNDER_INTEREST_RATE_CHART_TAB: 'funderInterestRateChart',
 };
+export const FunderChartConstants = {
+  TERM_DEFAULT: 'Term',
+  TERM_CHATTEL_MORTGAGE: 'Term - Chattel mortgage',
+  TERM_CHATTEL_RENTAL: 'Term - Chattel mortgage & Rental',
+  TERM_RATE_DEFAULT: 'Interest rates',
+  TERM_RATE_CHATTEL_MORTGAGE: 'chattel mortgage interest rates',
+  TERM_RATE_CHATTEL_RENTAL: 'chattel mortgage & rental interest rates',
+  INTEREST_CHART_CHATTEL_MORTGAGE: 'interestChartChattelMortgage',
+  INTEREST_CHART_RENTAL: 'interestChartRental',
+  CHATTEL_MORTGAGE_TERMS: 'chattelMortgageTerms',
+  RENTAL_TERMS: 'rentalTerms',
+};
+
+export const pipelineList: selectMenu[] = [
+  { option: 'All Pipelines', value: 0 },
+  { option: 'Internal Pipeline', value: 1 },
+  { option: 'External Pipeline', value: 2 },
+];
+
+export const leadTypeList: selectMenu[] = [
+  { option: 'All Leads', value: 0 },
+  { option: 'My Leads', value: 1 },
+];
+
+export const applicationTypelist: selectMenu[] = [
+  { option: 'Hide unassigned applications', value: 0 },
+  { option: 'Show unassigned applications', value: 1 },
+  { option: 'Show unassigned applications only', value: 2 },
+];
+
+export const recordTypeList: string[] = [
+  'Today',
+  'Yesterday',
+  'This week',
+  'Last week',
+  'This month',
+  'Last month',
+  'This quarter',
+  'Last quarter',
+  'This year',
+  'Last year',
+  'Last 7 days',
+  'Last 14 days',
+  'Last 30 days',
+  'Last 60 days',
+  'Last 90 days',
+];
 
 // extensions methods..
 

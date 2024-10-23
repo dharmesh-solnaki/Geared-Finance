@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   IGridSettings,
@@ -35,7 +35,8 @@ export class UserManagementComponent implements OnInit {
     private _fb: FormBuilder,
     private _userService: UserService,
     private _router: Router,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _cdr: ChangeDetectorRef
   ) {
     this.userHeaderSearchForm = this._fb.group({
       searchString: [''],
@@ -60,9 +61,9 @@ export class UserManagementComponent implements OnInit {
           this.userData.map((e) => {
             e.venodrName = e.vendor?.name || '-';
           });
+          this.paginationSetter();
         }
         this.isEnableLoader = false;
-        this.paginationSetter();
       },
       () => (this.isEnableLoader = false)
     );
@@ -84,6 +85,7 @@ export class UserManagementComponent implements OnInit {
     this.searchingModel.pageNumber = 1;
     this.searchingModel.pageSize = pageSize;
     this.userDataSetter();
+    this._cdr.detectChanges();
   }
 
   onEditEventRecevier(id: number) {

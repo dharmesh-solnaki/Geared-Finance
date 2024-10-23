@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -54,8 +52,7 @@ public partial class InterestChart
     [Precision(5, 2)]
     public decimal? MaxBrokerageCeiling { get; set; }
 
-    [Column(TypeName = "time with time zone")]
-    public DateTimeOffset CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public int CreatedBy { get; set; }
 

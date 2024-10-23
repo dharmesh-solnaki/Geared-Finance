@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostListener,
@@ -23,7 +24,7 @@ export class AppHeaderComponent implements OnInit {
   shouldVisible: boolean = false;
   shouldVisibleCanvas: boolean = false;
   userName: string = 'User';
-  isShowsettingHeader: boolean = false;
+  // isShowsettingHeader: boolean = false;
   visibleModulesList: string[] = [];
   headerSearchList: HeaderSearchModel[] = [];
   isShowSearchBar: boolean = true;

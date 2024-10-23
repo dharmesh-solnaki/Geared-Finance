@@ -167,4 +167,32 @@ public class FunderController : BaseController
         return Ok();
     }
 
+    [HttpGet("RateCharts/{id:int}")]
+
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_VIEW)]
+    public async Task<IActionResult> GetAllRateCharts(int id)
+    {
+        ValidateId(id);
+        RateChartResponseDTO rateChartResponse = await _funderService.GetRateChartsAsync(id);
+        return Ok(rateChartResponse);
+    }
+
+    [HttpPost("RateCharts/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_UPSERT, Constants.ID_TYPE)]
+    public async Task<IActionResult> UpsertRateChart(int id, List<RateChartOptionDTO> rateChartOptions)
+    {
+        ValidateId(id);
+        if (!rateChartOptions.Any()) return BadRequest();
+        await _funderService.UpsertRateChartOptionAsync(id, rateChartOptions);
+        return Ok();
+    }
+
+    [HttpDelete("RateChart/{id:int}")]
+    [AuthorizePermission(Constants.FUNDERS, Constants.CAN_DELETE)]
+    public async Task<IActionResult> DeleteRateChart(int id)
+    {
+        ValidateId(id);
+        await _funderService.DeleteRateChartAsync(id);
+        return Ok();
+    }
 }

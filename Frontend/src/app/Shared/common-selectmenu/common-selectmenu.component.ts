@@ -28,14 +28,17 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
   @Input() defaultOption: string = '';
   @Input() defaultValue: string | number | boolean = '';
   @Input() needsSearching: boolean = false;
+  @Input() isShowMultipleSelect: boolean = false;
   @Output() valueChangeEmitter = new EventEmitter();
+  @Output() checkListEmitter = new EventEmitter();
+  @Output() checkListShiftEmitter = new EventEmitter();
   @ViewChild('searchFromSelectList') searchFromSelectList!: ElementRef;
   selectedValue: string | number | boolean = '';
   selectedOption: string | number = '';
   isMenuOpen: boolean = false;
   @Input() workingOptionData: selectMenu[] = [];
-  isFieldRequired: boolean = false;
-
+  // isFieldRequired: boolean = false;
+  checkedList: selectMenu[] = [];
   constructor(private elementRef: ElementRef) {}
   onChange: any = () => {};
   onTouched: any = () => {};
@@ -138,5 +141,29 @@ export class CommonSelectmenuComponent implements OnInit, ControlValueAccessor {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isMenuOpen = false;
     }
+  }
+  handleOptionCheckboxChange(item: selectMenu) {
+    if (!this.checkedList.some((x) => x == item)) {
+      this.checkedList.push(item);
+    } else {
+      this.checkedList = this.checkedList.filter((x) => x != item);
+    }
+    const selectedChecks = this.checkedList.map((x) => +x.value);
+    this.checkListEmitter.emit(selectedChecks);
+  }
+  handleListCheboxChange(isForRemove: boolean) {
+    this.checkedList = [];
+    if (!isForRemove) {
+      this.checkedList = [...this.workingOptionData];
+    } else {
+      this.selectedOption = this.defaultOption;
+    }
+
+    const selectedChecks = this.checkedList.map((x) => +x.value);
+    this.checkListEmitter.emit(selectedChecks);
+  }
+  removeFromTheCheckList() {
+    let item = this.checkedList.shift();
+    this.checkListShiftEmitter.emit(item);
   }
 }

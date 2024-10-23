@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -21,19 +18,16 @@ public partial class RateChartOption
     public bool IsInterestRatesVary { get; set; }
 
     [Column(TypeName = "character varying")]
-    public string? RentelTerms { get; set; }
+    public string? RentalTerms { get; set; }
 
     [Column(TypeName = "character varying")]
-    public string? ChattelMortagageeTerms { get; set; }
+    public string? ChattelMortgageTerms { get; set; }
 
-    [Column(TypeName = "time with time zone")]
-    public DateTimeOffset CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    [Column(TypeName = "character varying")]
-    public string CreatedBy { get; set; } = null!;
+    public int CreatedBy { get; set; }
 
-    [Column(TypeName = "character varying")]
-    public string? ModifiedDate { get; set; }
+    public DateTime? ModifiedDate { get; set; }
 
     public int? ModifiedBy { get; set; }
 

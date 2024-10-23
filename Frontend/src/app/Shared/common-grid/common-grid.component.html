@@ -102,9 +102,14 @@
                     {{ item[key.name] | formatDate }}
                   </span>
                 </ng-container>
+                <ng-container *ngSwitchCase="'DATEORG'">
+                  <span>
+                    {{ item[key.name]?.toString() | formatDate : "date" }}
+                  </span>
+                </ng-container>
                 <ng-container *ngSwitchDefault>
                   <span>
-                    {{ item[key.name] }}
+                    {{ item[key.name] ?? "-" }}
                   </span>
                 </ng-container>
               </ng-container>
@@ -217,7 +222,12 @@
           </button>
         </li>
         <li>
-          <button class="page-link" disabled>...</button>
+          <button class="page-link d-flex flex-column" disabled>
+            <span class="active-highlighting-pageNumber">
+              {{ paginationSetting.currentPage }}</span
+            >
+            <!-- <span> ... </span> -->
+          </button>
         </li>
         <li>
           <button
@@ -258,7 +268,7 @@
       *ngIf="this.showPagination"
       #pageSizerChild
       [optionData]="pageSizeOptions"
-      [defaultOption]="pageSizeOptions[0].option"
+      [defaultOption]="paginationSetting.selectedPageSize![0]"
       (valueChangeEmitter)="pageSizeChangeHandler($event)"
     >
     </app-common-selectmenu>

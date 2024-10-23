@@ -8,7 +8,7 @@
 ></app-forgot-password>
 <div
   *ngIf="!isForgotPassStatus && getLoginStatus"
-  [ngClass]="shouldApplyWrapper ? 'wrapper-shriked' : 'wrapper'"
+  [ngClass]="shouldApplyWrapper ? 'wrapper-shrinked' : 'wrapper'"
 >
   <div class="card-title" *ngIf="getTemplateRef">
     <ng-container *ngTemplateOutlet="getTemplateRef"></ng-container>

@@ -1,4 +1,4 @@
-import { Component,  Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonTransfer } from 'src/app/Models/common-transfer.model';
 
 @Component({
@@ -13,6 +13,7 @@ export class CommonTransferComponent {
   availableDivDisplayList: CommonTransfer[] = [];
   tempList: CommonTransfer[] = [];
   tempAvailableList = new Map();
+  usedEquipmentIds: Set<number> = new Set();
 
   ngOnInit(): void {
     this.availableDivDisplayList = this.listInput;
@@ -61,8 +62,10 @@ export class CommonTransferComponent {
     const targetMap = this.tempAvailableList;
     if (targetMap.has(item.id)) {
       targetMap.delete(item.id);
+      subCategoryIds.forEach((id) => this.usedEquipmentIds.delete(id));
     } else {
       targetMap.set(item.id, subCategoryIds);
+      subCategoryIds.forEach((id) => this.usedEquipmentIds.add(id));
     }
   }
 
@@ -70,9 +73,13 @@ export class CommonTransferComponent {
     const targetMap = this.tempAvailableList;
     const subCategoryIds = targetMap.get(catId) || [];
     const index = subCategoryIds.indexOf(subCatId);
-    index > -1
-      ? subCategoryIds.splice(index, 1)
-      : subCategoryIds.push(subCatId);
+    if (index > -1) {
+      subCategoryIds.splice(index, 1);
+      this.usedEquipmentIds.delete(subCatId);
+    } else {
+      subCategoryIds.push(subCatId);
+      this.usedEquipmentIds.add(subCatId);
+    }
 
     subCategoryIds.length
       ? targetMap.set(catId, subCategoryIds)
@@ -83,6 +90,7 @@ export class CommonTransferComponent {
   }
   updateList(sourceList: CommonTransfer[], targetList: CommonTransfer[]): void {
     const tempList = this.tempAvailableList;
+
     const itemsToRemove: CommonTransfer[] = [];
 
     tempList.forEach((subCatIds, catId) => {

@@ -22,7 +22,12 @@ import {
 import { documentGridSetting } from 'src/app/Models/document.model';
 import { EquipmentService } from 'src/app/Service/equipment.service';
 import { FunderService } from 'src/app/Service/funder.service';
-import { validateDocType } from 'src/app/Shared/common-functions';
+import {
+  addListToSelectedList,
+  existingListSetter,
+  filterAvailableFundingList,
+  validateDocType,
+} from 'src/app/Shared/common-functions';
 import { CommonTransferComponent } from 'src/app/Shared/common-transfer/common-transfer.component';
 import {
   FunderModuleConstants,
@@ -42,6 +47,7 @@ export class FunderProductGuideComponent {
   activeFunderTemplate: TemplateRef<HTMLElement> | null = null;
   availableFunding: CommonTransfer[] = [];
   existedFundings: CommonTransfer[] = [];
+  beingUsedFundings: number[] = [];
   activeFunderTab: string = FunderModuleConstants.FUNDER_OVERVIEW;
   chosenFundingTitle: string = FunderModuleConstants.CHOSEN_FUNDING_TITLE;
   documentList: Document[] = [];
@@ -61,10 +67,11 @@ export class FunderProductGuideComponent {
   };
   docGridSetting!: IGridSettings;
   paginationSettings!: PaginationSetting;
-
   @Output() isFunderGuideDirty = new EventEmitter<boolean>();
   selectedDocName: string = String.Empty;
   documentUrlSrc: string = String.Empty;
+  isChattelTypeExist: boolean = false;
+  isRentalTypeExist: boolean = false;
 
   constructor(
     private _fb: FormBuilder,
@@ -82,8 +89,11 @@ export class FunderProductGuideComponent {
         res && this.funderGuideForm.patchValue(res);
         let tempData = this.funderGuideForm.get('selectedFundings')?.value;
         if (tempData) {
-          this.existingListSetter(tempData);
+          this.existedFundings = existingListSetter(tempData);
         }
+        this.beingUsedFundings = res.beingUsedFunding!;
+        this.isChattelTypeExist = res.isChattelTypeExist;
+        this.isRentalTypeExist = res.isRentalTypeExist;
       });
     }
   }
@@ -218,22 +228,7 @@ export class FunderProductGuideComponent {
       }
     });
   }
-  existingListSetter(list: any) {
-    const groupedData: { [key: number]: CommonTransfer } = {};
 
-    list.forEach((item: any) => {
-      const categoryId = item.id;
-      if (!groupedData[categoryId]) {
-        groupedData[categoryId] = new CommonTransfer(categoryId, item.name, []);
-      }
-      item.subCategory.forEach((subCat: any) => {
-        groupedData[categoryId].subCategory.push(
-          new SubCategory(subCat.id, subCat.name)
-        );
-      });
-    });
-    this.existedFundings = Object.values(groupedData);
-  }
   handleInputChange(field: string, type: number) {
     const formField = this.funderGuideForm.get(field);
     if (!formField?.value) {
@@ -254,11 +249,24 @@ export class FunderProductGuideComponent {
       formField?.setValue(result2);
     }
   }
-  handleCheckoxChange(type: number) {
+  handleCheckoxChange(ev: Event, type: number) {
     const financeType = this.funderGuideForm.get('financeType');
     const financeTypeValue = financeType?.value || String.Empty;
     const selectedType = type === 0 ? 'Chattel mortgage' : 'Rental';
     const hasType = financeTypeValue.includes(selectedType);
+    const checkbox = ev.target as HTMLInputElement;
+    if (hasType) {
+      if (type == 0 && this.isChattelTypeExist) {
+        this._toaster.error('first remove chattel moratgage interest charts');
+        checkbox.checked = true;
+        return;
+      }
+      if (type != 0 && this.isRentalTypeExist) {
+        this._toaster.error('first remove rental interest charts');
+        checkbox.checked = true;
+        return;
+      }
+    }
 
     let updatedValue: string;
     if (hasType) {
@@ -272,71 +280,41 @@ export class FunderProductGuideComponent {
         ? `${financeTypeValue}, ${selectedType}`.trim()
         : selectedType;
     }
+
     financeType?.setValue(updatedValue);
   }
   addToSelectedList() {
     if (!this.LtoRTransfer.isTempListEmpty()) {
       this.LtoRTransfer.addToSelectedList();
-
-      // Update 'existedFundings' with new subcategories
-      this.LtoRTransfer.tempList.forEach((selectedItem) => {
-        // Check if the category already exists in 'existedFundings'
-        const existingCategory = this.existedFundings.find(
-          (category) => category.id === selectedItem.id
-        );
-
-        if (existingCategory) {
-          // Add missing subcategories only
-          selectedItem.subCategory.forEach((newSubCat) => {
-            const subCatExists = existingCategory.subCategory.some(
-              (existingSubCat) => existingSubCat.id === newSubCat.id
-            );
-            if (!subCatExists) {
-              existingCategory.subCategory.push(newSubCat);
-            }
-          });
-        } else {
-          // If the category doesn't exist, add it completely
-          this.existedFundings.push(selectedItem);
-        }
-      });
-
-      // Update 'availableFunding' to remove transferred subcategories
-      this.LtoRTransfer.tempList.forEach((selectedItem) => {
-        const availableCategory = this.availableFunding.find(
-          (category) => category.id === selectedItem.id
-        );
-
-        if (availableCategory) {
-          // Remove selected subcategories from the available list
-          availableCategory.subCategory = availableCategory.subCategory.filter(
-            (subCat) =>
-              !selectedItem.subCategory.some(
-                (selectedSubCat) => selectedSubCat.id === subCat.id
-              )
-          );
-
-          // If all subcategories are removed, remove the category
-          if (availableCategory.subCategory.length === 0) {
-            this.availableFunding = this.availableFunding.filter(
-              (category) => category.id !== availableCategory.id
-            );
-          }
-        }
-      });
-
-      // Update the form field with the selected fundings
+      this.existedFundings = addListToSelectedList(
+        this.LtoRTransfer.tempList,
+        this.availableFunding,
+        this.existedFundings
+      );
       this.funderGuideForm
         .get('selectedFundings')
         ?.setValue(this.existedFundings);
-
-      // Clear the temporary list
       this.LtoRTransfer.clearTheTempList();
     }
   }
 
   removeFromSelectedList() {
     if (!this.RtoLTransfer.isTempListEmpty()) {
+      const hasUsedFundings = this.existedFundings.some((ele) =>
+        ele.subCategory.some(
+          (subCat) =>
+            this.beingUsedFundings.includes(subCat.id) &&
+            this.RtoLTransfer.usedEquipmentIds.has(subCat.id) &&
+            (() => {
+              this._toaster.error(
+                `Please remove ${subCat.name} from interest rate chart`
+              );
+              return true;
+            })()
+        )
+      );
+      if (hasUsedFundings) return;
+
       this.RtoLTransfer.addToSelectedList();
       // Add the removed items back to the available list
       this.availableFunding = [
@@ -366,45 +344,22 @@ export class FunderProductGuideComponent {
         }
       });
 
-      // Update the selected funding list
+      // // Update the selected funding list
       this.existedFundings = [...this.RtoLTransfer.availableDivDisplayList];
       this.funderGuideForm
         .get('selectedFundings')
         ?.setValue(this.existedFundings);
 
-      // Clear the temporary list after processing
+      // // Clear the temporary list after processing
       this.RtoLTransfer.clearTheTempList();
+      this.RtoLTransfer.usedEquipmentIds.clear();
     }
   }
   filterAvailableFunding() {
-    this.availableFunding = this.availableFunding
-      .map((funding) => {
-        // Find the corresponding funding item in existedFundings
-        const existingFunding = this.existedFundings.find(
-          (ef) => ef.id === funding.id
-        );
-
-        if (existingFunding) {
-          // Filter out the subCategories present in existedFunding
-          const filteredSubCategories = funding.subCategory.filter(
-            (subCat) =>
-              !existingFunding.subCategory.some(
-                (existingSubCat) => existingSubCat.id === subCat.id
-              )
-          );
-
-          // Return a new CommonTransfer object with the filtered subCategories
-          return new CommonTransfer(
-            funding.id,
-            funding.name,
-            filteredSubCategories
-          );
-        }
-
-        // If no matching existingFunding found, return the funding item as is
-        return funding;
-      })
-      .filter((funding) => funding.subCategory.length > 0);
+    this.availableFunding = filterAvailableFundingList(
+      this.availableFunding,
+      this.existedFundings
+    );
   }
   formChangeHandler() {
     this.isFunderGuideDirty.emit(this.funderGuideForm.dirty);
@@ -470,7 +425,14 @@ export class FunderProductGuideComponent {
   docEventHandler(event: { fileName: string; type: number }) {
     const { fileName, type } = event;
     this.selectedDocName = fileName;
-    this._funderService.getDocument(fileName).subscribe((res) => {
+    let updatedFileName = fileName;
+    if (type === 1 || type === 2) {
+      let fileExtention = fileName.split('.').pop() as string;
+      let baseFileName = fileName.slice(0, -(fileExtention?.length + 1));
+      updatedFileName = `${baseFileName}Funder${this.funderId}.${fileExtention}`;
+    }
+
+    this._funderService.getDocument(updatedFileName).subscribe((res) => {
       let url = URL.createObjectURL(res);
       if (type == 1) {
         const a = document.createElement('a');
@@ -488,7 +450,7 @@ export class FunderProductGuideComponent {
       }
     });
   }
-  deleteOkHandler() {
+  deleteDocHandler() {
     this._funderService.deleteDocument(+this.selectedDocName).subscribe(
       () => {
         document.getElementById('deleteModalCancelBtn')?.click();

@@ -3,32 +3,30 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 
-namespace Repository.Implementation
+namespace Repository.Implementation;
+public class UserRepo : BaseRepo<User>, IUserRepo
 {
-    public class UserRepo : BaseRepo<User>, IUserRepo
+    private readonly ApplicationDBContext _dbContext;
+
+
+    public UserRepo(ApplicationDBContext context) : base(context)
     {
-        private readonly ApplicationDBContext _dbContext;
+        _dbContext = context;
+
+    }
 
 
-        public UserRepo(ApplicationDBContext context) : base(context)
+    public async Task UpdateUserAsync(User user)
+    {
+        var trackedEntity = _dbContext.ChangeTracker.Entries<User>().FirstOrDefault(e => e.Entity.Id == user.Id);
+
+        if (trackedEntity != null)
         {
-            _dbContext = context;
-
+            _dbContext.Entry(trackedEntity.Entity).State = EntityState.Detached;
         }
 
-
-        public async Task UpdateUserAsync(User user)
-        {
-            var trackedEntity = _dbContext.ChangeTracker.Entries<User>().FirstOrDefault(e => e.Entity.Id == user.Id);
-
-            if (trackedEntity != null)
-            {
-                _dbContext.Entry(trackedEntity.Entity).State = EntityState.Detached;
-            }
-
-            _dbContext.Users.Attach(user);
-            _dbContext.Entry(user).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
-        }
+        _dbContext.Users.Attach(user);
+        _dbContext.Entry(user).State = EntityState.Modified;
+        await _dbContext.SaveChangesAsync();
     }
 }

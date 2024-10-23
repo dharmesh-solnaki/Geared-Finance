@@ -3,9 +3,21 @@
     <div class="nav-progress-line"></div>
     <ul class="d-lg-flex gap-5 p-0">
       <ng-container *ngFor="let item of chartArray">
-        <li class="nav-item active d-md-block">
-          <span class="nav-dot"></span>
-          <a class="nav-tab-link">{{ item }}</a>
+        <li
+          class="nav-item active d-md-block"
+          (click)="switchChartTab(item.id)"
+        >
+          <span
+            class="nav-dot"
+            [ngClass]="{
+              'active-dot': item.id == currentTabIndex
+            }"
+          ></span>
+          <a
+            class="nav-tab-link"
+            [ngClass]="item.id == currentTabIndex ? 'nav-tab-link-active' : ''"
+            >{{ item.name }}</a
+          >
         </li>
       </ng-container>
       <li class="nav-item d-md-block">
@@ -21,184 +33,358 @@
   </div>
 </div>
 <div class="row">
-  <div>
-    <h3 class="pb-0 page-section-title text-uppercase">Funds needs for</h3>
-    <div class="col-12 d-lg-flex gap-2">
-      <div class="col-lg-3 col-md-12">
-        <app-common-transfer></app-common-transfer>
-
-        <!-- #LtoRTransfer
-        [listInput]="availableFunding"
-        title="Available funding" -->
-      </div>
-      <div
-        class="col-lg-auto m-2 col-md-2 col-sm-3 self-align-center flex-nowrap d-flex flex-column justify-content-center"
-      >
-        <button class="btn btn-transfer px-3 py-1 mb-2">
-          <!-- (click)="addToSelectedList()" -->
-          <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Add</span>
-          <img
-            src="../../../assets/Images/ic-right-arrow.svg"
-            width="14px"
-            alt=""
-          />
-        </button>
-        <button class="btn btn-transfer px-3 py-1 mb-2">
-          <!-- (click)="removeFromSelectedList()" -->
-          <img
-            src="../../../assets/Images/ic-left-arrow.svg"
-            width="14px"
-            alt=""
-          />
-          <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Remove</span>
-        </button>
-      </div>
-      <div class="col-lg-3 col-md-12">
-        <app-common-transfer></app-common-transfer>
-        <!-- #RtoLTransfer
-        [listInput]="existedFundings"
-        [title]="chosenFundingTitle" -->
+  <form [formGroup]="currentForm" (change)="formChangeHandler()">
+    <div>
+      <h3 class="pb-0 page-section-title text-uppercase">Funds needs for</h3>
+      <div class="col-12 d-lg-flex gap-2">
+        <div class="col-lg-3 col-md-12">
+          <app-common-transfer
+            #LtoRTransfer
+            title="Available funding"
+            [listInput]="availableFunding"
+          ></app-common-transfer>
+        </div>
+        <div
+          class="col-lg-auto m-2 col-md-2 col-sm-3 self-align-center flex-nowrap d-flex flex-column justify-content-center"
+        >
+          <button
+            class="btn btn-transfer px-3 py-1 mb-2"
+            (click)="addToSelectedList()"
+          >
+            <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Add</span>
+            <img
+              src="../../../assets/Images/ic-right-arrow.svg"
+              width="14px"
+              alt=""
+            />
+          </button>
+          <button
+            class="btn btn-transfer px-3 py-1 mb-2"
+            (click)="removeFromSelectedList()"
+          >
+            <img
+              src="../../../assets/Images/ic-left-arrow.svg"
+              width="14px"
+              alt=""
+            />
+            <span class="mx-2 fw-bold" style="font-size: 0.9rem"> Remove</span>
+          </button>
+        </div>
+        <div class="col-lg-3 col-md-12">
+          <app-common-transfer
+            #RtoLTransfer
+            [title]="chosenFundingTitle"
+            [listInput]="existedFundings"
+          ></app-common-transfer>
+          <div
+            class="text-danger mt-1"
+            *ngIf="isFormSubmitted && existedFundings.length == 0"
+          >
+            Plese select the fundings
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="my-4 row">
-    <h3 class="pb-0 page-section-title text-uppercase">Rate charts options</h3>
-    <div class="col-xl-auto m-2">
-      <div class="form-group">
+    <div class="my-4 row">
+      <h3 class="pb-0 ms-2 page-section-title text-uppercase">
+        Rate charts options
+      </h3>
+      <div class="col-xl-auto m-2">
+        <div class="form-group">
+          <label class="form-label">
+            Type of finance: <span class="text-danger">*</span>
+          </label>
+          <div
+            class="align-items-center d-inline-flex"
+            *ngIf="isShowChattelOption"
+          >
+            <span class="custom-checkbox-container">
+              <input
+                type="checkbox"
+                class="input-checkbox"
+                value="Chattel mortgage"
+                [checked]="
+                  currentForm
+                    .get('typeOfFinance')
+                    ?.value.includes('Chattel mortgage')
+                "
+                (change)="handleCheckboxChange(0)"
+              />
+
+              <span class="custom-checkbox"></span>
+            </span>
+            &nbsp;
+            <span>Chattel mortgage </span>
+          </div>
+          <div
+            class="align-items-center mx-2 d-inline-flex"
+            *ngIf="isShowRentalOption"
+          >
+            <span class="custom-checkbox-container">
+              <input
+                type="checkbox"
+                class="input-checkbox"
+                value="Rental"
+                [checked]="
+                  currentForm.get('typeOfFinance')?.value.includes('Rental')
+                "
+                (change)="handleCheckboxChange(1)"
+              />
+
+              <span class="custom-checkbox"></span>
+            </span>
+            &nbsp;
+            <span>Rental </span>
+          </div>
+        </div>
+        <ng-container
+          *ngIf="
+            (isFormSubmitted && currentForm.get('typeOfFinance')?.invalid) ||
+            currentForm.get('typeOfFinance')?.dirty
+          "
+        >
+          <div class="text-danger mt-1">Plese select finance type</div>
+        </ng-container>
+      </div>
+      <div
+        class="col-xl-auto m-2"
+        *ngIf="isShowChattelTerm && isShowRentalTerm"
+      >
+        <label class="form-label"
+          >Interest rates vary based on the type of finance</label
+        >
+
+        <div class="form-check form-check-inline ps-0">
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              [value]="true"
+              formControlName="isInterestRatesVary"
+              (change)="ratesVaryChangeHandler()"
+            />
+
+            <span class="input-group-text overflow-hidden">Yes</span>
+          </label>
+          <label class="w-50">
+            <input
+              class="form-check-input"
+              type="radio"
+              [value]="false"
+              formControlName="isInterestRatesVary"
+              (change)="ratesVaryChangeHandler()"
+            />
+            <span class="input-group-text overflow-hidden">No</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="col-xl-auto m-2">
         <label class="form-label">
-          Type of finance: <span class="text-danger">*</span>
+          {{ termTitle }} :
+          <span class="text-danger">*</span>
         </label>
-        <div class="align-items-center d-inline-flex">
-          <span class="custom-checkbox-container">
+        <ng-container *ngFor="let item of ['24', '36', '48', '60', '72', '84']">
+          <span class="custom-checkbox-container mx-1">
             <input
               type="checkbox"
               class="input-checkbox"
-              value="Chattel mortgage"
+              [checked]="
+                currentForm.get('chattelMortgageTerms')?.value.includes(item)
+              "
+              (change)="handleTermsChange(item, 1)"
             />
-            <!-- [checked]="
-                funderGuideForm
-                  .get('financeType')
-                  ?.value.includes('Chattel mortgage')
-              "
-              (change)="handleCheckoxChange(0)" -->
+
+            <!-- [formControlName]="getFomControlName(item, action)" -->
             <span class="custom-checkbox"></span>
           </span>
-          &nbsp;
-          <span>Chattel mortgage </span>
-        </div>
-        <div class="align-items-center m-2 d-inline-flex">
-          <span class="custom-checkbox-container">
-            <input type="checkbox" class="input-checkbox" value="Rental" />
-            <!-- [checked]="
-                funderGuideForm.get('financeType')?.value.includes('Rental')
-              "
-              (change)="handleCheckoxChange(1)" -->
-            <span class="custom-checkbox"></span>
-          </span>
-          &nbsp;
-          <span>Rental </span>
-        </div>
+          <label class="mx-1">{{ item }}</label>
+        </ng-container>
+        <ng-container
+          *ngIf="isFormSubmitted && currentForm.get('chattelMortgageTerms')?.errors?.['arrayIsEmpty']"
+        >
+          <div class="text-danger mt-1">Plese select terms</div>
+        </ng-container>
       </div>
-    </div>
-    <div class="col-xl-auto m-2">
-      <label class="form-label"
-        >Interest rates vary based on the type of finance</label
+      <div
+        class="col-xl-auto m-2"
+        *ngIf="
+          this.currentForm.get('isInterestRatesVary')?.value &&
+          isShowChattelTerm &&
+          isShowRentalTerm
+        "
       >
-
-      <div class="form-check form-check-inline ps-0">
-        <label class="w-50">
-          <input class="form-check-input" type="radio" [value]="true" />
-
-          <!-- formControlName="sendEOTreports" -->
-          <span class="input-group-text overflow-hidden">Yes</span>
+        <label class="form-label">
+          Terms - Rental: <span class="text-danger">*</span>
         </label>
-        <label class="w-50">
-          <input class="form-check-input" type="radio" [value]="false" />
-          <span class="input-group-text overflow-hidden">No</span>
-        </label>
+        <ng-container *ngFor="let item of ['24', '36', '48', '60', '72', '84']">
+          <span class="custom-checkbox-container mx-1">
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              [checked]="currentForm.get('rentalTerms')?.value.includes(item)"
+              (change)="handleTermsChange(item, 2)"
+            />
+
+            <span class="custom-checkbox"></span>
+          </span>
+          <label class="mx-1">{{ item }}</label>
+        </ng-container>
+        <ng-container
+          *ngIf=" isFormSubmitted && isShowRentalTerm && currentForm.get('rentalTerms')?.errors?.['arrayIsEmpty']"
+        >
+          <div class="text-danger mt-1">Plese select terms</div>
+        </ng-container>
       </div>
     </div>
-    <div class="col-xl-auto m-2">
-      <label class="form-label">
-        Terms - Chattel mortgage: <span class="text-danger">*</span>
-      </label>
-      <ng-container *ngFor="let item of [24, 36, 48, 60, 72, 84]">
-        <span class="custom-checkbox-container mx-1">
-          <input type="checkbox" class="input-checkbox" />
 
-          <!-- [formControlName]="getFomControlName(item, action)" -->
-          <span class="custom-checkbox"></span>
-        </span>
-        <label class="mx-1">{{ item }}</label>
-      </ng-container>
-    </div>
-    <div class="col-xl-auto m-2">
-      <label class="form-label">
-        Terms - Rentel: <span class="text-danger">*</span>
-      </label>
-      <ng-container *ngFor="let item of [24, 36, 48, 60, 72, 84]">
-        <span class="custom-checkbox-container mx-1">
-          <input type="checkbox" class="input-checkbox" />
-
-          <!-- [formControlName]="getFomControlName(item, action)" -->
-          <span class="custom-checkbox"></span>
-        </span>
-        <label class="mx-1">{{ item }}</label>
-      </ng-container>
-    </div>
-  </div>
-
-  <div class="my-4">
-    <h3 class="pb-0 page-section-title text-uppercase">
-      Chattle mortage interest rates
-    </h3>
-    <div class="col-12 mt-2">
-      <div class="table-responsive">
-        <table class="table funder-interest-table">
-          <thead>
-            <tr class="funder-interest-header">
-              <td class="left-sticky-column">
-                <small> Interest Rate Value Range (Inc GST)</small>
-                <span class="text-danger">*</span>
-              </td>
-              <ng-container class="w-100 d-block">
-                <ng-container *ngFor="let item of [24, 36, 48, 60, 72, 84]">
-                  <td class="">
-                    <small>{{ item }} Months</small>
+    <div class="my-4">
+      <h3 class="pb-0 page-section-title text-uppercase">
+        {{ termChartTitle }}
+      </h3>
+      <div class="col-12 mt-2">
+        <div class="table-responsive">
+          <table class="table funder-interest-table">
+            <thead>
+              <tr class="funder-interest-header">
+                <td class="left-sticky-column">
+                  <small> Interest Rate Value Range (Inc GST)</small>
+                  <span class="text-danger">*</span>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                    isFormSubmitted && currentForm.get('interestChartChattelMortgage')?.errors?.['arrayIsEmpty']
+                  "
+                  >
+                    please select interest rate value range
+                  </div>
+                </td>
+                <ng-container class="w-100 d-block">
+                  <ng-container
+                    *ngFor="
+                      let item of currentForm.get('chattelMortgageTerms')?.value
+                    "
+                  >
+                    <td class="">
+                      <small>{{ item }} Months</small>
+                    </td>
+                  </ng-container>
+                  <td><small>Max brokerage %</small></td>
+                  <td><small>Default rate adjustment %</small></td>
+                  <td><small>Max brokerage ceiling %</small></td>
+                  <td
+                    *ngIf="interstChattelFormArr.length > 1"
+                    style="width: 0.2rem !important"
+                    class="p-0"
+                  >
+                    <small>Action</small>
                   </td>
                 </ng-container>
-                <td><small>Max brokerage %</small></td>
-                <td><small>Default rate adjustment %</small></td>
-                <td><small>Max brokerage ceiling %</small></td>
+              </tr>
+            </thead>
+            <tbody
+              class="funder-interest-body"
+              formArrayName="interestChartChattelMortgage"
+            >
+              <ng-container
+                *ngFor="
+                  let chart of interstChattelFormArr.controls;
+                  let chartItem = index
+                "
+              >
+                <tr [formGroupName]="chartItem">
+                  <td
+                    class="d-flex align-item-center gap-2 left-sticky-column"
+                    style="width: unset !important"
+                  >
+                    <div class="input-doller-container">
+                      <input
+                        type="text"
+                        class="form-control dollar-input-field"
+                        formControlName="minValue"
+                        [ngClass]="{'ng-invalid': chart.get('minValue')?.errors?.['invalidMinValue'] && isFormSubmitted}"
+                        (blur)="handleChartValueFormat('minValue', 1, 1)"
+                        (blur)="
+                          validateMinValueField(chart, null, chartItem, 1)
+                        "
+                      />
+                    </div>
+                    <span class="align-bottom">to</span>
+                    <div class="input-doller-container form-group">
+                      <input
+                        type="text"
+                        class="form-control dollar-input-field"
+                        formControlName="maxValue"
+                        [ngClass]="{'ng-invalid': chart.get('maxValue')?.errors?.['invalidMaxValue'] && isFormSubmitted}"
+                        (blur)="handleChartValueFormat('maxValue', 1, 1)"
+                        (blur)="validateMaxValueField(chart, chartItem, 1)"
+                      />
+                    </div>
+                  </td>
+                  <ng-container
+                    *ngFor="
+                      let item of currentForm.get('chattelMortgageTerms')?.value
+                    "
+                  >
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="month{{ item }}"
+                        (blur)="handleChartValueFormat('month{{ item }}', 2, 1)"
+                      />
+                    </td>
+                  </ng-container>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="maxBrokerage"
+                      (blur)="handleChartValueFormat('maxBrokerage', 2, 1)"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="defaultRateAdjustment"
+                      (blur)="
+                        handleChartValueFormat('defaultRateAdjustment', 2, 1)
+                      "
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="maxBrokerageCeiling"
+                      (blur)="
+                        handleChartValueFormat('maxBrokerageCeiling', 2, 1)
+                      "
+                    />
+                  </td>
+                  <td
+                    *ngIf="
+                      chartItem == interstChattelFormArr.length - 1 &&
+                      interstChattelFormArr.length > 1
+                    "
+                    style="width: 0.2rem !important"
+                    class="p-0"
+                  >
+                    <a
+                      class="action-icon action-delete-icon"
+                      (click)="removeRateChart(1)"
+                    ></a>
+                  </td>
+                </tr>
               </ng-container>
-            </tr>
-          </thead>
-          <tbody class="funder-interest-body">
-            <tr>
-              <td class="d-flex align-item-center gap-2 left-sticky-column">
-                <div class="input-doller-container">
-                  <input type="text" class="form-control dollar-input-field" />
-                </div>
-                <span>to</span>
-                <div class="input-doller-container">
-                  <input type="text" class="form-control dollar-input-field" />
-                </div>
-              </td>
-              <ng-container *ngFor="let item of [24, 36, 48, 60, 72, 84]">
-                <td><input type="text" class="form-control" /></td>
-              </ng-container>
-              <td><input type="text" class="form-control" /></td>
-              <td><input type="text" class="form-control" /></td>
-              <td><input type="text" class="form-control" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
 
-      <hr class="mb-3" />
-      <div class="d-flex justify-content-between">
-        <div>
-          <button class="btn btn-funder-interest">
+        <hr class="mb-3 mt-1" />
+        <div class="d-flex flex-column flex-md-row justify-content-between">
+          <button class="btn btn-funder-interest" (click)="AddNewRateChart(1)">
             <img
               src="../../../assets/Images/icon-plus-dark.svg"
               width="15px"
@@ -206,9 +392,254 @@
             />
             <span class="fw-bold ps-2">Add value Range</span>
           </button>
+
+          <span>
+            Last Updated: {{ lastUpdateDateForChattel | date : "dd/MM/yyyy" }}
+          </span>
         </div>
-        <span> Last Updated: 23/09/2024 </span>
       </div>
     </div>
+    <div
+      class="my-4"
+      *ngIf="
+        this.currentForm.get('isInterestRatesVary')?.value &&
+        isShowChattelTerm &&
+        isShowRentalTerm
+      "
+    >
+      <h3 class="pb-0 page-section-title text-uppercase">
+        Rental interest rates
+      </h3>
+      <div class="col-12 mt-2">
+        <div class="table-responsive">
+          <table class="table funder-interest-table">
+            <thead>
+              <tr class="funder-interest-header">
+                <td class="left-sticky-column">
+                  <small> Interest Rate Value Range (Inc GST)</small>
+                  <span class="text-danger">*</span>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      isFormSubmitted && currentForm.get('interestChartRental')?.errors?.['arrayIsEmpty']
+                    "
+                  >
+                    please select interest rate value range
+                  </div>
+                </td>
+                <ng-container class="w-100 d-block">
+                  <ng-container
+                    *ngFor="
+                      let item of this.currentForm.get('rentalTerms')?.value
+                    "
+                  >
+                    <td class="">
+                      <small>{{ item }} Months</small>
+                    </td>
+                  </ng-container>
+                  <td><small>Max brokerage %</small></td>
+                  <td><small>Default rate adjustment %</small></td>
+                  <td><small>Max brokerage ceiling %</small></td>
+                  <td
+                    *ngIf="interestRentalFormArr.length > 1"
+                    style="width: 0.2rem !important"
+                    class="p-0"
+                  >
+                    <small>Action</small>
+                  </td>
+                </ng-container>
+              </tr>
+            </thead>
+            <tbody
+              class="funder-interest-body"
+              formArrayName="interestChartRental"
+            >
+              <ng-container
+                *ngFor="
+                  let chart of interestRentalFormArr.controls;
+                  let chartItem = index
+                "
+              >
+                <tr [formGroupName]="chartItem">
+                  <td
+                    class="d-flex align-item-center gap-2 left-sticky-column"
+                    style="width: unset !important"
+                  >
+                    <div class="input-doller-container">
+                      <input
+                        type="text"
+                        class="form-control dollar-input-field"
+                        formControlName="minValue"
+                        [ngClass]="{'ng-invalid': chart.get('minValue')?.errors?.['invalidMinValue'] && isFormSubmitted}"
+                        (blur)="handleChartValueFormat('minValue', 1, 2)"
+                        (blur)="
+                          validateMinValueField(chart, null, chartItem, 2)
+                        "
+                      />
+                    </div>
+                    <span class="align-bottom">to</span>
+                    <div class="input-doller-container">
+                      <input
+                        type="text"
+                        class="form-control dollar-input-field"
+                        formControlName="maxValue"
+                        [ngClass]="{'ng-invalid': chart.get('maxValue')?.errors?.['invalidMaxValue'] && isFormSubmitted}"
+                        (blur)="handleChartValueFormat('maxValue', 1, 2)"
+                        (blur)="validateMaxValueField(chart, chartItem, 2)"
+                      />
+                    </div>
+                  </td>
+                  <ng-container
+                    *ngFor="let item of currentForm.get('rentalTerms')?.value"
+                  >
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="month{{ item }}"
+                        (blur)="handleChartValueFormat('month{{ item }}', 2, 2)"
+                      />
+                    </td>
+                  </ng-container>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="maxBrokerage"
+                      (blur)="handleChartValueFormat('maxBrokerage', 2, 2)"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="defaultRateAdjustment"
+                      (blur)="
+                        handleChartValueFormat('defaultRateAdjustment', 2, 2)
+                      "
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="maxBrokerageCeiling"
+                      (blur)="
+                        handleChartValueFormat('maxBrokerageCeiling', 2, 2)
+                      "
+                    />
+                  </td>
+                  <td
+                    *ngIf="
+                      chartItem == interestRentalFormArr.length - 1 &&
+                      interestRentalFormArr.length > 1
+                    "
+                    style="width: 0.2rem !important"
+                    class="p-0"
+                  >
+                    <a
+                      class="action-icon action-delete-icon"
+                      (click)="removeRateChart(2)"
+                    ></a>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="mb-3" />
+        <div class="d-flex flex-column flex-md-row justify-content-between">
+          <div class="d-flex flex-column flex-md-row gap-2 m-1">
+            <button
+              class="btn btn-funder-interest"
+              (click)="AddNewRateChart(2)"
+            >
+              <img
+                src="../../../assets/Images/icon-plus-dark.svg"
+                width="15px"
+                height="15px"
+              />
+              <span class="fw-bold ps-2">Add Value Range</span>
+            </button>
+            <button
+              class="btn btn-secondary"
+              (click)="copyChattelRateToRental()"
+            >
+              <span class="fw-bold ps-2">Copy Chattel Mortgage Rate Chart</span>
+            </button>
+          </div>
+          <span class="text-muted"
+            >Last Updated:
+            {{ lastUpdateDateForRental | date : "dd/MM/yyyy" }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="d-flex flex-sm-row flex-column justify-content-between gap-1">
+    <!-- <button (click)="submitChartForms()">Click here to submit Form</button> -->
+    <button
+      class="btn btn-secondary"
+      style="width: fit-content"
+      (click)="onEditSubTabClick()"
+      data-bs-toggle="modal"
+      data-bs-target="#editSubTabModal"
+    >
+      <span class="h6 mt-1"> Edit sub-tab name</span>
+    </button>
+
+    <button
+      *ngIf="currentTabIndex > 0"
+      class="btn btn-secondary"
+      style="width: fit-content"
+      data-bs-toggle="modal"
+      data-bs-target="#deleteSubTabModal"
+    >
+      <span class="h6 mt-1">Delete this sub-tab</span>
+    </button>
   </div>
 </div>
+
+<app-common-dialog
+  modalTitle="Edit sub tab name"
+  [bodyData]="editSubTabTemplate"
+  modalClass="modal-dialog-centered"
+  modalId="editSubTabModal"
+></app-common-dialog>
+
+<app-common-dialog
+  modalTitle="Delete subtab"
+  [bodyData]="deleteSubTabTemplate"
+  modalClass="modal-dialog-centered"
+  modalId="deleteSubTabModal"
+></app-common-dialog>
+
+<ng-template #editSubTabTemplate>
+  <input class="form-control" [(ngModel)]="equipmentSubTabName" />
+
+  <div class="mt-3 d-flex gap-3">
+    <button class="btn btn-primary" (click)="onSubTabNameSave()">Save</button>
+    <button
+      class="btn btn-secondary"
+      id="subTabcancelbtn"
+      data-bs-dismiss="modal"
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteSubTabTemplate>
+  <p>Are you sure you want to delete this subtab?</p>
+  <div class="mt-3 d-flex justify-content-end gap-2">
+    <button class="btn btn-primary" (click)="deleteTheSubTab()">Ok</button>
+    <button
+      class="btn btn-secondary"
+      id="deletSubtabCancel"
+      data-bs-dismiss="modal"
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>

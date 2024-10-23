@@ -59,7 +59,7 @@
                   .get('financeType')
                   ?.value.includes('Chattel mortgage')
               "
-              (change)="handleCheckoxChange(0)"
+              (change)="handleCheckoxChange($event, 0)"
             />
             <span class="custom-checkbox"></span>
           </span>
@@ -75,7 +75,7 @@
               [checked]="
                 funderGuideForm.get('financeType')?.value.includes('Rental')
               "
-              (change)="handleCheckoxChange(1)"
+              (change)="handleCheckoxChange($event, 1)"
             />
             <span class="custom-checkbox"></span>
           </span>
@@ -402,7 +402,7 @@
     <button
       class="btn btn-primary mx-1"
       type="button"
-      (click)="deleteOkHandler()"
+      (click)="deleteDocHandler()"
     >
       Ok
     </button>

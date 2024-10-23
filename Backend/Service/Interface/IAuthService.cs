@@ -2,15 +2,13 @@
 using Entities.Models;
 using Service.Interface;
 
-namespace Repository.Interface
+namespace Repository.Interface;
+public interface IAuthService : IBaseService<User>
 {
-    public interface IAuthService : IBaseService<User>
-    {
-        Task<string> GenerateToken(LoginDTO model);
-        Task<bool> IsValidMailAsync(string email);
-        Task<bool> UpdatePasswordAsync(PasswordUpdateReq model);
-        Task<bool> ValidateOtpAsync(OtpRequest model);
-        string ValidateRefreshToken(string token);
-        int GetUserId();
-    }
+    Task<string> GenerateToken(LoginDTO model);
+    Task<bool> IsValidMailAsync(string email);
+    Task<bool> UpdatePasswordAsync(PasswordUpdateReq model);
+    Task<bool> ValidateOtpAsync(OtpRequest model);
+    string ValidateRefreshToken(string token);
+    int GetUserId();
 }

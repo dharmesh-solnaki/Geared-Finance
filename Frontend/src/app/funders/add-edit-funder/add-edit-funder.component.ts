@@ -32,6 +32,7 @@ import { CommonSearch } from 'src/app/Models/common-search.model';
 import { TokenService } from 'src/app/Service/token.service';
 import { environment } from 'src/environments/environment.development';
 import { FunderChartComponent } from '../funder-chart/funder-chart.component';
+import { FormatDatePipe } from 'src/app/Pipes/format-date.pipe';
 
 @Component({
   selector: 'app-add-edit-funder',
@@ -53,7 +54,7 @@ export class AddEditFunderComponent {
   entityName = 'Funder';
   funderLogoUrl: string = String.Empty;
   funderDbLogo: string = String.Empty;
-  isFunderGuideFormChanged: boolean = false;
+  isFunderFormChanged: boolean = false;
   @ViewChild('overViewTemplate', { static: true })
   overViewTemplate!: TemplateRef<HTMLElement>;
   @ViewChild('funderProductTypeGuide', { static: true })
@@ -72,6 +73,7 @@ export class AddEditFunderComponent {
   funderProductGuide!: FunderProductGuideComponent;
   @ViewChild('funderInterestRateChart')
   funderInterestRateChart!: FunderChartComponent;
+  isEnableLoader: boolean = false;
 
   // notes
   notesModalTitle: string = String.Empty;
@@ -105,6 +107,7 @@ export class AddEditFunderComponent {
 
       if (id) {
         this.funderId = id;
+        this.isEnableLoader = true;
         this._funderService.getFunder(id).subscribe((res) => {
           res.bdmPhone = new PhonePipe().transform(res.bdmPhone);
           let domainName = res.bdmEmail.split('@')[1];
@@ -118,6 +121,7 @@ export class AddEditFunderComponent {
           this.entityName = res.entityName;
           this.notesModalTitle = `Notes | ${this.entityName.toUpperCase()}`;
         });
+        this.isEnableLoader = false;
       }
     }
   }
@@ -178,19 +182,12 @@ export class AddEditFunderComponent {
     });
   }
   setActiveTab(tab: string, template: TemplateRef<HTMLElement>) {
-    if (
-      (this.funderForm.dirty &&
-        this.activeTab === FunderModuleConstants.ACTIVE_OVERVIEW_TAB) ||
-      (this.isFunderGuideFormChanged &&
-        this.activeTab ===
-          FunderModuleConstants.ACTIVE_FUNDER_PRODUCT_GUIDE_TAB)
-    ) {
+    if (this.funderForm.dirty || this.isFunderFormChanged) {
       const confirmLeave = confirm(alertResponses.UNSAVE_CONFIRMATION);
       if (!confirmLeave) {
         return;
       }
     }
-
     this.activeTab = tab;
     this.activeTemplate = template;
   }
@@ -222,6 +219,13 @@ export class AddEditFunderComponent {
       this.funderProductGuide.funderGuideFormSubmit();
     }
 
+    if (
+      this.isEdit &&
+      this.activeTab ===
+        FunderModuleConstants.ACTIVE_FUNDER_INTEREST_RATE_CHART_TAB
+    ) {
+      this.funderInterestRateChart.submitChartForms();
+    }
     if (this.activeTab === FunderModuleConstants.ACTIVE_OVERVIEW_TAB) {
       if (this.funderForm.invalid) {
         return;
@@ -270,7 +274,7 @@ export class AddEditFunderComponent {
     }
   }
   funderGuideFormchange(ev: boolean) {
-    this.isFunderGuideFormChanged = ev;
+    this.isFunderFormChanged = ev;
   }
   SaveEntityName(field: HTMLInputElement) {
     const inputValue = field.value.trim();
@@ -298,7 +302,7 @@ export class AddEditFunderComponent {
 
   @HostListener('window:beforeunload', ['$event'])
   canChangePage(event: BeforeUnloadEvent) {
-    if (this.funderForm.dirty || this.isFunderGuideFormChanged) {
+    if (this.funderForm.dirty || this.isFunderFormChanged) {
       return window.confirm(alertResponses.UNSAVE_CONFIRMATION);
     } else {
       return;
@@ -391,7 +395,7 @@ export class AddEditFunderComponent {
 
     const download = (data: Note[]) => {
       downloadData = data.map(({ createdDate, userName, description }) => ({
-        CreatedDate: createdDate,
+        CreatedDate: new FormatDatePipe().transform(createdDate),
         UserName: userName,
         Note: description,
       }));
@@ -420,5 +424,8 @@ export class AddEditFunderComponent {
     this.tempNote = new Note();
     this.isAddBtnDisabled = false;
     this.isSaveBtnDisabled = true;
+  }
+  funderChartFormChange(ev: boolean) {
+    this.isFunderFormChanged = ev;
   }
 }

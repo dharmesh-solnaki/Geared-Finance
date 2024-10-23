@@ -11,6 +11,10 @@ import { BaseResponse, HeaderSearchModel } from '../Models/common-models';
 import { Funder } from '../Models/funder.model';
 import { Document } from '../Models/document.model';
 import { Note } from '../Models/note.model';
+import {
+  RateChartOption,
+  RateChartResponse,
+} from '../Models/rateChartOption.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -89,5 +93,23 @@ export class FunderService {
   }
   deleteNote(id: number) {
     return this._http.delete(`${this.API_URL}/Note/${id}`);
+  }
+
+  //funder-chart
+  getFunderCharts(funderId: number): Observable<RateChartResponse> {
+    return this._http.get<RateChartResponse>(
+      `${this.API_URL}/RateCharts/${funderId}`
+    );
+  }
+
+  upsertFunderCharts(funderId: number, equipmentCharts: RateChartOption[]) {
+    return this._http.post(
+      `${this.API_URL}/RateCharts/${funderId}`,
+      equipmentCharts
+    );
+  }
+
+  deleteFunderChart(chartId: number) {
+    return this._http.delete(`${this.API_URL}/RateChart/${chartId}`);
   }
 }

@@ -33,6 +33,13 @@ const appRoutes: Routes = [
     loadChildren: () =>
       import('./funders/funders.module').then((m) => m.FundersModule),
   },
+  {
+    path: 'application',
+    loadChildren: () =>
+      import('./Application/application.module').then(
+        (m) => m.ApplicationModule
+      ),
+  },
   { path: 'access-denied', component: AccessDeniedPageComponent },
 ];
 

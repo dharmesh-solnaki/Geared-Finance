@@ -340,10 +340,10 @@ height: inherit;
   position: absolute;
   right: 5%;
   top: 45%;
-  transform: translateY(-50%);
+  transform: translateY(-40%);
 }
 .dropdownImageTransform {
-  transform: rotate(180deg);
+  transform: translateY(-50%) rotateX(180deg);
 }
 .selected-text {
   width: auto;
@@ -376,6 +376,10 @@ height: inherit;
   background-color: #eef4f7;
 }
 
+.includedListItem{
+  background-color: #eef4f7 !important;
+}
+
 .filter-textbox {
   border-bottom: 1px solid #ccc;
   position: relative;
@@ -391,7 +395,7 @@ height: inherit;
   background-color: transparent;
 }
 .page-section-title {
-  font-size: 16px;
+  font-size: 0.89rem;
   line-height: 30px;
   font-weight: 700;
   font-family: "Source Sans Pro", sans-serif;
@@ -676,7 +680,8 @@ background-image: url('../Images/ic-save-orange.svg') !important;
   position: relative;
 }
 .loader-overlay {
-  position: fixed;
+  /* position: fixed; */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -896,7 +901,7 @@ position: absolute; top: -10 !important;
 .funder-interest-header {
   border-top: 2px solid #6c7e8f  ;
   border-bottom: 2px solid #6c7e8f  ;
- position: relative;
+  position: relative;
 }
 .funder-interest-table  td {
   vertical-align: text-top;
@@ -912,14 +917,14 @@ position: absolute; top: -10 !important;
  width: 7rem ;
 }
 .funder-interest-body tr td {
-  border: none !important;
+  border-bottom: 1px solid #34495e !important;
 }
 .left-sticky-column{
   width: fit-content;
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 50;
+  z-index: 2;
 }
 .btn-funder-interest{
   border-color: #34495e !important;
@@ -946,6 +951,17 @@ position: absolute; top: -10 !important;
 
 .dollar-input-field {
   padding-left: 1.3rem !important; 
+}
+.recordListUl{
+padding: 0;
+background-color: white !important;
+}
+.recordListUl>li:hover{
+ background-color: #f8f9fa !important;
+}
+.recordListUl>li:active{
+  background-color: #34495e !important;
+  color: white;
 }
 @media (max-width: 768px) 
  {
@@ -1046,7 +1062,7 @@ position: absolute; top: -10 !important;
   .setting-left-div {
     position: absolute;
     top: 0;
-    z-index: 100;
+    z-index: 110;
     height : 100%;
     background-color: white;
     border-right: 1px solid black;

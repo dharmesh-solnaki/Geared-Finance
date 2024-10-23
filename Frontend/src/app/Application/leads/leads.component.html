@@ -1,0 +1,135 @@
+<app-loader [isShowLoader]="isEnableLoader"></app-loader>
+<div>
+  <form [formGroup]="filterForm">
+    <ng-template #LeadsHeader>
+      <div
+        class="d-flex align-item-center gap-sm-3 gap-1 my-2 flex-sm-row flex-column"
+      >
+        <span class="inner-page-heading-title m-0"> LEADS </span>
+        <app-common-selectmenu
+          #pipelineDropdown
+          [optionData]="pipelineList"
+          defaultOption="All Pipelines"
+          defaultValue="0"
+          formControlName="pipelineType"
+        >
+        </app-common-selectmenu>
+        <app-common-selectmenu
+          #leadTypeDropdown
+          *ngIf="isShowLeadType"
+          [optionData]="leadTypeList"
+          defaultOption="All Leads"
+          defaultValue="0"
+          formControlName="leadType"
+        >
+        </app-common-selectmenu>
+        <app-common-selectmenu
+          #applicationListDropdown
+          *ngIf="isShowApplicationListType"
+          [optionData]="leadVisibleList"
+          defaultOption="Hide unassigned applications"
+          defaultValue="0"
+          formControlName="listType"
+        >
+        </app-common-selectmenu>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="row g-2 m-2">
+      <app-common-selectmenu
+        #ownerIdDropdown
+        *ngIf="
+          filterForm.get('leadType')?.value != 1 &&
+          filterForm.get('listType')?.value != 2
+        "
+        [optionData]="ownerList"
+        defaultOption="Owner"
+        defaultValue="0"
+        [isShowMultipleSelect]="true"
+        [needsSearching]="true"
+        class="col-lg-auto col-md-3 col-sm-6"
+        (checkListEmitter)="handleOwnerListValue($event)"
+        (checkListShiftEmitter)="checkedListEmitterHandler($event, 1)"
+      >
+      </app-common-selectmenu>
+
+      <app-common-selectmenu
+        #vendorIdDropdown
+        *ngIf="filterForm.get('pipelineType')?.value != 1"
+        [optionData]="vendorList"
+        defaultOption="Vendor"
+        defaultValue="0"
+        [needsSearching]="true"
+        formControlName="vendorId"
+        class="col-lg-auto col-md-3 col-sm-6"
+        (valueChangeEmitter)="getVendorUserList($event)"
+      >
+      </app-common-selectmenu>
+
+      <app-common-selectmenu
+        #vendorUserIdsDropdown
+        *ngIf="filterForm.get('vendorId')?.value != 0"
+        [optionData]="vendorUserList"
+        defaultOption="Vendor User"
+        defaultValue="0"
+        [needsSearching]="true"
+        formControlName="vendorSalesIds"
+        class="col-lg-auto col-md-3 col-sm-6"
+        [isShowMultipleSelect]="isShowVendorUserMultiselect"
+        [needsSearching]="true"
+        (checkListEmitter)="handleVendoprUserList($event)"
+        (checkListShiftEmitter)="checkedListEmitterHandler($event, 2)"
+      >
+      </app-common-selectmenu>
+
+      <div class="col-sm-6 col-auto">
+        <span
+          class="me-1 fw-semibold"
+          (click)="isShowRecordListMenu = !isShowRecordListMenu"
+        >
+          Viewing : {{ selectedRecordType }}</span
+        >
+        <img
+          src="../../../assets/Images/chevron-right.svg"
+          width="15px"
+          style="rotate: 90deg"
+        />
+        <div
+          class="position-absolute"
+          *ngIf="isShowRecordListMenu"
+          style="
+            border: 0.05mm solid black;
+            border-radius: 4px;
+            width: 10.1rem !important;
+            z-index: 100;
+          "
+        >
+          <ul class="recordListUl">
+            <ng-container *ngFor="let item of recordTypeList">
+              <li (click)="handleRecordTypeChange(item)" class="ps-3 pe-5 py-1">
+                {{ item }}
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-2 p-2">
+    <app-common-grid
+      [data]="LeadDataList"
+      [gridSettings]="leadGridSetting"
+      [paginationSettings]="paginationSettings"
+      (onSortEvent)="sortHandler($event)"
+      (onPageChange)="pageChangeEventHandler($event)"
+      (onpageSizeChange)="pageSizeChangeHandler($event)"
+    >
+    </app-common-grid>
+  </div>
+</div>

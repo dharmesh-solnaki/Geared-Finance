@@ -1,9 +1,7 @@
 ﻿using Entities.Models;
 
-namespace Repository.Interface
+namespace Repository.Interface;
+public interface IEquipmentRepo : IBaseRepo<FundingEquipmentType>
 {
-    public interface IEquipmentRepo : IBaseRepo<FundingEquipmentType>
-    {
-        Task<IEnumerable<FundingCategory>> GetEquipmentCategoriesAsync();
-    }
+    Task<IEnumerable<FundingCategory>> GetEquipmentCategoriesAsync();
 }

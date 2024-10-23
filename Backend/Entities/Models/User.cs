@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entities.Models;
 
@@ -73,8 +71,29 @@ public partial class User
     [Column(TypeName = "character varying")]
     public string? FullName { get; set; }
 
+    [InverseProperty("Salesstaff")]
+    public virtual ICollection<Application> ApplicationSalesstaffs { get; set; } = new List<Application>();
+
+    [InverseProperty("Vendorrep")]
+    public virtual ICollection<Application> ApplicationVendorreps { get; set; } = new List<Application>();
+
+    [InverseProperty("VendorRep")]
+    public virtual ICollection<DealVendor> DealVendors { get; set; } = new List<DealVendor>();
+
+    [InverseProperty("SalesStaff")]
+    public virtual ICollection<Deal> Deals { get; set; } = new List<Deal>();
+
     [InverseProperty("RelationshipManagerNavigation")]
     public virtual ICollection<User> InverseRelationshipManagerNavigation { get; set; } = new List<User>();
+
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<Lead> LeadCreatedByNavigations { get; set; } = new List<Lead>();
+
+    [InverseProperty("SalesStaff")]
+    public virtual ICollection<Lead> LeadSalesStaffs { get; set; } = new List<Lead>();
+
+    [InverseProperty("VendorRep")]
+    public virtual ICollection<Lead> LeadVendorReps { get; set; } = new List<Lead>();
 
     [ForeignKey("ManagerId")]
     [InverseProperty("Users")]
@@ -82,6 +101,9 @@ public partial class User
 
     [InverseProperty("CreatedByNavigation")]
     public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
+
+    [InverseProperty("SalesStaff")]
+    public virtual ICollection<Quote> Quotes { get; set; } = new List<Quote>();
 
     [ForeignKey("RelationshipManager")]
     [InverseProperty("InverseRelationshipManagerNavigation")]

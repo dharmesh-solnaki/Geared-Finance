@@ -1,4 +1,5 @@
 import { ApiAddress } from '../Models/common-models';
+import { CommonTransfer, SubCategory } from '../Models/common-transfer.model';
 import { MAPS_ADDRESS_TYPES, RoleEnum, SiteRolesId } from './constants';
 
 export const csvMaker = (data: any[], csvTitle: string) => {
@@ -106,10 +107,102 @@ export function getAddressFromApi(
 export function validateDocType(doctype: string, format: string): boolean {
   switch (format) {
     case 'img':
-      return ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'].includes(doctype);
+      return ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'].includes(
+        doctype
+      );
     case 'pdf':
       return doctype === 'application/pdf';
     default:
       return false;
   }
+}
+
+export function existingListSetter(list: any): CommonTransfer[] {
+  const groupedData: { [key: number]: CommonTransfer } = {};
+
+  list.forEach((item: any) => {
+    const categoryId = item.id;
+    if (!groupedData[categoryId]) {
+      groupedData[categoryId] = new CommonTransfer(categoryId, item.name, []);
+    }
+    item.subCategory.forEach((subCat: any) => {
+      groupedData[categoryId].subCategory.push(
+        new SubCategory(subCat.id, subCat.name)
+      );
+    });
+  });
+  return Object.values(groupedData);
+}
+
+export function addListToSelectedList(
+  tempList: CommonTransfer[],
+  availableFunding: CommonTransfer[],
+  existedFundings: CommonTransfer[]
+): CommonTransfer[] {
+  tempList.forEach((selectedItem) => {
+    const existingCategory = existedFundings.find(
+      (category) => category.id === selectedItem.id
+    );
+
+    if (existingCategory) {
+      selectedItem.subCategory.forEach((newSubCat) => {
+        const subCatExists = existingCategory.subCategory.some(
+          (existingSubCat) => existingSubCat.id === newSubCat.id
+        );
+        if (!subCatExists) {
+          existingCategory.subCategory.push(newSubCat);
+        }
+      });
+    } else {
+      existedFundings.push(selectedItem);
+    }
+
+    const availableCategory = availableFunding.find(
+      (category) => category.id === selectedItem.id
+    );
+
+    if (availableCategory) {
+      availableCategory.subCategory = availableCategory.subCategory.filter(
+        (subCat) =>
+          !selectedItem.subCategory.some(
+            (selectedSubCat) => selectedSubCat.id === subCat.id
+          )
+      );
+      if (availableCategory.subCategory.length === 0) {
+        availableFunding = availableFunding.filter(
+          (category) => category.id !== availableCategory.id
+        );
+      }
+    }
+  });
+  return existedFundings;
+}
+
+export function filterAvailableFundingList(
+  availableFunding: CommonTransfer[],
+  existedFundings: CommonTransfer[]
+): CommonTransfer[] {
+  return availableFunding
+    .map((funding) => {
+      const existingFunding = existedFundings.find(
+        (ef) => ef.id === funding.id
+      );
+
+      if (existingFunding) {
+        const filteredSubCategories = funding.subCategory.filter(
+          (subCat) =>
+            !existingFunding.subCategory.some(
+              (existingSubCat) => existingSubCat.id === subCat.id
+            )
+        );
+        return new CommonTransfer(
+          funding.id,
+          funding.name,
+          filteredSubCategories
+        );
+      }
+
+      return funding;
+    })
+    .filter((funding) => funding.subCategory.length > 0);
 }

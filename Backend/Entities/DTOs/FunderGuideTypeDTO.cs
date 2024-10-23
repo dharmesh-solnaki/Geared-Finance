@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs;
-
 public class FunderGuideTypeDTO : BaseDTO
 {
     [StringLength(25)]
@@ -31,4 +30,10 @@ public class FunderGuideTypeDTO : BaseDTO
     public int? FunderId { get; set; }
 
     public SelectedFundingDTO[]? SelectedFundings { get; set; } = null!;
+    public IEnumerable<int>? BeingUsedFunding { get; set; } = null!;
+
+    public bool IsChattelTypeExist { get; set; } = false;
+
+    public bool IsRentalTypeExist { get; set; } = false;
+
 }

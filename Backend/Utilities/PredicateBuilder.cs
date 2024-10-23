@@ -50,7 +50,7 @@ public static class PredicateBuilder
                     condition = Expression.Call(propertyToLower, containsMethod, valueToLower);
 
                 }
-                else if (property.Type == typeof(int) ||   property.Type == typeof(bool))
+                else if (property.Type == typeof(int) || property.Type == typeof(bool))
                 {
                     condition = Expression.Equal(property, valueConstant);
                 }
@@ -64,6 +64,7 @@ public static class PredicateBuilder
         if (!string.IsNullOrWhiteSpace(searchModel.Property1) && !string.IsNullOrWhiteSpace(searchModel.Keyword))
         {
             var propertyValue1 = Expression.Property(parameter, searchModel.Property1);
+            var replace = typeof(string).GetMethod(nameof(string.Replace), new[] { typeof(string) });
             var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
             var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
             var propertyValue1Lower = Expression.Call(propertyValue1, toLowerMethod);
@@ -79,7 +80,7 @@ public static class PredicateBuilder
             else
             {
                 var containsConstant = Expression.Call(propertyValue1Lower, containsMethod, keywordConstant);
-                predicate = Expression.OrElse(predicate, containsConstant);
+                predicate = Expression.AndAlso(predicate, containsConstant);
             }
         }
 
@@ -96,7 +97,7 @@ public static class PredicateBuilder
         }
 
         return currentExpression as MemberExpression;
-    }   
+    }
 }
 
 

@@ -1,3 +1,4 @@
+<app-loader [isShowLoader]="isEnableLoader"></app-loader>
 <ng-template #funderHeaderTabs>
   <div class="d-lg-flex justify-content-between my-1">
     <div class="d-lg-flex justify-content-between pb-1">
@@ -22,7 +23,10 @@
           'header-active-tab': activeTab === 'funderInterestRateChart'
         }"
         (click)="
-          setActiveTab('funderInterestRateChart', funderInterestRateChart)
+          setActiveTab(
+            'funderInterestRateChart',
+            funderInterestRateChartTempRef
+          )
         "
         *ngIf="isEdit"
       >
@@ -596,8 +600,11 @@
   >
   </app-funder-product-guide>
 </ng-template>
-<ng-template #funderInterestRateChart>
-  <app-funder-chart></app-funder-chart>
+<ng-template #funderInterestRateChartTempRef>
+  <app-funder-chart
+    #funderInterestRateChart
+    (isFunderChartFormDirty)="funderChartFormChange($event)"
+  ></app-funder-chart>
 </ng-template>
 
 <ng-template #EntityNameSetter>

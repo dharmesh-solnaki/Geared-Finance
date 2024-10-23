@@ -4,10 +4,20 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'formatDate',
 })
 export class FormatDatePipe implements PipeTransform {
-  transform(value: string): string {
+  transform(value: string | number, type?: string): string {
     if (!value) {
       return String.Empty;
     }
+
+    if (type == 'date') {
+      return new Date(value).toLocaleString('en-AU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'Australia/Sydney',
+      });
+    }
+
     return new Date(+value)
       .toLocaleString('en-AU', {
         day: '2-digit',

@@ -5,8 +5,8 @@ import { forkJoin, of } from 'rxjs';
 import { CommonSearch } from 'src/app/Models/common-search.model';
 import { PhonePipe } from 'src/app/Pipes/phone.pipe';
 import {
-  dateSelectonMenu,
-  monthSelectonMenu,
+  dateSelectionMenu,
+  monthSelectionMenu,
   notificationPreSelectionMenu,
   roleSelectionMenu,
   selectMenu,
@@ -58,8 +58,8 @@ export class AddSiteUserComponent implements OnInit {
   ngOnInit(): void {
     this.selectMenuRoles = roleSelectionMenu;
     this.selectMenuNotificationPref = notificationPreSelectionMenu;
-    this.defaultDateSelection = dateSelectonMenu(31);
-    this.defaultMonthSelection = monthSelectonMenu(-1);
+    this.defaultDateSelection = dateSelectionMenu(31);
+    this.defaultMonthSelection = monthSelectionMenu(-1);
     this.selectMenuMonth = this.defaultMonthSelection;
     this.selectMenuDate = this.defaultDateSelection;
     this.addFormBirthHandler();

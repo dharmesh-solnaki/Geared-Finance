@@ -1,6 +1,4 @@
-﻿
-
-using Entities.Models;
+﻿using Entities.Models;
 
 namespace Repository.Interface
 {

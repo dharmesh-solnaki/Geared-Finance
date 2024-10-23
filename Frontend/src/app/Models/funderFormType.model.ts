@@ -50,6 +50,9 @@ export class FunderGuideType {
     public generalNotes?: string,
     public eotNotes?: string,
     public cutoff?: string,
-    public craa?: string
+    public craa?: string,
+    public beingUsedFunding?: number[],
+    public isChattelTypeExist: boolean = false,
+    public isRentalTypeExist: boolean = false
   ) {}
 }
